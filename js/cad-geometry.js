@@ -80,7 +80,7 @@ function calculateGeometry() {
     const A = { x: 0, y: 0 };
     const A3 = { x: W_neck, y: 0 };
     const A4 = { x: W_neck, y: -H_back_neck };
-    const A5 = { x: W_neck * 0.72, y: -H_back_neck * 0.25 };
+    const A5 = { x: W_neck * 0.55, y: 0 }; // Строго горизонтальная касательная на сгибе спинки
     const A1 = { x: X_G, y: 0 };
 
     const L_back_sh = state.shp + postureBackDart;
@@ -110,6 +110,9 @@ function calculateGeometry() {
     const V1 = { x: X_G3, y: Y_V1 };
     const V3 = { x: X_G3 - W_neck, y: Y_V1 };
     const V4 = { x: X_G3, y: Y_V1 + W_neck + 1.0 };
+    // Точки Безье горловины полочки: горизонтальная касательная на линии полузаноса (V4)
+    const V5_c1 = { x: V3.x, y: V3.y + (V4.y - V3.y) * 0.55 };
+    const V5_c2 = { x: V3.x + W_neck * 0.55, y: V4.y };
     const V5 = { x: X_G3 - W_neck * 0.66, y: V1.y + (V4.y - V1.y) * 0.66 };
     const A2 = { x: X_G2, y: 0 };
 
@@ -192,7 +195,8 @@ function calculateGeometry() {
     // 6. Анатомический втачной рукав
     const W_sleeve = state.op + state.pop;
     const d_vert = ((Y_G - P1.y) + (Y_G - P5_closed.y)) / 2;
-    const H_cap = Math.max(11.0, 0.77 * d_vert + 0.8);
+    // Оптимальная высота оката: стабильная посадка +2.0..+3.2 см без избыточного сборения на больших размерах
+    const H_cap = Math.min(17.2, Math.max(11.0, 0.70 * d_vert + 1.6));
     const L_sleeve = state.dr;
     const W_wrist = state.oz + 2.0;
 
@@ -240,7 +244,7 @@ function calculateGeometry() {
         A, A1, A2, A3, A4, A5,
         P1, P2, P3, G4,
         sh_D1, sh_D2, sh_Apex, postureBackDart,
-        V1, V3, V4, V5, V7, V8, V9, G7,
+        V1, V3, V4, V5, V5_c1, V5_c2, V7, V8, V9, G7,
         P5_closed, P5_open, P6_closed, P6_open, P7,
         T1, T3, T4, T5, T7, T8, T10, T11,
         B1, B3, B4, B5, B8_bot, B_front_bot,

@@ -52,7 +52,7 @@ function generatePatternPiecesMarkup(g, options = {}) {
     };
 
     const frontOutlinePath = `
-        M ${g.B4.x * CM} ${(g.Y_H + 1.2) * CM}
+        M ${g.B4.x * CM} ${g.Y_H * CM}
         L ${g.B4.x * CM} ${g.B4.y * CM}
         L ${g.T4.x * CM} ${g.T4.y * CM}
         L ${g.G4.x * CM} ${g.G4.y * CM}
@@ -62,8 +62,9 @@ function generatePatternPiecesMarkup(g, options = {}) {
         L ${g.G7.x * CM} ${g.G7.y * CM}
         L ${g.V7.x * CM} ${g.V7.y * CM}
         L ${g.V3.x * CM} ${g.V3.y * CM}
-        Q ${g.V5.x * CM} ${g.V5.y * CM}, ${g.V4.x * CM} ${g.V4.y * CM}
+        C ${g.V5_c1.x * CM} ${g.V5_c1.y * CM}, ${g.V5_c2.x * CM} ${g.V5_c2.y * CM}, ${g.V4.x * CM} ${g.V4.y * CM}
         L ${g.X_G3 * CM} ${(g.Y_H + 1.2) * CM}
+        Q ${(g.X_G3 * 0.65 + g.B4.x * 0.35) * CM} ${(g.Y_H + 1.2) * CM}, ${g.B4.x * CM} ${g.Y_H * CM}
         Z
     `;
 
