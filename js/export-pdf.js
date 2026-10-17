@@ -1,0 +1,350 @@
+// js/export-pdf.js - Экспорт лекал в SVG, PNG и нарезка на листы А4 в PDF
+
+function getPieceExportData(pieceType) {
+    const g = calculateGeometry();
+    const p = generatePatternPiecesMarkup(g, { showClassic: true, frontShiftX: 0, sleeveOriginX: g.W_sleeve / 2 });
+
+    let minX = 0, minY = 0, widthMm = 500, heightMm = 800;
+    let contentSvg = '';
+    let fileTitle = '';
+    let pieceLabelRu = '';
+
+    if (pieceType === 'back') {
+        const maxBackX = Math.max(g.X_G4, g.B3.x, g.P1.x);
+        minX = -20;
+        minY = Math.floor(g.A4.y * CM) - 20;
+        widthMm = Math.ceil(maxBackX * CM) + 45;
+        heightMm = Math.ceil((g.Y_H + 2) * CM) - minY + 25;
+        fileTitle = `spinka_OG${state.og}_OT${state.ot}`;
+        pieceLabelRu = `Спинка (Ог ${state.og}, От ${state.ot}, Об ${state.ob})`;
+
+        contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.backOutlinePath}" fill="#ffffff"/>
+                <path d="${p.backDiamondPath}" />
+                <line x1="0" y1="${g.Y_G * CM}" x2="${g.G4.x * CM}" y2="${g.Y_G * CM}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                <line x1="0" y1="${g.Y_T * CM}" x2="${g.T3.x * CM}" y2="${g.Y_T * CM}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                <line x1="0" y1="${g.Y_B * CM}" x2="${g.B3.x * CM}" y2="${g.Y_B * CM}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                <!-- Линия долевой нити со сгибом -->
+                <line x1="${3.0 * CM}" y1="${(g.Y_G + 2) * CM}" x2="${3.0 * CM}" y2="${(g.Y_H - 4) * CM}" stroke="#18181b" stroke-width="0.9"/>
+                <text x="${12}" y="${(g.Y_T - 4) * CM}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#52525b" transform="rotate(-90 12 ${(g.Y_T - 4) * CM})">[ СГИБ ТКАНИ ]</text>
+            </g>
+            <text x="${(g.W_back * 0.48) * CM}" y="${(g.Y_G - 2.5) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">СПИНКА (1 дет. со сгибом)</text>
+            <text x="${(g.W_back * 0.48) * CM}" y="${(g.Y_G - 0.8) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Ог=${state.og} | От=${state.ot} | Об=${state.ob} | Осанка: ${state.posture}</text>
+        `;
+    } else if (pieceType === 'front') {
+        // Устраняем баг обрезания плеча: minX учитывает P5_open!
+        const minFrontX = Math.min(g.P5_open.x, g.X_G4, g.B4.x);
+        minX = Math.floor(minFrontX * CM) - 25;
+        minY = Math.floor(g.Y_V1 * CM) - 20;
+        widthMm = Math.ceil((g.X_G3 - minFrontX) * CM) + 50;
+        heightMm = Math.ceil((g.Y_H + 3.2) * CM) - minY + 25;
+        fileTitle = `polochka_OG${state.og}_OT${state.ot}`;
+        pieceLabelRu = `Полочка (Ог ${state.og}, От ${state.ot}, Об ${state.ob})`;
+
+        contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.frontOutlinePath}" fill="#ffffff"/>
+                <path d="${p.frontDiamondPath}" />
+                <line x1="${g.G4.x * CM}" y1="${g.Y_G * CM}" x2="${g.X_G3 * CM}" y2="${g.Y_G * CM}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                <line x1="${g.T4.x * CM}" y1="${g.T4.y * CM}" x2="${g.T5.x * CM}" y2="${g.T5.y * CM}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                <line x1="${g.B4.x * CM}" y1="${g.B4.y * CM}" x2="${g.B5.x * CM}" y2="${g.B5.y * CM}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                <circle cx="${g.G7.x * CM}" cy="${g.G7.y * CM}" r="2.5" fill="#09090b"/>
+                <circle cx="${g.V8.x * CM}" cy="${g.V8.y * CM}" r="2" fill="#2563eb"/>
+                <text x="${(g.X_G3 * CM) - 10}" y="${(g.Y_T - 4) * CM}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#52525b" transform="rotate(-90 ${(g.X_G3 * CM) - 10} ${(g.Y_T - 4) * CM})">[ ЛИНИЯ ПОЛУЗАНОСА ]</text>
+            </g>
+            <text x="${((g.X_G2 + g.X_G3) * 0.5) * CM}" y="${(g.Y_G - 2.5) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">ПОЛОЧКА (1 дет. со сгибом / 2 дет.)</text>
+            <text x="${((g.X_G2 + g.X_G3) * 0.5) * CM}" y="${(g.Y_G - 0.8) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Ог=${state.og} | От=${state.ot} | Вг=${state.vg} | Осанка: ${state.posture}</text>
+        `;
+    } else if (pieceType === 'sleeve') {
+        minX = -20;
+        minY = -20;
+        widthMm = Math.ceil(g.W_sleeve * CM) + 40;
+        heightMm = Math.ceil((g.L_sleeve + 2) * CM) + 40;
+        fileTitle = `rukav_OG${state.og}_DR${state.dr}`;
+        pieceLabelRu = `Рукав втачной (Оп ${state.op}, Др ${state.dr})`;
+
+        contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.sleeveOutlinePath}" fill="#ffffff"/>
+                <line x1="${p.slCenter - p.halfW}" y1="${p.slCapY}" x2="${p.slCenter + p.halfW}" y2="${p.slCapY}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                <line x1="${p.slCenter}" y1="0" x2="${p.slCenter}" y2="${p.slBotY}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+            </g>
+            <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) * 0.42}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">РУКАВ ВТАЧНОЙ (2 дет.)</text>
+            <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) * 0.42 + 16}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Оп=${state.op} см | Др=${state.dr} см | Посадка: +${g.sleeve_ease.toFixed(1)} см</text>
+            <text x="${p.slCenter + p.halfW * 0.45}" y="${p.slCapY * 0.7}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#047857">ПЕРЕД ➔</text>
+            <text x="${p.slCenter - p.halfW * 0.65}" y="${p.slCapY * 0.7}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#1d4ed8">⬅ СПИНКА</text>
+        `;
+    } else {
+        // Полный комплект: чистая аналитическая генерация без клонирования экранного DOM!
+        const sepShift = 20 * CM;
+        const slOrigin = g.W_grid * CM + sepShift + (g.W_sleeve / 2) * CM + 60;
+        const pAll = generatePatternPiecesMarkup(g, { showClassic: true, frontShiftX: sepShift, sleeveOriginX: slOrigin / CM });
+
+        minX = -25;
+        minY = -45;
+        widthMm = Math.ceil((slOrigin + (g.W_sleeve / 2) * CM) + 60);
+        heightMm = Math.ceil((Math.max(g.Y_H, g.L_sleeve) + 6) * CM) + 60;
+        fileTitle = `chertezh_polny_OG${state.og}_OT${state.ot}`;
+        pieceLabelRu = `Полный комплект лекал (Ог ${state.og}, От ${state.ot}, Об ${state.ob})`;
+
+        contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${pAll.backOutlinePath}" fill="#ffffff"/>
+                <path d="${pAll.backDiamondPath}" />
+                <g transform="translate(${sepShift}, 0)">
+                    <path d="${pAll.frontOutlinePath}" fill="#ffffff"/>
+                    <path d="${pAll.frontDiamondPath}" />
+                </g>
+                <path d="${pAll.sleeveOutlinePath}" fill="#ffffff"/>
+            </g>
+        `;
+    }
+
+    return { minX, minY, widthMm, heightMm, contentSvg, fileTitle, pieceLabelRu };
+}
+
+// Экспорт отдельной детали в SVG или PNG (8 px/mm ~ 200 DPI)
+function exportPiece(pieceType, format) {
+    const data = getPieceExportData(pieceType);
+    const { minX, minY, widthMm, heightMm, contentSvg, fileTitle } = data;
+
+    // Контрольный квадрат размещен строго за пределами лекала, без наложения
+    const scaleSquareSvg = renderScaleSquareMarkup(minX + 20, minY + heightMm - 110);
+
+    const standaloneSvg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${widthMm}mm" height="${heightMm}mm" viewBox="${minX} ${minY} ${widthMm} ${heightMm}">
+    <rect x="${minX}" y="${minY}" width="${widthMm}" height="${heightMm}" fill="#ffffff"/>
+    ${contentSvg}
+    ${pieceType !== 'all' ? scaleSquareSvg : ''}
+</svg>`;
+
+    if (format === 'svg') {
+        const blob = new Blob([standaloneSvg], { type: 'image/svg+xml;charset=utf-8' });
+        triggerDownload(URL.createObjectURL(blob), `${fileTitle}_1to1.svg`);
+    } else if (format === 'png') {
+        const dpiScale = 6; // 6 px/mm ~ 152.4 DPI (четкие линии без размытия)
+        const canvas = document.createElement('canvas');
+        canvas.width = widthMm * dpiScale;
+        canvas.height = heightMm * dpiScale;
+        const ctx = canvas.getContext('2d');
+
+        const img = new Image();
+        const svgBlob = new Blob([standaloneSvg], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = () => {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(url);
+            canvas.toBlob((pngBlob) => {
+                if (pngBlob) triggerDownload(URL.createObjectURL(pngBlob), `${fileTitle}_200dpi.png`);
+            }, 'image/png');
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            console.error('Ошибка рендеринга PNG');
+        };
+        img.src = url;
+    }
+}
+
+// Нарезка на листы А4 в PDF (1:1 в мм)
+async function exportTiledA4PDF(pieceType) {
+    const banner = document.getElementById('pdf-status-banner');
+    const bannerText = document.getElementById('pdf-status-text');
+    if (banner) {
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
+        bannerText.textContent = 'Подготовка векторного полотна 1:1 и нарезка на листы А4...';
+    }
+
+    try {
+        const data = getPieceExportData(pieceType);
+        const skipEmpty = document.getElementById('chk-skip-empty') ? document.getElementById('chk-skip-empty').checked : true;
+
+        const pageW = 210;
+        const pageH = 297;
+        const marginX = 15; // Поля 15 мм
+        const marginY = 15;
+        const tileW = pageW - marginX * 2; // 180 мм
+        const tileH = pageH - marginY * 2; // 267 мм
+
+        const cols = Math.max(1, Math.ceil(data.widthMm / tileW));
+        const rows = Math.max(1, Math.ceil(data.heightMm / tileH));
+        const fullCanvasW = cols * tileW;
+        const fullCanvasH = rows * tileH;
+
+        const pxPerMm = 4; // 4 px/mm ~ 101.6 DPI (быстрый и четкий рендеринг без перегрузки памяти)
+
+        const standaloneSvg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${fullCanvasW * pxPerMm}" height="${fullCanvasH * pxPerMm}" viewBox="${data.minX} ${data.minY} ${fullCanvasW} ${fullCanvasH}">
+    <rect x="${data.minX}" y="${data.minY}" width="${fullCanvasW}" height="${fullCanvasH}" fill="#ffffff"/>
+    ${data.contentSvg}
+</svg>`;
+
+        const masterCanvas = document.createElement('canvas');
+        masterCanvas.width = fullCanvasW * pxPerMm;
+        masterCanvas.height = fullCanvasH * pxPerMm;
+        const mCtx = masterCanvas.getContext('2d');
+
+        await new Promise((resolve, reject) => {
+            const img = new Image();
+            const svgBlob = new Blob([standaloneSvg], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            img.onload = () => {
+                mCtx.fillStyle = '#ffffff';
+                mCtx.fillRect(0, 0, masterCanvas.width, masterCanvas.height);
+                mCtx.drawImage(img, 0, 0, masterCanvas.width, masterCanvas.height);
+                URL.revokeObjectURL(url);
+                resolve();
+            };
+            img.onerror = (e) => {
+                URL.revokeObjectURL(url);
+                reject(e);
+            };
+            img.src = url;
+        });
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const tileCanvas = document.createElement('canvas');
+        tileCanvas.width = tileW * pxPerMm;
+        tileCanvas.height = tileH * pxPerMm;
+        const tCtx = tileCanvas.getContext('2d');
+
+        const isTileNonEmpty = (ctx, w, h) => {
+            const imgData = ctx.getImageData(0, 0, w, h).data;
+            for (let i = 0; i < imgData.length; i += 16) {
+                if (imgData[i] < 245 || imgData[i + 1] < 245 || imgData[i + 2] < 245) return true;
+            }
+            return false;
+        };
+
+        let addedPagesCount = 0;
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const sx = c * tileW * pxPerMm;
+                const sy = r * tileH * pxPerMm;
+
+                tCtx.fillStyle = '#ffffff';
+                tCtx.fillRect(0, 0, tileCanvas.width, tileCanvas.height);
+                tCtx.drawImage(masterCanvas, sx, sy, tileCanvas.width, tileCanvas.height, 0, 0, tileCanvas.width, tileCanvas.height);
+
+                const isFirstTile = (r === 0 && c === 0);
+                if (skipEmpty && !isFirstTile && !isTileNonEmpty(tCtx, tileCanvas.width, tileCanvas.height)) {
+                    continue;
+                }
+
+                if (addedPagesCount > 0) pdf.addPage('a4', 'portrait');
+                addedPagesCount++;
+
+                const rowLetter = String.fromCharCode(65 + r);
+                const colNumber = c + 1;
+                const cellCode = `${rowLetter}${colNumber}`;
+
+                // Вставка тайла в масштабе 1:1
+                const tileDataUrl = tileCanvas.toDataURL('image/png');
+                pdf.addImage(tileDataUrl, 'PNG', marginX, marginY, tileW, tileH);
+
+                // Рамка склейки (пунктир)
+                pdf.setDrawColor(120, 120, 125);
+                pdf.setLineWidth(0.25);
+                pdf.setLineDashPattern([2, 1.5], 0);
+                pdf.rect(marginX, marginY, tileW, tileH);
+                pdf.setLineDashPattern([], 0);
+
+                // Замкнутые 4-угольные ромбики совмещения
+                pdf.setDrawColor(24, 24, 27);
+                pdf.setFillColor(24, 24, 27);
+                const drawDiamond = (cx, cy, sz = 2.2) => {
+                    pdf.lines([[sz, sz], [-sz, sz], [-sz, -sz]], cx, cy - sz, [1, 1], 'FD', true);
+                };
+                drawDiamond(marginX + tileW / 2, marginY);
+                drawDiamond(marginX + tileW / 2, marginY + tileH);
+                drawDiamond(marginX, marginY + tileH / 2);
+                drawDiamond(marginX + tileW, marginY + tileH / 2);
+
+                // Угловые крестики
+                const drawCross = (cx, cy) => {
+                    pdf.setLineWidth(0.35);
+                    pdf.line(cx - 3, cy, cx + 3, cy);
+                    pdf.line(cx, cy - 3, cx, cy + 3);
+                };
+                drawCross(marginX, marginY);
+                drawCross(marginX + tileW, marginY);
+                drawCross(marginX, marginY + tileH);
+                drawCross(marginX + tileW, marginY + tileH);
+
+                // Колонтитулы
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(9.5);
+                pdf.setTextColor(24, 24, 27);
+                pdf.text(`A4 [${cellCode}]  |  Row ${r + 1}/${rows}, Col ${c + 1}/${cols}`, marginX, marginY - 4.5);
+
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(7.5);
+                pdf.setTextColor(100, 100, 108);
+                pdf.text(`Scale 100%  •  OG:${state.og} OT:${state.ot} OB:${state.ob}  •  Glue along dashed line`, marginX + 60, marginY - 4.5);
+
+                // Номер листа
+                pdf.setFillColor(244, 244, 245);
+                pdf.setDrawColor(180, 180, 185);
+                pdf.rect(marginX + 3, marginY + 3, 20, 9, 'FD');
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(10.5);
+                pdf.setTextColor(24, 24, 27);
+                pdf.text(cellCode, marginX + 13, marginY + 9.2, { align: 'center' });
+
+                // Проверочный квадрат 50x50 мм на листе A1 (размещен на правом верхнем поле, без перекрытия чертежа)
+                if (isFirstTile) {
+                    const sqX = marginX + tileW - 55;
+                    const sqY = marginY + 4;
+                    pdf.setFillColor(255, 255, 255);
+                    pdf.setDrawColor(24, 24, 27);
+                    pdf.setLineWidth(0.45);
+                    pdf.rect(sqX, sqY, 50, 50, 'S'); // 'S' = Stroke without opaque Fill to never erase drawing
+
+                    for (let step = 10; step < 50; step += 10) {
+                        pdf.line(sqX + step, sqY, sqX + step, sqY + 3);
+                        pdf.line(sqX, sqY + step, sqX + 3, sqY + step);
+                    }
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(24, 24, 27);
+                    pdf.text('TEST SQUARE', sqX + 25, sqY + 20, { align: 'center' });
+                    pdf.setFontSize(9.5);
+                    pdf.text('5.0 x 5.0 cm', sqX + 25, sqY + 27, { align: 'center' });
+                }
+            }
+        }
+
+        pdf.save(`${data.fileTitle}_A4_${addedPagesCount}pages.pdf`);
+    } catch (err) {
+        console.error('Ошибка генерации PDF А4:', err);
+    } finally {
+        if (banner) {
+            setTimeout(() => {
+                banner.classList.add('hidden');
+                banner.classList.remove('flex');
+            }, 600);
+        }
+    }
+}
+
+function triggerDownload(url, filename) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
