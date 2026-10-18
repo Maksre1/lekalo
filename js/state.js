@@ -28,6 +28,18 @@ const state = {
     // Осанка: 'normal' | 'stooped' | 'erect'
     posture: 'normal',
 
+    // Моделирование фасонов
+    dartPosition: 'shoulder', // 'shoulder' (в плечо) | 'side' (в боковой шов) | 'waist' (в талию) | 'armhole' (в пройму)
+    necklineType: 'round',    // 'round' (круглая) | 'v-neck' (V-образная) | 'boat' (лодочка) | 'square' (каре)
+    necklineDepth: 0,         // доп. углубление выреза горловины (см: 0..8)
+    sleeveLengthType: 'long', // 'long' (длинный) | 'three-quarter' (3/4) | 'short' (короткий)
+    silhouette: 'straight',   // 'straight' (прямой) | 'flare' (трапеция/клеш)
+
+    // Параметры ткани и раскладки
+    fabricWidth: 140,         // ширина полотна ткани (см: 110, 140, 150)
+    fabricFold: true,         // раскрой в сгиб ткани (вдвое)
+    fabricShrinkage: 5,       // запас на усадку при декотировании (%)
+
     // Опции отображения
     showSeamAllowance: false, // Припуски на швы (+1 см, +3 см низ)
     showA4Grid: false,        // Сетка листов А4
@@ -36,7 +48,8 @@ const state = {
     separate: false,          // Раздельный вид деталей
     showSleeve: true,         // Показать рукав
     classicStyle: false,      // Современный цветной / Черно-белый стиль
-    showGrid: true            // Буквенные точки и линии основы
+    showGrid: true,           // Буквенные точки и линии основы
+    showFitHeatmap: false     // Подсветка степени прилегания (Heatmap)
 };
 
 // Конфигурация полей ввода с подробными человеческими подсказками

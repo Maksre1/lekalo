@@ -192,15 +192,107 @@ function calculateGeometry() {
     const T11 = { x: X_G6 + front_dart_w / 2, y: T9_y };
     const B_front_bot = { x: X_G6, y: Y_B + front_waist_drop * 0.5 - 4.0 };
 
-    // 6. Анатомический втачной рукав
+    // 6. Анатомический втачной рукав с вариациями длины
+    const sleeveLengthType = state.sleeveLengthType || 'long';
+    let L_sleeve = state.dr;
+    let W_wrist = state.oz + 2.0;
+
+    if (sleeveLengthType === 'three-quarter') {
+        L_sleeve = Math.round(state.dr * 0.72);
+        W_wrist = Math.round(state.op * 0.88 + 2.0);
+    } else if (sleeveLengthType === 'short') {
+        L_sleeve = 22.0;
+        W_wrist = Math.round(state.op + state.pop * 0.65);
+    }
+
     const W_sleeve = state.op + state.pop;
     const d_vert = ((Y_G - P1.y) + (Y_G - P5_closed.y)) / 2;
     // Оптимальная высота оката: стабильная посадка +2.0..+3.2 см без избыточного сборения на больших размерах
     const H_cap = Math.min(17.2, Math.max(11.0, 0.70 * d_vert + 1.6));
-    const L_sleeve = state.dr;
-    const W_wrist = state.oz + 2.0;
 
-    // 7. Расчет длин пройм и оката для проверки посадки
+    // 7. Моделирование выреза горловины (Neckline)
+    const necklineType = state.necklineType || 'round';
+    const necklineDepth = Math.max(0, Math.min(8.0, Number(state.necklineDepth) || 0));
+
+    // Точки горловины полочки
+    let V3_neck = { x: V3.x, y: V3.y };
+    let V4_neck = { x: X_G3, y: V4.y + necklineDepth };
+    let V_neck_c1 = { x: V3_neck.x, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
+    let V_neck_c2 = { x: V3_neck.x + W_neck * 0.55, y: V4_neck.y };
+    let V_corner_sq = null;
+
+    if (necklineType === 'v-neck') {
+        V3_neck = { x: V3.x - 0.5, y: V3.y };
+        V4_neck = { x: X_G3, y: V4.y + 2.5 + necklineDepth };
+        V_neck_c1 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.35 + 0.6, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
+        V_neck_c2 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.75 + 0.3, y: V4_neck.y - 0.5 };
+    } else if (necklineType === 'boat') {
+        // Лодочка: плечо открывается наружу к пройме на 3.2 см
+        const shiftBoat = 3.2;
+        V3_neck = { x: V3.x - shiftBoat * f_ux, y: V3.y - shiftBoat * f_uy };
+        V4_neck = { x: X_G3, y: Y_V1 + 2.8 + necklineDepth * 0.4 };
+        V_neck_c1 = { x: V3_neck.x, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
+        V_neck_c2 = { x: V3_neck.x + (X_G3 - V3_neck.x) * 0.55, y: V4_neck.y };
+    } else if (necklineType === 'square') {
+        // Каре: прямоугольный вырез
+        V3_neck = { x: V3.x - 0.8, y: V3.y };
+        const sqDepthY = V4.y + necklineDepth;
+        V_corner_sq = { x: V3_neck.x, y: sqDepthY };
+        V4_neck = { x: X_G3, y: sqDepthY };
+    }
+
+    // Горловина спинки при вырезе «лодочка»
+    let A4_neck = { x: A4.x, y: A4.y };
+    let A5_neck = { x: A5.x, y: A5.y };
+    if (necklineType === 'boat') {
+        const shiftBoatBack = 3.2;
+        A4_neck = { x: A4.x + shiftBoatBack * sh_ux, y: A4.y + shiftBoatBack * sh_uy };
+        A5_neck = { x: A4_neck.x * 0.55, y: A.y };
+    }
+
+    // 8. Моделирование переноса нагрудной вытачки (Bust Dart Transfer)
+    const dartPosition = state.dartPosition || 'shoulder';
+
+    // Точки для французской вытачки в боковой шов ('side')
+    const side_dart_start_y = Y_G + 3.8;
+    const side_dart_leg = bust_dart_width * 0.88;
+    const S_d1 = { x: X_G4, y: side_dart_start_y };
+    const S_d2 = { x: X_G4, y: side_dart_start_y + side_dart_leg };
+    const S_mid = { x: X_G4, y: (S_d1.y + S_d2.y) / 2 };
+    const dx_s = G7.x - S_mid.x;
+    const dy_s = G7.y - S_mid.y;
+    const dist_s = Math.hypot(dx_s, dy_s);
+    // Вершина вытачки укорочена на 2.5 см от центра груди
+    const S_apex = {
+        x: G7.x - (dx_s / dist_s) * 2.5,
+        y: G7.y - (dy_s / dist_s) * 2.5
+    };
+
+    // Точки для перевода вытачки в талию ('waist')
+    const front_dart_w_waist = front_dart_w + bust_dart_width * 0.82;
+    const T10_waist = { x: X_G6 - front_dart_w_waist / 2, y: T9_y };
+    const T11_waist = { x: X_G6 + front_dart_w_waist / 2, y: T9_y };
+    const G7_waist_apex = { x: X_G6, y: G7.y + 2.0 };
+
+    // Точки для перевода вытачки в пройму ('armhole')
+    const arm_dart_leg = bust_dart_width * 0.75;
+    const P6_arm_d1 = { x: P6_closed.x - 0.2, y: P6_closed.y - arm_dart_leg / 2 };
+    const P6_arm_d2 = { x: P6_closed.x - 0.2, y: P6_closed.y + arm_dart_leg / 2 };
+    const dx_arm = G7.x - P6_closed.x;
+    const dy_arm = G7.y - P6_closed.y;
+    const dist_arm = Math.hypot(dx_arm, dy_arm);
+    const Arm_apex = {
+        x: G7.x - (dx_arm / dist_arm) * 2.2,
+        y: G7.y - (dy_arm / dist_arm) * 2.2
+    };
+
+    // 9. Силуэт изделия: прямой ('straight') или трапеция/клеш ('flare')
+    const silhouette = state.silhouette || 'straight';
+    const flare_w = silhouette === 'flare' ? 5.5 : 0.0;
+    const H_back_side = { x: B3.x + flare_w, y: Y_H - (silhouette === 'flare' ? 0.6 : 0) };
+    const H_front_side = { x: B4.x - flare_w, y: (Y_H + front_waist_drop) - (silhouette === 'flare' ? 0.6 : 0) };
+
+    // 10. Расчет длин пройм и оката для проверки посадки
     // Пройма спинки
     const back_c1 = { x: X_G - 0.15, y: P1.y + 3.0 };
     const back_c2 = { x: P2.x, y: P2.y - 1.0 };
@@ -235,6 +327,37 @@ function calculateGeometry() {
     const total_sleeve_cap_len = len_sleeve_front + len_sleeve_back;
     const sleeve_ease = total_sleeve_cap_len - total_armhole_len; // Посадка в см
 
+    // 11. Метрики свободы и степени прилегания (Fit Indicators)
+    const totalEaseBust = state.pg * 2;
+    const totalEaseWaist = state.pt * 2;
+    const totalEaseHips = state.pb * 2;
+    const totalEaseSleeve = state.pop;
+
+    let bustFitCategory = 'semi';
+    let bustFitLabel = 'Полуприлегающий (комфорт)';
+    let bustFitColor = '#10b981'; // emerald
+    if (totalEaseBust < 4.0) {
+        bustFitCategory = 'tight';
+        bustFitLabel = 'Облегающий (бодикон)';
+        bustFitColor = '#f43f5e';
+    } else if (totalEaseBust <= 6.0) {
+        bustFitCategory = 'fitted';
+        bustFitLabel = 'Прилегающий (по фигуре)';
+        bustFitColor = '#06b6d4';
+    } else if (totalEaseBust <= 9.0) {
+        bustFitCategory = 'semi';
+        bustFitLabel = 'Полуприлегающий (рекомендован)';
+        bustFitColor = '#10b981';
+    } else if (totalEaseBust <= 14.0) {
+        bustFitCategory = 'relaxed';
+        bustFitLabel = 'Свободный (прямой)';
+        bustFitColor = '#6366f1';
+    } else {
+        bustFitCategory = 'oversize';
+        bustFitLabel = 'Оверсайз (свободный крой)';
+        bustFitColor = '#8b5cf6';
+    }
+
     return {
         Sg, St, Sb, Ssh,
         W_grid, W_back, W_armhole, W_front,
@@ -253,6 +376,18 @@ function calculateGeometry() {
         W_sleeve, H_cap, L_sleeve, W_wrist,
         len_back_armhole, len_front_armhole, total_armhole_len,
         len_sleeve_front, len_sleeve_back, total_sleeve_cap_len, sleeve_ease,
-        posture
+        posture,
+        // Новые свойства моделирования и прилегания
+        sleeveLengthType,
+        necklineType, necklineDepth,
+        V3_neck, V4_neck, V_neck_c1, V_neck_c2, V_corner_sq,
+        A4_neck, A5_neck,
+        dartPosition,
+        S_d1, S_d2, S_apex,
+        T10_waist, T11_waist, G7_waist_apex,
+        P6_arm_d1, P6_arm_d2, Arm_apex,
+        silhouette, flare_w, H_back_side, H_front_side,
+        totalEaseBust, totalEaseWaist, totalEaseHips, totalEaseSleeve,
+        bustFitCategory, bustFitLabel, bustFitColor
     };
 }

@@ -24,7 +24,7 @@ function generatePatternPiecesMarkup(g, options = {}) {
     const backOutlinePath = `
         M 0 ${g.Y_H * CM}
         L 0 0
-        Q ${g.A5.x * CM} ${g.A5.y * CM}, ${g.A4.x * CM} ${g.A4.y * CM}
+        Q ${g.A5_neck.x * CM} ${g.A5_neck.y * CM}, ${g.A4_neck.x * CM} ${g.A4_neck.y * CM}
         L ${g.sh_D1.x * CM} ${g.sh_D1.y * CM}
         L ${g.sh_Apex.x * CM} ${g.sh_Apex.y * CM}
         L ${g.sh_D2.x * CM} ${g.sh_D2.y * CM}
@@ -33,7 +33,8 @@ function generatePatternPiecesMarkup(g, options = {}) {
         Q ${g.P3.x * CM} ${g.P3.y * CM}, ${g.G4.x * CM} ${g.G4.y * CM}
         L ${g.T3.x * CM} ${g.T3.y * CM}
         L ${g.B3.x * CM} ${g.B3.y * CM}
-        L ${g.B3.x * CM} ${g.Y_H * CM}
+        L ${g.H_back_side.x * CM} ${g.H_back_side.y * CM}
+        L 0 ${g.Y_H * CM}
         Z
     `;
 
@@ -45,38 +46,132 @@ function generatePatternPiecesMarkup(g, options = {}) {
         Z
     `;
 
-    // 2. Контур ПОЛОЧКИ (с правильной кинематикой P5_open и P6_open)
+    // 2. Контур ПОЛОЧКИ (с моделированием вытачек и выреза горловины)
+    let necklinePath = '';
+    if (g.necklineType === 'square' && g.V_corner_sq) {
+        necklinePath = `
+            L ${g.V_corner_sq.x * CM} ${g.V_corner_sq.y * CM}
+            L ${g.V4_neck.x * CM} ${g.V4_neck.y * CM}
+        `;
+    } else {
+        necklinePath = `
+            C ${g.V_neck_c1.x * CM} ${g.V_neck_c1.y * CM}, ${g.V_neck_c2.x * CM} ${g.V_neck_c2.y * CM}, ${g.V4_neck.x * CM} ${g.V4_neck.y * CM}
+        `;
+    }
+
+    const frontHemPath = `
+        L ${g.X_G3 * CM} ${(g.Y_H + 1.2) * CM}
+        Q ${(g.X_G3 * 0.65 + g.H_front_side.x * 0.35) * CM} ${(g.Y_H + 1.2) * CM}, ${g.H_front_side.x * CM} ${g.H_front_side.y * CM}
+    `;
+
     const ctrl_f_open = {
         x: (g.P6_open.x + g.P5_open.x) * 0.5 - 0.5,
         y: (g.P6_open.y + g.P5_open.y) * 0.5 - 0.5
     };
 
-    const frontOutlinePath = `
-        M ${g.B4.x * CM} ${g.Y_H * CM}
-        L ${g.B4.x * CM} ${g.B4.y * CM}
-        L ${g.T4.x * CM} ${g.T4.y * CM}
-        L ${g.G4.x * CM} ${g.G4.y * CM}
-        Q ${g.P7.x * CM} ${g.P7.y * CM}, ${g.P6_open.x * CM} ${g.P6_open.y * CM}
-        Q ${ctrl_f_open.x * CM} ${ctrl_f_open.y * CM}, ${g.P5_open.x * CM} ${g.P5_open.y * CM}
-        L ${g.V9.x * CM} ${g.V9.y * CM}
-        L ${g.G7.x * CM} ${g.G7.y * CM}
-        L ${g.V7.x * CM} ${g.V7.y * CM}
-        L ${g.V3.x * CM} ${g.V3.y * CM}
-        C ${g.V5_c1.x * CM} ${g.V5_c1.y * CM}, ${g.V5_c2.x * CM} ${g.V5_c2.y * CM}, ${g.V4.x * CM} ${g.V4.y * CM}
-        L ${g.X_G3 * CM} ${(g.Y_H + 1.2) * CM}
-        Q ${(g.X_G3 * 0.65 + g.B4.x * 0.35) * CM} ${(g.Y_H + 1.2) * CM}, ${g.B4.x * CM} ${g.Y_H * CM}
-        Z
-    `;
+    let frontOutlinePath = '';
+    let frontDiamondPath = '';
 
-    const frontDiamondPath = `
-        M ${g.front_dart_top.x * CM} ${g.front_dart_top.y * CM}
-        L ${g.T10.x * CM} ${g.T10.y * CM}
-        L ${g.B_front_bot.x * CM} ${g.B_front_bot.y * CM}
-        L ${g.T11.x * CM} ${g.T11.y * CM}
-        Z
-    `;
+    if (g.dartPosition === 'side') {
+        // Французская вытачка в боковой шов. Плечо и пройма закрыты!
+        frontOutlinePath = `
+            M ${g.H_front_side.x * CM} ${g.H_front_side.y * CM}
+            L ${g.B4.x * CM} ${g.B4.y * CM}
+            L ${g.T4.x * CM} ${g.T4.y * CM}
+            L ${g.S_d2.x * CM} ${g.S_d2.y * CM}
+            L ${g.S_apex.x * CM} ${g.S_apex.y * CM}
+            L ${g.S_d1.x * CM} ${g.S_d1.y * CM}
+            L ${g.G4.x * CM} ${g.G4.y * CM}
+            Q ${g.P7.x * CM} ${g.P7.y * CM}, ${g.P6_closed.x * CM} ${g.P6_closed.y * CM}
+            Q ${(g.X_G2 - 0.5) * CM} ${(g.P5_closed.y + 3.0) * CM}, ${g.P5_closed.x * CM} ${g.P5_closed.y * CM}
+            L ${g.V3_neck.x * CM} ${g.V3_neck.y * CM}
+            ${necklinePath}
+            ${frontHemPath}
+            Z
+        `;
+        frontDiamondPath = `
+            M ${g.front_dart_top.x * CM} ${g.front_dart_top.y * CM}
+            L ${g.T10.x * CM} ${g.T10.y * CM}
+            L ${g.B_front_bot.x * CM} ${g.B_front_bot.y * CM}
+            L ${g.T11.x * CM} ${g.T11.y * CM}
+            Z
+        `;
+    } else if (g.dartPosition === 'waist') {
+        // Перевод вытачки в талию. Плечо закрыто, талиевая вытачка увеличена.
+        frontOutlinePath = `
+            M ${g.H_front_side.x * CM} ${g.H_front_side.y * CM}
+            L ${g.B4.x * CM} ${g.B4.y * CM}
+            L ${g.T4.x * CM} ${g.T4.y * CM}
+            L ${g.G4.x * CM} ${g.G4.y * CM}
+            Q ${g.P7.x * CM} ${g.P7.y * CM}, ${g.P6_closed.x * CM} ${g.P6_closed.y * CM}
+            Q ${(g.X_G2 - 0.5) * CM} ${(g.P5_closed.y + 3.0) * CM}, ${g.P5_closed.x * CM} ${g.P5_closed.y * CM}
+            L ${g.V3_neck.x * CM} ${g.V3_neck.y * CM}
+            ${necklinePath}
+            ${frontHemPath}
+            Z
+        `;
+        frontDiamondPath = `
+            M ${g.G7_waist_apex.x * CM} ${g.G7_waist_apex.y * CM}
+            L ${g.T10_waist.x * CM} ${g.T10_waist.y * CM}
+            L ${g.B_front_bot.x * CM} ${g.B_front_bot.y * CM}
+            L ${g.T11_waist.x * CM} ${g.T11_waist.y * CM}
+            Z
+        `;
+    } else if (g.dartPosition === 'armhole') {
+        // Перевод вытачки в пройму.
+        frontOutlinePath = `
+            M ${g.H_front_side.x * CM} ${g.H_front_side.y * CM}
+            L ${g.B4.x * CM} ${g.B4.y * CM}
+            L ${g.T4.x * CM} ${g.T4.y * CM}
+            L ${g.G4.x * CM} ${g.G4.y * CM}
+            Q ${g.P7.x * CM} ${g.P7.y * CM}, ${g.P6_arm_d2.x * CM} ${g.P6_arm_d2.y * CM}
+            L ${g.Arm_apex.x * CM} ${g.Arm_apex.y * CM}
+            L ${g.P6_arm_d1.x * CM} ${g.P6_arm_d1.y * CM}
+            Q ${(g.X_G2 - 0.5) * CM} ${(g.P5_closed.y + 3.0) * CM}, ${g.P5_closed.x * CM} ${g.P5_closed.y * CM}
+            L ${g.V3_neck.x * CM} ${g.V3_neck.y * CM}
+            ${necklinePath}
+            ${frontHemPath}
+            Z
+        `;
+        frontDiamondPath = `
+            M ${g.front_dart_top.x * CM} ${g.front_dart_top.y * CM}
+            L ${g.T10.x * CM} ${g.T10.y * CM}
+            L ${g.B_front_bot.x * CM} ${g.B_front_bot.y * CM}
+            L ${g.T11.x * CM} ${g.T11.y * CM}
+            Z
+        `;
+    } else {
+        // По умолчанию: базовая вытачка в плечевом шве ('shoulder')
+        const ctrl_f_open = {
+            x: (g.P6_open.x + g.P5_open.x) * 0.5 - 0.5,
+            y: (g.P6_open.y + g.P5_open.y) * 0.5 - 0.5
+        };
 
-    // 3. Контур АНАТОМИЧЕСКОГО РУКАВА
+        frontOutlinePath = `
+            M ${g.H_front_side.x * CM} ${g.H_front_side.y * CM}
+            L ${g.B4.x * CM} ${g.B4.y * CM}
+            L ${g.T4.x * CM} ${g.T4.y * CM}
+            L ${g.G4.x * CM} ${g.G4.y * CM}
+            Q ${g.P7.x * CM} ${g.P7.y * CM}, ${g.P6_open.x * CM} ${g.P6_open.y * CM}
+            Q ${ctrl_f_open.x * CM} ${ctrl_f_open.y * CM}, ${g.P5_open.x * CM} ${g.P5_open.y * CM}
+            L ${g.V9.x * CM} ${g.V9.y * CM}
+            L ${g.G7.x * CM} ${g.G7.y * CM}
+            L ${g.V7.x * CM} ${g.V7.y * CM}
+            L ${g.V3_neck.x * CM} ${g.V3_neck.y * CM}
+            ${necklinePath}
+            ${frontHemPath}
+            Z
+        `;
+        frontDiamondPath = `
+            M ${g.front_dart_top.x * CM} ${g.front_dart_top.y * CM}
+            L ${g.T10.x * CM} ${g.T10.y * CM}
+            L ${g.B_front_bot.x * CM} ${g.B_front_bot.y * CM}
+            L ${g.T11.x * CM} ${g.T11.y * CM}
+            Z
+        `;
+    }
+
+    // 3. Контур АНАТОМИЧЕСКОГО РУКАВА (с учетом длины: длинный, 3/4, короткий)
     const slCenter = sleeveOriginX * CM;
     const slTopY = 0;
     const slCapY = g.H_cap * CM;
@@ -84,8 +179,6 @@ function generatePatternPiecesMarkup(g, options = {}) {
     const halfW = (g.W_sleeve / 2) * CM;
     const halfWrist = (g.W_wrist / 2) * CM;
 
-    // Правая сторона = Передняя часть (с выемкой внизу)
-    // Левая сторона = Локтевая часть (выпуклая)
     const sleeveOutlinePath = `
         M ${slCenter} ${slTopY}
         C ${slCenter + halfW * 0.45} ${slTopY}, ${slCenter + halfW * 0.70} ${slCapY * 1.12}, ${slCenter + halfW} ${slCapY}
@@ -97,20 +190,19 @@ function generatePatternPiecesMarkup(g, options = {}) {
     `;
 
     // 4. Надсечки (Notches)
-    const notchLen = 6; // 6 мм надсечка
+    const notchLen = 6;
+    const notchFrontPoint = g.dartPosition === 'shoulder' ? g.P6_open : g.P6_closed;
     const notchesMarkup = `
         <!-- Надсечка спинки П2 -->
         <line x1="${(g.P2.x - notchLen/10) * CM}" y1="${g.P2.y * CM}" x2="${(g.P2.x + notchLen/10) * CM}" y2="${g.P2.y * CM}" stroke="#dc2626" stroke-width="1.6"/>
         <!-- Надсечка полочки П6 -->
         <g transform="translate(${frontShiftX}, 0)">
-            <line x1="${(g.P6_open.x - notchLen/10) * CM}" y1="${g.P6_open.y * CM}" x2="${(g.P6_open.x + notchLen/10) * CM}" y2="${g.P6_open.y * CM}" stroke="#dc2626" stroke-width="1.6"/>
+            <line x1="${(notchFrontPoint.x - notchLen/10) * CM}" y1="${notchFrontPoint.y * CM}" x2="${(notchFrontPoint.x + notchLen/10) * CM}" y2="${notchFrontPoint.y * CM}" stroke="#dc2626" stroke-width="1.6"/>
         </g>
         <!-- Надсечки рукава: вершина, перед (1 засечка), спинка (2 засечки) -->
         <g id="sleeve-notches">
             <line x1="${slCenter}" y1="${slTopY - notchLen}" x2="${slCenter}" y2="${slTopY + notchLen}" stroke="#dc2626" stroke-width="1.6"/>
-            <!-- Передняя надсечка рукава -->
             <line x1="${slCenter + halfW * 0.58 - notchLen}" y1="${slCapY * 0.55}" x2="${slCenter + halfW * 0.58 + notchLen}" y2="${slCapY * 0.55}" stroke="#dc2626" stroke-width="1.6"/>
-            <!-- Локтевая надсечка рукава (двойная) -->
             <line x1="${slCenter - halfW * 0.62 - notchLen}" y1="${slCapY * 0.50 - 3}" x2="${slCenter - halfW * 0.62 + notchLen}" y2="${slCapY * 0.50 - 3}" stroke="#dc2626" stroke-width="1.6"/>
             <line x1="${slCenter - halfW * 0.62 - notchLen}" y1="${slCapY * 0.50 + 3}" x2="${slCenter - halfW * 0.62 + notchLen}" y2="${slCapY * 0.50 + 3}" stroke="#dc2626" stroke-width="1.6"/>
         </g>
@@ -262,28 +354,75 @@ function renderPattern() {
 
     // 5. Рукав
     if (showSleeve) {
+        const slTitle = g.sleeveLengthType === 'short' ? 'РУКАВ КОРОТКИЙ' : (g.sleeveLengthType === 'three-quarter' ? 'РУКАВ 3/4' : 'РУКАВ ВТАЧНОЙ (ДЛИННЫЙ)');
         html += `
             <g id="piece-sleeve">
                 <path d="${p.sleeveOutlinePath}" fill="#ffffff" stroke="${p.colSleeve}" stroke-width="1.9" stroke-linejoin="round" />
-                <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) / 2 - 12}" text-anchor="middle" font-size="11" fill="#18181b" font-weight="600">РУКАВ ВТАЧНОЙ</text>
+                <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) / 2 - 12}" text-anchor="middle" font-size="11" fill="#18181b" font-weight="600">${slTitle}</text>
             </g>
         `;
     }
 
-    // 6. Надсечки и маркировка
+    // 6. Подсветка прилегания (Fit Heatmap)
+    if (state.showFitHeatmap) {
+        html += renderFitHeatmapMarkup(g, p);
+    }
+
+    // 7. Надсечки и маркировка
     if (state.showNotches) html += p.notchesMarkup;
     if (state.showGrainline) html += p.markingsMarkup;
 
-    // 7. Буквенные точки
+    // 8. Буквенные точки
     if (showGrid) {
         html += renderPointsMarkup(g, p.frontShiftX);
     }
 
-    // 8. Контрольный квадрат 10x10 см (размещен безопасно внизу)
+    // 9. Контрольный квадрат 10x10 см (размещен безопасно внизу)
     html += renderScaleSquareMarkup(0, (g.Y_H + 4) * CM);
 
     html += `</g>`;
     svg.innerHTML = html;
+
+    // Реактивное обновление карточек раскладки ткани и индикатора посадки
+    if (typeof updateFabricLayoutUI === 'function') updateFabricLayoutUI(g);
+    if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
+    if (typeof updateStyleUI === 'function') updateStyleUI(g);
+}
+
+function renderFitHeatmapMarkup(g, p) {
+    const shiftX = p.frontShiftX;
+    const yChest = g.Y_G * CM;
+    const yWaist = g.Y_T * CM;
+    const yHips = g.Y_B * CM;
+
+    const chestColor = g.bustFitColor;
+    const waistColor = g.totalEaseWaist < 2.0 ? '#f43f5e' : (g.totalEaseWaist <= 5.0 ? '#10b981' : '#6366f1');
+    const hipsColor = g.totalEaseHips < 2.0 ? '#f43f5e' : (g.totalEaseHips <= 5.0 ? '#10b981' : '#6366f1');
+    const sleeveColor = g.totalEaseSleeve < 3.5 ? '#f43f5e' : (g.totalEaseSleeve <= 6.5 ? '#10b981' : '#6366f1');
+
+    return `
+        <g id="fit-heatmap-layer" opacity="0.92">
+            <!-- Подсветка зоны груди -->
+            <rect x="0" y="${yChest - 12}" width="${g.W_grid * CM + shiftX}" height="24" rx="5" fill="${chestColor}" fill-opacity="0.14" stroke="${chestColor}" stroke-width="1.2" stroke-dasharray="4,2"/>
+            <rect x="${(g.X_G4 * CM) - 70}" y="${yChest - 10}" width="140" height="20" rx="4" fill="#ffffff" stroke="${chestColor}" stroke-width="1.2"/>
+            <text x="${g.X_G4 * CM}" y="${yChest + 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="${chestColor}">Грудь: +${g.totalEaseBust.toFixed(1)} см (${g.bustFitCategory})</text>
+
+            <!-- Подсветка зоны талии -->
+            <rect x="0" y="${yWaist - 11}" width="${g.W_grid * CM + shiftX}" height="22" rx="5" fill="${waistColor}" fill-opacity="0.14" stroke="${waistColor}" stroke-width="1.2" stroke-dasharray="4,2"/>
+            <rect x="${(g.X_G4 * CM) - 60}" y="${yWaist - 9}" width="120" height="18" rx="4" fill="#ffffff" stroke="${waistColor}" stroke-width="1.2"/>
+            <text x="${g.X_G4 * CM}" y="${yWaist + 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="${waistColor}">Талия: +${g.totalEaseWaist.toFixed(1)} см</text>
+
+            <!-- Подсветка зоны бедер -->
+            <rect x="0" y="${yHips - 11}" width="${g.W_grid * CM + shiftX}" height="22" rx="5" fill="${hipsColor}" fill-opacity="0.14" stroke="${hipsColor}" stroke-width="1.2" stroke-dasharray="4,2"/>
+            <rect x="${(g.X_G4 * CM) - 60}" y="${yHips - 9}" width="120" height="18" rx="4" fill="#ffffff" stroke="${hipsColor}" stroke-width="1.2"/>
+            <text x="${g.X_G4 * CM}" y="${yHips + 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="${hipsColor}">Бедра: +${g.totalEaseHips.toFixed(1)} см</text>
+
+            <!-- Подсветка зоны рукава -->
+            <rect x="${p.slCenter - p.halfW}" y="${p.slCapY - 10}" width="${p.halfW * 2}" height="20" rx="4" fill="${sleeveColor}" fill-opacity="0.14" stroke="${sleeveColor}" stroke-width="1.2" stroke-dasharray="4,2"/>
+            <rect x="${p.slCenter - 55}" y="${p.slCapY - 9}" width="110" height="18" rx="4" fill="#ffffff" stroke="${sleeveColor}" stroke-width="1.2"/>
+            <text x="${p.slCenter}" y="${p.slCapY + 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="${sleeveColor}">Рукав: +${g.totalEaseSleeve.toFixed(1)} см</text>
+        </g>
+    `;
 }
 
 function renderPointsMarkup(g, frontShiftX) {

@@ -142,7 +142,8 @@ function applyEasePreset(pg, pt, pb, pspr, pop) {
 }
 
 function switchTab(tabName) {
-    ['measures', 'ease', 'table', 'export'].forEach(t => {
+    const tabs = ['measures', 'style', 'fit', 'layout', 'export'];
+    tabs.forEach(t => {
         const panel = document.getElementById(`panel-${t}`);
         const btn = document.getElementById(`tab-${t}`);
         if (panel) panel.classList.add('hidden');
@@ -157,6 +158,199 @@ function switchTab(tabName) {
     if (activeBtn) {
         activeBtn.classList.add('border-indigo-600', 'text-indigo-600', 'bg-white', 'font-bold');
         activeBtn.classList.remove('border-transparent', 'text-stone-500', 'font-medium');
+    }
+}
+
+// --- МОДЕЛИРОВАНИЕ ФАСОНОВ ---
+function setDartPosition(pos) {
+    state.dartPosition = pos;
+    document.querySelectorAll('.dart-btn').forEach(btn => {
+        if (btn.dataset.dart === pos) {
+            btn.className = "dart-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer";
+        } else {
+            btn.className = "dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+        }
+    });
+    renderPattern();
+}
+
+function setNecklineType(type) {
+    state.necklineType = type;
+    document.querySelectorAll('.neckline-btn').forEach(btn => {
+        if (btn.dataset.neckline === type) {
+            btn.className = "neckline-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer";
+        } else {
+            btn.className = "neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+        }
+    });
+    renderPattern();
+}
+
+function setNecklineDepth(val) {
+    const d = parseFloat(val);
+    if (isNaN(d)) return;
+    state.necklineDepth = Math.max(0, Math.min(8, d));
+    const numEl = document.getElementById('num-neckline-depth');
+    const rngEl = document.getElementById('rng-neckline-depth');
+    if (numEl && document.activeElement !== numEl) numEl.value = state.necklineDepth;
+    if (rngEl && document.activeElement !== rngEl) rngEl.value = state.necklineDepth;
+    renderPattern();
+}
+
+function setSleeveLength(type) {
+    state.sleeveLengthType = type;
+    document.querySelectorAll('.sleeve-length-btn').forEach(btn => {
+        if (btn.dataset.sleeve === type) {
+            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center";
+        } else {
+            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+        }
+    });
+    renderPattern();
+}
+
+function setSilhouette(sil) {
+    state.silhouette = sil;
+    document.querySelectorAll('.silhouette-btn').forEach(btn => {
+        if (btn.dataset.silhouette === sil) {
+            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center";
+        } else {
+            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+        }
+    });
+    renderPattern();
+}
+
+function updateStyleUI(g) {
+    document.querySelectorAll('.dart-btn').forEach(btn => {
+        const active = btn.dataset.dart === state.dartPosition;
+        btn.classList.toggle('border-indigo-600', active);
+        btn.classList.toggle('border-2', active);
+        btn.classList.toggle('bg-indigo-50/60', active);
+    });
+    document.querySelectorAll('.neckline-btn').forEach(btn => {
+        const active = btn.dataset.neckline === state.necklineType;
+        btn.classList.toggle('border-indigo-600', active);
+        btn.classList.toggle('border-2', active);
+        btn.classList.toggle('bg-indigo-50/60', active);
+    });
+    document.querySelectorAll('.sleeve-length-btn').forEach(btn => {
+        const active = btn.dataset.sleeve === state.sleeveLengthType;
+        btn.classList.toggle('bg-indigo-600', active);
+        btn.classList.toggle('text-white', active);
+    });
+    document.querySelectorAll('.silhouette-btn').forEach(btn => {
+        const active = btn.dataset.silhouette === state.silhouette;
+        btn.classList.toggle('bg-indigo-600', active);
+        btn.classList.toggle('text-white', active);
+    });
+}
+
+// --- ИНДИКАТОР ПРИЛЕГАНИЯ И ТЕПЛОВАЯ КАРТА ---
+function toggleFitHeatmap() {
+    state.showFitHeatmap = !state.showFitHeatmap;
+    const btn = document.getElementById('btn-toggle-heatmap');
+    if (btn) {
+        if (state.showFitHeatmap) {
+            btn.className = "w-full py-2 px-3 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-sm flex items-center justify-center gap-2 transition cursor-pointer";
+            btn.innerHTML = `<span>🔥 Тепловая карта включена (скрыть)</span>`;
+        } else {
+            btn.className = "w-full py-2 px-3 text-xs font-semibold rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 flex items-center justify-center gap-2 transition cursor-pointer";
+            btn.innerHTML = `<span>🌡️ Показать карту прилегания (Heatmap)</span>`;
+        }
+    }
+    renderPattern();
+}
+
+function updateFitIndicatorUI(g) {
+    const badgeCategory = document.getElementById('fit-category-badge');
+    const badgeCategoryDesc = document.getElementById('fit-category-desc');
+    if (badgeCategory) {
+        badgeCategory.textContent = g.bustFitLabel;
+        badgeCategory.style.backgroundColor = g.bustFitColor + '20';
+        badgeCategory.style.color = g.bustFitColor;
+        badgeCategory.style.borderColor = g.bustFitColor + '50';
+    }
+    if (badgeCategoryDesc) {
+        if (g.bustFitCategory === 'tight') {
+            badgeCategoryDesc.innerHTML = '<b>Облегающий крой:</b> Плотная посадка. Рекомендуется для эластичных тканей (трикотаж, стрейч).';
+        } else if (g.bustFitCategory === 'fitted') {
+            badgeCategoryDesc.innerHTML = '<b>Прилегающий силуэт:</b> Подчеркивает изгибы фигуры, четкая посадка с легкой свободой дыхания.';
+        } else if (g.bustFitCategory === 'semi') {
+            badgeCategoryDesc.innerHTML = '<b>Полуприлегающий крой (ГОСТ):</b> Оптимальный баланс элегантности и комфорта в повседневной носке.';
+        } else if (g.bustFitCategory === 'relaxed') {
+            badgeCategoryDesc.innerHTML = '<b>Свободный крой:</b> Прямой непринужденный силуэт для блуз, жакетов и платьев свободного кроя.';
+        } else {
+            badgeCategoryDesc.innerHTML = '<b>Оверсайз:</b> Объемный современный фасон со спущенным ощущением свободы.';
+        }
+    }
+
+    const setGauge = (prefix, val, text, maxVal = 16) => {
+        const valEl = document.getElementById(`fit-val-${prefix}`);
+        const textEl = document.getElementById(`fit-text-${prefix}`);
+        const barEl = document.getElementById(`fit-bar-${prefix}`);
+        if (valEl) valEl.textContent = `+${val.toFixed(1)} см`;
+        if (textEl) textEl.textContent = text;
+        if (barEl) {
+            const pct = Math.min(100, Math.max(10, Math.round((val / maxVal) * 100)));
+            barEl.style.width = `${pct}%`;
+        }
+    };
+
+    setGauge('bust', g.totalEaseBust, g.bustFitLabel.split(' ')[0], 16);
+    const waistText = g.totalEaseWaist < 2.0 ? 'Плотный пояс' : (g.totalEaseWaist <= 5.0 ? 'Комфортное дыхание' : 'Свободный пояс');
+    setGauge('waist', g.totalEaseWaist, waistText, 12);
+    const hipsText = g.totalEaseHips < 2.0 ? 'Плотно по бедрам' : (g.totalEaseHips <= 5.0 ? 'Свободный шаг' : 'Летящий низ');
+    setGauge('hips', g.totalEaseHips, hipsText, 12);
+    const sleeveText = g.totalEaseSleeve < 3.5 ? 'Узкий рукав' : (g.totalEaseSleeve <= 6.5 ? 'Свободный подъем рук' : 'Широкий рукав');
+    setGauge('sleeve', g.totalEaseSleeve, sleeveText, 10);
+}
+
+// --- КАЛЬКУЛЯТОР ТКАНИ И РАСКЛАДКА ---
+function setFabricWidth(w) {
+    state.fabricWidth = parseInt(w);
+    document.querySelectorAll('.fabric-w-btn').forEach(btn => {
+        if (parseInt(btn.dataset.width) === state.fabricWidth) {
+            btn.className = "fabric-w-btn flex-1 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center";
+        } else {
+            btn.className = "fabric-w-btn flex-1 py-1.5 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+        }
+    });
+    renderPattern();
+}
+
+function toggleFabricFold() {
+    state.fabricFold = !state.fabricFold;
+    const btn = document.getElementById('btn-fabric-fold');
+    if (btn) {
+        btn.textContent = state.fabricFold ? 'Раскрой «в сгиб» (полотно вдвое)' : 'Раскрой «в разворот» (в один слой)';
+    }
+    renderPattern();
+}
+
+function setFabricShrinkage(val) {
+    const s = parseFloat(val);
+    if (isNaN(s)) return;
+    state.fabricShrinkage = Math.max(0, Math.min(15, s));
+    const lbl = document.getElementById('fabric-shrinkage-val');
+    if (lbl) lbl.textContent = `${state.fabricShrinkage}%`;
+    renderPattern();
+}
+
+function updateFabricLayoutUI(g) {
+    if (typeof calculateFabricLayout !== 'function' || typeof renderFabricLayoutSvg !== 'function') return;
+    const layout = calculateFabricLayout(g, state);
+
+    const mLen = document.getElementById('layout-length-m');
+    const mLenShrink = document.getElementById('layout-length-shrink-m');
+    const mEfficiency = document.getElementById('layout-efficiency-pct');
+    const svgContainer = document.getElementById('fabric-layout-svg-container');
+
+    if (mLen) mLen.textContent = `${layout.totalLengthM} м`;
+    if (mLenShrink) mLenShrink.textContent = `${layout.totalLengthWithShrinkageM} м`;
+    if (mEfficiency) mEfficiency.textContent = `${layout.efficiency}%`;
+    if (svgContainer) {
+        svgContainer.innerHTML = renderFabricLayoutSvg(layout);
     }
 }
 
@@ -213,9 +407,10 @@ function updateCalculationTable(g) {
 }
 
 function updateExportDimensions(g) {
-    const backW = Math.max(g.X_G4, g.B3.x, g.P1.x).toFixed(1);
+    const maxBackX = Math.max(g.X_G4, g.B3.x, g.P1.x, g.H_back_side ? g.H_back_side.x : g.B3.x);
+    const backW = maxBackX.toFixed(1);
     const backH = (g.Y_H + g.H_back_neck).toFixed(1);
-    const minFrontX = Math.min(g.P5_open.x, g.X_G4, g.B4.x);
+    const minFrontX = Math.min(g.P5_open.x, g.P5_closed.x, g.X_G4, g.B4.x, g.H_front_side ? g.H_front_side.x : g.B4.x);
     const frontW = (g.X_G3 - minFrontX).toFixed(1);
     const frontH = (g.Y_H + 1.2 - g.Y_V1).toFixed(1);
 

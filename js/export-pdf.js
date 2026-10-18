@@ -10,7 +10,7 @@ function getPieceExportData(pieceType) {
     let pieceLabelRu = '';
 
     if (pieceType === 'back') {
-        const maxBackX = Math.max(g.X_G4, g.B3.x, g.P1.x);
+        const maxBackX = Math.max(g.X_G4, g.B3.x, g.P1.x, g.H_back_side ? g.H_back_side.x : g.B3.x);
         minX = -20;
         minY = Math.floor(g.A4.y * CM) - 20;
         widthMm = Math.ceil(maxBackX * CM) + 45;
@@ -33,10 +33,10 @@ function getPieceExportData(pieceType) {
             <text x="${(g.W_back * 0.48) * CM}" y="${(g.Y_G - 0.8) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Ог=${state.og} | От=${state.ot} | Об=${state.ob} | Осанка: ${state.posture}</text>
         `;
     } else if (pieceType === 'front') {
-        // Устраняем баг обрезания плеча: minX учитывает P5_open!
-        const minFrontX = Math.min(g.P5_open.x, g.X_G4, g.B4.x);
+        // Устраняем баг обрезания: minFrontX учитывает все варианты вытачек и клеш!
+        const minFrontX = Math.min(g.P5_open.x, g.P5_closed.x, g.X_G4, g.B4.x, g.H_front_side ? g.H_front_side.x : g.B4.x);
         minX = Math.floor(minFrontX * CM) - 25;
-        minY = Math.floor(g.Y_V1 * CM) - 20;
+        minY = Math.floor(Math.min(g.Y_V1, g.V3_neck ? g.V3_neck.y : g.Y_V1) * CM) - 20;
         widthMm = Math.ceil((g.X_G3 - minFrontX) * CM) + 50;
         heightMm = Math.ceil((g.Y_H + 3.2) * CM) - minY + 25;
         fileTitle = `polochka_OG${state.og}_OT${state.ot}`;
