@@ -7,11 +7,25 @@ function buildInputs() {
     const renderGroup = (containerId, list) => {
         const container = document.getElementById(containerId);
         if (!container) return;
-        container.innerHTML = list.map(item => `
-            <div class="py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors">
+        container.innerHTML = list.map(item => {
+            const isRec = Boolean(item.recommended);
+            const val = (state[item.key] !== null && state[item.key] !== undefined && state[item.key] !== '') ? state[item.key] : '';
+            const cardClasses = isRec
+                ? "py-2.5 px-3 rounded-xl bg-[#FFFBF9] border border-[#FADCD5] mb-2 flex items-center justify-between shadow-[0_2px_10px_-2px_rgba(224,90,71,0.08)] hover:border-[#F4B4A8] transition-colors"
+                : "py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors";
+
+            const recBadge = isRec ? `
+                <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-[#FFF0ED] text-[#E05A47] border border-[#FCDAD5] shrink-0 flex items-center gap-0.5" title="Рекомендуем измерить для безупречной посадки в груди">
+                    <i data-lucide="sparkles" class="w-2.5 h-2.5 text-[#E05A47]"></i>Советуем
+                </span>
+            ` : '';
+
+            return `
+            <div class="${cardClasses}">
                 <div class="flex items-center gap-2 min-w-0 pr-2">
                     <span class="text-xs font-semibold text-[#2C2825] truncate">${item.label}</span>
                     <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">${item.abbr}</span>
+                    ${recBadge}
                     <div class="relative group/tip inline-flex items-center shrink-0">
                         <button type="button" onclick="showMeasurementHint('${item.label}', '${item.abbr}', '${item.hint.replace(/'/g, "\\'")}')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]" aria-label="Справка">
                             <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
@@ -25,16 +39,17 @@ function buildInputs() {
                 </div>
                 <!-- Тактильный степпер -->
                 <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
-                    <button type="button" onclick="adjustValue('${item.key}', -${item.step})" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">−</button>
+                    <button type="button" onclick="adjustValue('${item.key}', -${item.step})" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer" title="Уменьшить">−</button>
                     <div class="w-12 text-center mono text-xs font-bold bg-white border-x border-[#F0ECE1] py-1 text-[#2C2825]">
-                        <input type="number" id="num-${item.key}" value="${state[item.key]}" min="${item.min}" max="${item.max}" step="${item.step}"
+                        <input type="number" id="num-${item.key}" value="${val}" placeholder="${item.placeholder || ''}" min="${item.min}" max="${item.max}" step="${item.step}"
                             oninput="syncInput('${item.key}', this.value)"
-                            class="w-full text-center bg-transparent focus:outline-none">
+                            class="w-full text-center bg-transparent focus:outline-none placeholder:text-[#A8A29E] placeholder:font-normal placeholder:italic">
                     </div>
-                    <button type="button" onclick="adjustValue('${item.key}', ${item.step})" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">+</button>
+                    <button type="button" onclick="adjustValue('${item.key}', ${item.step})" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer" title="Увеличить">+</button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     };
 
     renderGroup('measures-girths', inputConfig.girths);
@@ -48,13 +63,27 @@ function buildInputs() {
 }
 
 function adjustValue(key, delta) {
-    let cur = parseFloat(state[key]);
-    if (isNaN(cur)) cur = 0;
+    let cur = state[key];
+    if (cur === null || cur === undefined || cur === '' || isNaN(parseFloat(cur))) {
+        if (key === 'shs') cur = 35.0;
+        else if (key === 'shg') cur = 33.0;
+        else cur = 0;
+    } else {
+        cur = parseFloat(cur);
+    }
     let next = Math.round((cur + delta) * 10) / 10;
     syncInput(key, next);
 }
 
 function syncInput(key, value) {
+    if (value === '' || value === null || value === undefined) {
+        state[key] = null;
+        const numEl = document.getElementById(`num-${key}`);
+        if (numEl && document.activeElement !== numEl) numEl.value = '';
+        renderPattern();
+        if (typeof StorageManager !== 'undefined') StorageManager.save();
+        return;
+    }
     const val = parseFloat(value);
     if (isNaN(val)) return;
     state[key] = val;
@@ -121,7 +150,7 @@ function applyPreset(sizeKey) {
     Object.keys(p).forEach(k => {
         state[k] = p[k];
         const numEl = document.getElementById(`num-${k}`);
-        if (numEl) numEl.value = p[k];
+        if (numEl) numEl.value = (p[k] !== null && p[k] !== undefined) ? p[k] : '';
     });
 
     document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -868,7 +897,7 @@ function applyMyProfile() {
         Object.keys(profile.data).forEach(k => {
             state[k] = profile.data[k];
             const numEl = document.getElementById(`num-${k}`);
-            if (numEl) numEl.value = profile.data[k];
+            if (numEl) numEl.value = (profile.data[k] !== null && profile.data[k] !== undefined) ? profile.data[k] : '';
         });
 
         // Выделяем кнопку Мой размер
@@ -959,7 +988,7 @@ function importProfileJson(inputEl) {
                 if (k in state) {
                     state[k] = m[k];
                     const numEl = document.getElementById(`num-${k}`);
-                    if (numEl) numEl.value = m[k];
+                    if (numEl) numEl.value = (m[k] !== null && m[k] !== undefined) ? m[k] : '';
                 }
             });
             saveMyProfile();
