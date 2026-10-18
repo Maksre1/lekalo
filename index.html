@@ -103,8 +103,8 @@
                 </div>
             </div>
 
-            <!-- Вкладки управления (5 шагов САПР) -->
-            <div class="grid grid-cols-5 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500">
+            <!-- Вкладки управления (шаги САПР) -->
+            <div id="tabs-header-bar" class="grid grid-cols-5 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500">
                 <button onclick="switchTab('measures')" id="tab-measures" class="py-2.5 border-b-2 border-indigo-600 text-indigo-600 bg-white font-bold transition text-center">1. Мерки</button>
                 <button onclick="switchTab('style')" id="tab-style" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center">2. Фасон</button>
                 <button onclick="switchTab('fit')" id="tab-fit" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center">3. Посадка</button>
@@ -381,6 +381,14 @@
                                     <div class="font-bold">Каре</div>
                                     <div class="text-[10px] text-stone-500 font-normal mt-0.5">Прямоугольный вырез</div>
                                 </button>
+                                <button onclick="setNecklineType('keyhole')" data-neckline="keyhole" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <div class="font-bold flex items-center justify-between">Капелька <span class="text-[10px] text-rose-600 mono bg-rose-50 px-1 rounded border border-rose-200">Стрим</span></div>
+                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Акцентный вырез в декольте</div>
+                                </button>
+                                <button onclick="setNecklineType('deep-v')" data-neckline="deep-v" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <div class="font-bold flex items-center justify-between">Глубокое V <span class="text-[10px] text-amber-700 mono bg-amber-50 px-1 rounded border border-amber-200">Секси</span></div>
+                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Эффектное декольте</div>
+                                </button>
                             </div>
 
                             <!-- Слайдер глубины выреза -->
@@ -424,7 +432,7 @@
                         <div>
                             <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1 flex items-center justify-between">
                                 <span>1. Каталог и фасоны юбок</span>
-                                <span class="text-[10px] text-indigo-600 font-semibold lowercase">10 моделей</span>
+                                <span class="text-[10px] text-indigo-600 font-semibold lowercase">13 моделей</span>
                             </div>
                             <div id="skirt-catalog-container" class="space-y-3">
                                 <!-- Рендерится через renderSkirtStyleCatalog() -->
@@ -465,6 +473,14 @@
                                 <button onclick="setPantiesModel('thong')" data-model="thong" class="panties-model-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
                                     <div class="font-bold">Стринги</div>
                                     <div class="text-[10px] text-stone-500 font-normal mt-0.5">Минималистичная задняя планка</div>
+                                </button>
+                                <button onclick="setPantiesModel('strappy')" data-model="strappy" class="panties-model-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <div class="font-bold flex items-center justify-between">Стрепы <span class="text-[10px] text-rose-600 mono bg-rose-50 px-1 rounded border border-rose-200">Секси</span></div>
+                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">V-пояс и стрепы на бедрах</div>
+                                </button>
+                                <button onclick="setPantiesModel('dolphin-shorts')" data-model="dolphin-shorts" class="panties-model-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <div class="font-bold flex items-center justify-between">Шортики Dolphin <span class="text-[10px] text-emerald-700 mono bg-emerald-50 px-1 rounded border border-emerald-200">Стрим</span></div>
+                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">С закругленными боками и кантом</div>
                                 </button>
                             </div>
                         </div>
@@ -995,6 +1011,7 @@
                 if (typeof renderDressActiveDetails === 'function') renderDressActiveDetails();
                 if (typeof renderSkirtStyleCatalog === 'function') renderSkirtStyleCatalog();
                 if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
+                if (typeof updateContextualTabs === 'function') updateContextualTabs(state.garmentType);
                 // На мобильных экранах по умолчанию открываем холст
                 if (window.innerWidth < 768) {
                     setMobileView('canvas');
@@ -1011,6 +1028,15 @@
                 }
                 if (urlParams.get('dart')) {
                     setDartPosition(urlParams.get('dart'));
+                }
+                if (urlParams.get('neckline')) {
+                    setNecklineType(urlParams.get('neckline'));
+                }
+                if (urlParams.get('skirtStyle')) {
+                    selectSkirtStyle(urlParams.get('skirtStyle'));
+                }
+                if (urlParams.get('panties')) {
+                    setPantiesModel(urlParams.get('panties'));
                 }
                 if (urlParams.get('heatmap') === '1') {
                     toggleFitHeatmap();

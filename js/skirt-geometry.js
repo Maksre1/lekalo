@@ -70,6 +70,10 @@ function calculateSkirtGeometry() {
     let isPleated = false;
     let yokeHeight = 0;
     let pleatStep = 0;
+    let hasLaceup = false;
+    let laceupHeight = 0;
+    let hasRuched = false;
+    let isMicro = false;
 
     if (style === 'a-line') {
         // Трапеция / А-силуэт миди: расклешение бокового шва
@@ -81,6 +85,28 @@ function calculateSkirtGeometry() {
         hemCurveLift = 0.9;
         backDartLen = Math.min(10.0, effectiveLength * 0.28);
         frontDartLen = Math.min(7.0, effectiveLength * 0.20);
+    } else if (style === 'mini-laceup') {
+        // Мини со шнуровкой по бедру
+        flareOffset = 1.0;
+        hemCurveLift = 0;
+        hasLaceup = true;
+        laceupHeight = Math.min(18.0, effectiveLength * 0.45);
+        backDartLen = Math.min(10.0, effectiveLength * 0.28);
+        frontDartLen = Math.min(7.0, effectiveLength * 0.20);
+    } else if (style === 'mini-ruched') {
+        // Мини на кулиске со сборкой
+        flareOffset = -1.2;
+        hemCurveLift = 0;
+        hasRuched = true;
+        backDartLen = Math.min(9.0, effectiveLength * 0.25);
+        frontDartLen = Math.min(6.5, effectiveLength * 0.18);
+    } else if (style === 'mini-micro') {
+        // Y2K ультра-микро юбка 30 см на бедрах
+        flareOffset = 2.0;
+        hemCurveLift = 0.5;
+        isMicro = true;
+        backDartLen = Math.min(7.0, effectiveLength * 0.22);
+        frontDartLen = Math.min(5.0, effectiveLength * 0.16);
     } else if (style === 'mini-slit') {
         // Мини с разрезом по ноге
         flareOffset = 0.5;
@@ -151,6 +177,8 @@ function calculateSkirtGeometry() {
         hasSlit, slitHeight,
         isWrap, wrapOverlap,
         isPleated, yokeHeight, pleatStep,
+        hasLaceup, laceupHeight,
+        hasRuched, isMicro,
         // Точки ЗП
         B_waist_center, B_dart_left, B_dart_apex, B_dart_right, B_waist_side,
         B_hip_side, B_hem_side, B_hem_center, B_hip_center,
@@ -271,6 +299,9 @@ function generateSkirtPiecesMarkup(g, options = {}) {
     let styleTitleRu = 'ПРЯМАЯ КЛАССИЧЕСКАЯ';
     if (g.style === 'a-line') styleTitleRu = 'ТРАПЕЦИЯ МИДИ (А-СИЛУЭТ)';
     else if (g.style === 'mini-trapeze') styleTitleRu = 'МИНИ-ТРАПЕЦИЯ (А-СИЛУЭТ)';
+    else if (g.style === 'mini-laceup') styleTitleRu = 'МИНИ СО ШНУРОВКОЙ ПО БЕДРУ';
+    else if (g.style === 'mini-ruched') styleTitleRu = 'МИНИ С БОКОВОЙ КУЛИСКОЙ';
+    else if (g.style === 'mini-micro') styleTitleRu = 'Y2K МИКРО-ЮБКА (30 СМ)';
     else if (g.style === 'mini-pleated') styleTitleRu = 'ТЕННИСНАЯ МИНИ (ПЛИССЕ)';
     else if (g.style === 'mini-wrap') styleTitleRu = 'МИНИ С ЗАПАХОМ';
     else if (g.style === 'mini-slit') styleTitleRu = 'МИНИ С РАЗРЕЗОМ';
@@ -282,6 +313,31 @@ function generateSkirtPiecesMarkup(g, options = {}) {
         <line x1="${g.F_dart_apex.x * CM}" y1="${g.F_hem_side.y * CM}" x2="${g.F_dart_apex.x * CM}" y2="${(g.skirtLength - g.slitHeight) * CM}" stroke="#e11d48" stroke-width="2.0" stroke-dasharray="4,2"/>
         <circle cx="${g.F_dart_apex.x * CM}" cy="${(g.skirtLength - g.slitHeight) * CM}" r="3" fill="#e11d48"/>
         <text x="${g.F_dart_apex.x * CM + 6}" y="${(g.skirtLength - g.slitHeight * 0.45) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">✂ РАЗРЕЗ ${g.slitHeight.toFixed(0)} см</text>
+    ` : '';
+
+    const laceupMarkupBack = g.hasLaceup ? `
+        <!-- Люверсы шнуровки на ЗП -->
+        <circle cx="${g.B_hem_side.x * CM - 6}" cy="${(g.skirtLength - 3) * CM}" r="2.5" fill="#f43f5e"/>
+        <circle cx="${g.B_hem_side.x * CM - 6}" cy="${(g.skirtLength - 8) * CM}" r="2.5" fill="#f43f5e"/>
+        <circle cx="${g.B_hem_side.x * CM - 6}" cy="${(g.skirtLength - 13) * CM}" r="2.5" fill="#f43f5e"/>
+        <text x="${g.B_hem_side.x * CM - 10}" y="${(g.skirtLength - 8) * CM}" text-anchor="end" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="#f43f5e">⚡ ЛЮВЕРСЫ (d=4мм)</text>
+    ` : '';
+
+    const laceupMarkupFront = g.hasLaceup ? `
+        <!-- Люверсы и шнуровка на ПП -->
+        <circle cx="${g.F_hem_side.x * CM + 6}" cy="${(g.skirtLength - 3) * CM}" r="2.5" fill="#f43f5e"/>
+        <circle cx="${g.F_hem_side.x * CM + 6}" cy="${(g.skirtLength - 8) * CM}" r="2.5" fill="#f43f5e"/>
+        <circle cx="${g.F_hem_side.x * CM + 6}" cy="${(g.skirtLength - 13) * CM}" r="2.5" fill="#f43f5e"/>
+        <text x="${g.F_hem_side.x * CM + 10}" y="${(g.skirtLength - 8) * CM}" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="#f43f5e">⚡ ШНУРОВКА</text>
+    ` : '';
+
+    const ruchedMarkup = g.hasRuched ? `
+        <!-- Кулиска под шнурок со сборкой по боку -->
+        <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.skirtLength - 4) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#7c3aed">✨ КУЛИСКА 2.5 см (сборка длины шнуром)</text>
+    ` : '';
+
+    const microMarkup = g.isMicro ? `
+        <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.skirtLength - 2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#db2777">🔥 Y2K ULTRA-MINI (30 см) - низкая посадка</text>
     ` : '';
 
     const wrapMarkup = g.isWrap ? `
@@ -323,6 +379,7 @@ function generateSkirtPiecesMarkup(g, options = {}) {
                 <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="${colBack}">ЗАДНЕЕ ПОЛОТНИЩЕ</text>
                 <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb + 0) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">${styleTitleRu} | 1 деталь со сгибом</text>
                 ${pleatedMarkupBack}
+                ${laceupMarkupBack}
             </g>
 
             <!-- Переднее полотнище юбки -->
@@ -338,6 +395,9 @@ function generateSkirtPiecesMarkup(g, options = {}) {
                 <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="${colFront}">ПЕРЕДНЕЕ ПОЛОТНИЩЕ</text>
                 <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb + 0) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">1 деталь со сгибом (От ${g.ot}, Об ${g.ob})</text>
                 ${slitMarkup}
+                ${laceupMarkupFront}
+                ${ruchedMarkup}
+                ${microMarkup}
                 ${wrapMarkup}
                 ${pleatedMarkupFront}
             </g>

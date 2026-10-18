@@ -79,6 +79,51 @@ const STYLE_CATALOG = {
             cutTip: 'Круговой раскрой без вытачек, пояс на резинке или притачной',
             vectorType: 'mini-skater'
         },
+        {
+            id: 'mini-laceup',
+            name: 'Мини со шнуровкой',
+            category: 'mini',
+            badge: 'Стример',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            recLength: 36,
+            summary: 'Соблазнительный открытый боковой разрез с люверсами и перекрестной шнуровкой. Эффектный фокус в веб-камеру.',
+            fabrics: 'Плотный хлопковый твил, экокожа, деним, замша, костюмка с эластаном',
+            difficulty: 'Легко',
+            time: '1.5 часа',
+            cutTip: 'Боковой шов с открытым вырезом под люверсы d=4мм или кулиску',
+            vectorType: 'mini-laceup'
+        },
+        {
+            id: 'mini-ruched',
+            name: 'Мини с кулиской',
+            category: 'mini',
+            badge: 'Тренд',
+            badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
+            image: null,
+            recLength: 38,
+            summary: 'Облегающая юбка с боковой кулиской. Шнурками регулируется длина от 38 см до дерзкого микро 28 см со сборкой.',
+            fabrics: 'Эластичный трикотаж (рибана, лапша, масло, бифлекс), вискоза с эластаном',
+            difficulty: 'Очень легко (без молний)',
+            time: '1 час',
+            cutTip: 'Раскрой из трикотажа, припуск 2.5 см на боковую кулиску со шнурком',
+            vectorType: 'mini-ruched'
+        },
+        {
+            id: 'mini-micro',
+            name: 'Y2K микро-юбка',
+            category: 'mini',
+            badge: 'Экстрим 30 см',
+            badgeColor: 'bg-pink-100 text-pink-700 border-pink-200',
+            image: null,
+            recLength: 30,
+            summary: 'Ультракороткая прямая мини-юбка в дерзкой эстетике 2000-х с низкой посадкой на косточках бедер.',
+            fabrics: 'Деним, твид, вельвет, плотный хлопок, экокожа',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Длина 30 см, посадка на бедрах (low-rise)',
+            vectorType: 'mini-micro'
+        },
 
         // --- МИДИ И МАКСИ ---
         {
@@ -210,6 +255,32 @@ const STYLE_CATALOG = {
             time: '25 минут',
             cutTip: 'Минимальный расход — всего 20 см ткани',
             vectorType: 'panties-thong'
+        },
+        {
+            id: 'dolphin-shorts',
+            name: 'Шортики Dolphin',
+            badge: 'Стрим-хит',
+            badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            image: null,
+            summary: 'Культовые домашние микро-шорты с закругленными боковыми разрезами и контрастным кантом. Уютно и супер-мило.',
+            fabrics: 'Хлопковый трикотаж (кулирка), махра, велюр, микрофибра',
+            difficulty: 'Легко',
+            time: '35 минут',
+            cutTip: 'Закругленные бока, окантовка трикотажной косой бейкой контрастного цвета',
+            vectorType: 'dolphin-shorts'
+        },
+        {
+            id: 'strappy',
+            name: 'Стрепы / V-waist',
+            badge: 'Секси',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Соблазнительные трусики с дерзким V-образным поясом и декоративными эластичными стрепами на бедрах.',
+            fabrics: 'Эластичная сетка, тонкое кружево, бретелечная резинка-стрепы 10-12 мм',
+            difficulty: 'Легко',
+            time: '30 минут',
+            cutTip: 'V-образная талия, боковые стрепы регулируются под обхват',
+            vectorType: 'panties-strappy'
         }
     ],
 
@@ -251,6 +322,33 @@ const STYLE_CATALOG = {
             summary: 'Плавная изогнутая вытачка из проймы рукава. Изящный женственный рельеф.',
             fabrics: 'Тонкая шерсть, плательный лен, креп-шифон',
             vectorType: 'dress-armhole'
+        },
+        {
+            id: 'keyhole',
+            name: 'Капелька (Keyhole)',
+            badge: 'Стример',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            summary: 'Акцентный фигурный вырез-капелька по центру декольте. Идеальный фокус в стрим-камеру.',
+            fabrics: 'Эластичный трикотаж, рибана, бифлекс, шелк-стрейч',
+            vectorType: 'dress-keyhole'
+        },
+        {
+            id: 'halter',
+            name: 'Холтер с открытой спиной',
+            badge: 'Тренд',
+            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+            summary: 'Бретель через шею с открытыми плечами и глубокой проймой. Легкий пошив без рукавов.',
+            fabrics: 'Кулирка с лайкрой, вискозный трикотаж, бифлекс',
+            vectorType: 'dress-halter'
+        },
+        {
+            id: 'bustier',
+            name: 'Мягкий бюстье / топ',
+            badge: 'Секси',
+            badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
+            summary: 'Корсетный фигурный силуэт с мягкими чашечками без косточек. Соблазнительный и удобный.',
+            fabrics: 'Плотный бифлекс, плотный трикотаж понте, атлас-стрейч',
+            vectorType: 'dress-bustier'
         }
     ]
 };
@@ -331,6 +429,59 @@ function getStyleVectorSvg(type, size = 64) {
                 <path d="M 28 25 Q 27 48 26 71" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
                 <path d="M 40 25 Q 40 48 40 70" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
                 <path d="M 52 25 Q 53 48 54 71" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
+            `;
+            break;
+
+        case 'mini-laceup':
+            content = `
+                <!-- Мини со шнуровкой по бедру -->
+                <path d="M 28 20 L 52 20 L 52 26 L 28 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 26 L 24 45 L 29 65 L 56 65 L 52 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Шнуровка крест-накрест -->
+                <line x1="24" y1="48" x2="28" y2="52" stroke="#f43f5e" stroke-width="1.3"/>
+                <line x1="28" y1="48" x2="25" y2="52" stroke="#f43f5e" stroke-width="1.3"/>
+                <line x1="25" y1="54" x2="29" y2="58" stroke="#f43f5e" stroke-width="1.3"/>
+                <line x1="29" y1="54" x2="26" y2="58" stroke="#f43f5e" stroke-width="1.3"/>
+                <circle cx="24" cy="48" r="1.1" fill="#f43f5e"/>
+                <circle cx="28" cy="48" r="1.1" fill="#f43f5e"/>
+                <circle cx="25" cy="54" r="1.1" fill="#f43f5e"/>
+                <circle cx="29" cy="54" r="1.1" fill="#f43f5e"/>
+                <circle cx="26" cy="60" r="1.1" fill="#f43f5e"/>
+                <circle cx="29.5" cy="60" r="1.1" fill="#f43f5e"/>
+                <path d="M 26 61 Q 23 65 25 67 M 29 61 Q 31 65 29 67" stroke="#f43f5e" stroke-width="1" fill="none"/>
+            `;
+            break;
+
+        case 'mini-ruched':
+            content = `
+                <!-- Мини с боковой кулиской (сборка) -->
+                <path d="M 28 20 L 52 20 L 52 25 L 28 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 25 L 25 65 Q 40 68 53 62 L 52 25 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Складки сборки -->
+                <path d="M 33 35 Q 43 37 52 34" stroke="#a855f7" stroke-width="1.1" fill="none"/>
+                <path d="M 30 44 Q 42 46 52.5 42" stroke="#a855f7" stroke-width="1.1" fill="none"/>
+                <path d="M 27 53 Q 41 55 53 51" stroke="#a855f7" stroke-width="1.1" fill="none"/>
+                <!-- Кулиска справа с завязками -->
+                <line x1="52" y1="25" x2="53" y2="62" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="2,2"/>
+                <path d="M 53 62 Q 51 69 49 73 M 53 62 Q 56 69 55 74" stroke="#7c3aed" stroke-width="1.2" fill="none"/>
+                <circle cx="49" cy="73" r="1" fill="#7c3aed"/>
+                <circle cx="55" cy="74" r="1" fill="#7c3aed"/>
+            `;
+            break;
+
+        case 'mini-micro':
+            content = `
+                <!-- Y2K микро-юбка (30 см) -->
+                <path d="M 27 28 L 53 28 L 53 34 L 27 34 Z" fill="#cbd5e1" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Ультракороткое полотнище -->
+                <path d="M 27 34 L 25 54 L 55 54 L 53 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Пряжка ремня и шлевки Y2K -->
+                <rect x="38" y="29" width="4" height="4" fill="#f59e0b" stroke="${stroke}" stroke-width="0.8"/>
+                <line x1="31" y1="28" x2="31" y2="34" stroke="${stroke}" stroke-width="1"/>
+                <line x1="49" y1="28" x2="49" y2="34" stroke="${stroke}" stroke-width="1"/>
+                <!-- Кармашки микро -->
+                <path d="M 28 37 L 34 37 L 34 43 L 28 43" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
+                <path d="M 52 37 L 46 37 L 46 43 L 52 43" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
             `;
             break;
 
@@ -420,6 +571,32 @@ function getStyleVectorSvg(type, size = 64) {
             `;
             break;
 
+        case 'dolphin-shorts':
+            content = `
+                <!-- Микро-шортики Dolphin -->
+                <path d="M 22 25 L 58 25 L 58 30 L 22 30 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 22 30 L 20 46 Q 22 56 31 56 L 40 50 L 49 56 Q 58 56 60 46 L 58 30 Z" fill="#ecfdf5" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 20 42 Q 22 55 31 55 L 40 50 L 49 55 Q 58 55 60 42" stroke="#10b981" stroke-width="1.8" fill="none"/>
+                <path d="M 20 42 Q 23 48 27 50" stroke="#10b981" stroke-width="1.2" fill="none"/>
+                <path d="M 60 42 Q 57 48 53 50" stroke="#10b981" stroke-width="1.2" fill="none"/>
+                <circle cx="40" cy="27.5" r="1.2" fill="#10b981"/>
+            `;
+            break;
+
+        case 'panties-strappy':
+            content = `
+                <!-- Стрепы / V-waist трусики -->
+                <path d="M 22 26 Q 40 35 58 26 L 56 32 Q 44 42 42 61 L 38 61 Q 36 42 24 32 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 22 26 Q 40 35 58 26" stroke="#f43f5e" stroke-width="1.6" fill="none"/>
+                <line x1="22" y1="26" x2="14" y2="23" stroke="#f43f5e" stroke-width="1.4"/>
+                <line x1="23" y1="31" x2="15" y2="30" stroke="#f43f5e" stroke-width="1.4"/>
+                <line x1="58" y1="26" x2="66" y2="23" stroke="#f43f5e" stroke-width="1.4"/>
+                <line x1="57" y1="31" x2="65" y2="30" stroke="#f43f5e" stroke-width="1.4"/>
+                <circle cx="22" cy="26" r="1" fill="#f43f5e"/>
+                <circle cx="58" cy="26" r="1" fill="#f43f5e"/>
+            `;
+            break;
+
         case 'dress-shoulder':
             content = `
                 <!-- Платье: вытачка в плечо -->
@@ -453,6 +630,37 @@ function getStyleVectorSvg(type, size = 64) {
                 <path d="M 26 18 Q 40 24 54 18 L 59 34 L 54 36 L 52 48 L 52 74 L 28 74 L 28 48 L 26 36 L 21 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
                 <!-- Вытачка из проймы -->
                 <path d="M 52 28 Q 45 32 41 38" stroke="#059669" stroke-width="1.6" fill="none"/>
+            `;
+            break;
+
+        case 'dress-keyhole':
+            content = `
+                <!-- Топ с вырезом-капелькой -->
+                <path d="M 26 18 Q 40 22 54 18 L 59 34 L 54 36 L 52 48 L 52 68 L 28 68 L 28 48 L 26 36 L 21 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 33 19.5 Q 40 21 47 19.5" stroke="${stroke}" stroke-width="1.6" fill="none"/>
+                <!-- Капелька по центру -->
+                <path d="M 40 24 C 36 27 36 34 40 36 C 44 34 44 27 40 24 Z" fill="#f43f5e" fill-opacity="0.25" stroke="#f43f5e" stroke-width="1.4"/>
+            `;
+            break;
+
+        case 'dress-halter':
+            content = `
+                <!-- Топ-холтер с открытыми плечами -->
+                <path d="M 34 14 Q 40 12 46 14 L 47 20 L 33 20 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 33 20 L 47 20 L 54 38 L 52 48 L 52 68 L 28 68 L 28 48 L 26 38 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <line x1="33" y1="20" x2="26" y2="38" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="47" y1="20" x2="54" y2="38" stroke="#d97706" stroke-width="1.4"/>
+            `;
+            break;
+
+        case 'dress-bustier':
+            content = `
+                <!-- Мягкий топ-бюстье / корсетный силуэт -->
+                <path d="M 28 26 Q 34 20 40 24 Q 46 20 52 26 L 53 45 L 51 66 L 29 66 L 27 45 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 26 Q 34 32 40 24" stroke="#a855f7" stroke-width="1.3" fill="none"/>
+                <path d="M 40 24 Q 46 32 52 26" stroke="#a855f7" stroke-width="1.3" fill="none"/>
+                <line x1="35" y1="30" x2="35" y2="66" stroke="#c084fc" stroke-width="1.1" stroke-dasharray="2,2"/>
+                <line x1="45" y1="30" x2="45" y2="66" stroke="#c084fc" stroke-width="1.1" stroke-dasharray="2,2"/>
             `;
             break;
 
@@ -521,7 +729,7 @@ function renderSkirtStyleCatalog() {
                 <div class="text-[11px] font-bold uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
                     <span>🔥 МИНИ-ЮБКИ (30 – 45 см)</span>
                 </div>
-                <span class="text-[10px] text-rose-500 font-medium">5 моделей</span>
+                <span class="text-[10px] text-rose-500 font-medium">${miniStyles.length} моделей</span>
             </div>
             <div class="grid grid-cols-1 gap-2">
                 ${miniStyles.map(renderCard).join('')}
@@ -534,7 +742,7 @@ function renderSkirtStyleCatalog() {
                 <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
                     <span>👗 МИДИ И МАКСИ (50 – 100 см)</span>
                 </div>
-                <span class="text-[10px] text-stone-400 font-medium">5 моделей</span>
+                <span class="text-[10px] text-stone-400 font-medium">${midiStyles.length} моделей</span>
             </div>
             <div class="grid grid-cols-1 gap-2">
                 ${midiStyles.map(renderCard).join('')}

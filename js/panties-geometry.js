@@ -32,12 +32,18 @@ function calculatePantiesGeometry() {
         sideSeam = Math.min(sideSeam, 4.5);
     } else if (model === 'thong') {
         sideSeam = Math.min(sideSeam, 3.0);
+    } else if (model === 'strappy') {
+        sideSeam = 2.0; // ультра-узкий бок под эластичные стрепы
+    } else if (model === 'dolphin-shorts') {
+        frontHeight += 3.5;
+        backHeight += 3.5;
+        sideSeam = 8.0;
     }
 
     // Ширина верха переда (половина со сгибом)
-    const frontTopHalfW = (obCalc / 4) * 0.88;
+    const frontTopHalfW = (obCalc / 4) * (model === 'dolphin-shorts' ? 1.05 : 0.88);
     // Ширина верха спинки (половина со сгибом)
-    const backTopHalfW = (obCalc / 4) * 0.94;
+    const backTopHalfW = (obCalc / 4) * (model === 'dolphin-shorts' ? 1.10 : 0.94);
 
     // Размеры ластовицы (половина со сгибом)
     const gussetLen = 12.0;
@@ -45,25 +51,25 @@ function calculatePantiesGeometry() {
     const gussetBackHalfW = 3.9;  // полная 7.8 см
 
     // Точки передней детали (Front) - сгиб по X = 0
-    const F_top_center = { x: 0, y: 1.2 };
+    const F_top_center = { x: 0, y: model === 'dolphin-shorts' ? 0 : 1.2 };
     const F_top_side = { x: frontTopHalfW, y: 0 };
     const F_bot_side = { x: frontTopHalfW - (frontHeight - sideSeam) * 0.22, y: sideSeam };
     const F_gusset_join = { x: gussetFrontHalfW, y: frontHeight };
     const F_gusset_center = { x: 0, y: frontHeight };
 
     // Точки выреза ноги переда (контрольные точки Безье)
-    const legDepthMult = (legCut === 'high' ? 0.35 : 0.50);
+    const legDepthMult = (legCut === 'high' ? 0.35 : (model === 'dolphin-shorts' ? 0.70 : 0.50));
     const F_leg_ctrl1 = {
-        x: F_bot_side.x * 0.55,
+        x: F_bot_side.x * (model === 'dolphin-shorts' ? 0.90 : 0.55),
         y: F_bot_side.y + (frontHeight - F_bot_side.y) * 0.35
     };
     const F_leg_ctrl2 = {
         x: gussetFrontHalfW + (F_bot_side.x - gussetFrontHalfW) * legDepthMult,
-        y: frontHeight - 2.5
+        y: frontHeight - (model === 'dolphin-shorts' ? 1.0 : 2.5)
     };
 
     // Точки задней детали (Back) - сгиб по X = 0
-    const B_top_center = { x: 0, y: -0.8 };
+    const B_top_center = { x: 0, y: model === 'dolphin-shorts' ? 0 : -0.8 };
     const B_top_side = { x: backTopHalfW, y: 0 };
     const B_bot_side = { x: backTopHalfW - (backHeight - sideSeam) * 0.20, y: sideSeam };
     const B_gusset_join = { x: gussetBackHalfW, y: backHeight };
@@ -71,20 +77,30 @@ function calculatePantiesGeometry() {
 
     // Оформление выреза спинки в зависимости от модели
     let B_leg_ctrl1, B_leg_ctrl2;
-    if (model === 'braziliana') {
-        // V-образный дерзкий вырез Бразилиана
+    if (model === 'braziliana' || model === 'strappy') {
+        // V-образный дерзкий вырез Бразилиана / Стрепы
         B_leg_ctrl1 = {
-            x: B_bot_side.x * 0.30,
-            y: B_bot_side.y + (backHeight - B_bot_side.y) * 0.55
+            x: B_bot_side.x * 0.28,
+            y: B_bot_side.y + (backHeight - B_bot_side.y) * 0.58
         };
         B_leg_ctrl2 = {
-            x: gussetBackHalfW + 1.0,
+            x: gussetBackHalfW + 0.8,
             y: backHeight - 1.5
         };
     } else if (model === 'thong') {
         // Стринги: узкая спинка
         B_leg_ctrl1 = { x: 1.8, y: B_bot_side.y + 4.0 };
         B_leg_ctrl2 = { x: 1.5, y: backHeight - 2.0 };
+    } else if (model === 'dolphin-shorts') {
+        // Округлый вырез шортиков Dolphin
+        B_leg_ctrl1 = {
+            x: B_bot_side.x * 0.95,
+            y: B_bot_side.y + (backHeight - B_bot_side.y) * 0.30
+        };
+        B_leg_ctrl2 = {
+            x: gussetBackHalfW + (B_bot_side.x - gussetBackHalfW) * 0.65,
+            y: backHeight - 0.5
+        };
     } else {
         // Слипы (классика): плавная линия, закрывающая ягодицу
         B_leg_ctrl1 = {
@@ -178,7 +194,19 @@ function generatePantiesPiecesMarkup(g, options = {}) {
         Z
     `;
 
-    const modelRu = g.model === 'braziliana' ? 'БРАЗИЛИАНА' : (g.model === 'high-waist' ? 'РЕТРО (ВЫСОКАЯ ТАЛИЯ)' : (g.model === 'thong' ? 'СТРИНГИ' : 'СЛИПЫ'));
+    const modelRu = g.model === 'braziliana' ? 'БРАЗИЛИАНА' : (g.model === 'high-waist' ? 'РЕТРО (ВЫСОКАЯ ТАЛИЯ)' : (g.model === 'thong' ? 'СТРИНГИ' : (g.model === 'dolphin-shorts' ? 'ШОРТИКИ DOLPHIN' : (g.model === 'strappy' ? 'СТРЕПЫ / V-WAIST' : 'СЛИПЫ'))));
+
+    const strappySideMarkup = g.model === 'strappy' ? `
+        <!-- Линии стреп на бедрах -->
+        <line x1="${g.F_top_side.x * CM}" y1="0" x2="${(g.F_top_side.x + 3.5) * CM}" y2="-6" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="3,2"/>
+        <line x1="${g.F_bot_side.x * CM}" y1="${g.F_bot_side.y * CM}" x2="${(g.F_bot_side.x + 3.5) * CM}" y2="${g.F_bot_side.y * CM + 4}" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="3,2"/>
+        <text x="${(g.F_top_side.x + 0.5) * CM}" y="-8" font-family="Inter, sans-serif" font-size="7.5" font-weight="bold" fill="#f43f5e">⚡ СТРЕПЫ (резинка 12 мм)</text>
+    ` : '';
+
+    const dolphinSideMarkup = g.model === 'dolphin-shorts' ? `
+        <!-- Контрастный кант Dolphin -->
+        <text x="${(g.frontTopHalfW * 0.45) * CM}" y="${(g.frontHeight * CM) - 22}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="#059669">✨ Окантовка контрастным кантом (бейка)</text>
+    ` : '';
 
     return {
         frontPath,
@@ -204,6 +232,8 @@ function generatePantiesPiecesMarkup(g, options = {}) {
                 <text x="${(g.frontTopHalfW * 0.45) * CM}" y="${(g.frontHeight * CM) - 10}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#71717a">⬇ шов ластовицы</text>
                 <!-- Отметка длины бокового шва -->
                 <text x="${g.F_top_side.x * CM + 4}" y="${(g.sideSeam * 0.5) * CM}" font-family="JetBrains Mono, monospace" font-size="8" fill="#be123c">бок ${g.sideSeam} см</text>
+                ${strappySideMarkup}
+                ${dolphinSideMarkup}
             </g>
 
             <!-- 2. ЗАДНЯЯ ПОЛОВИНКА -->
@@ -235,7 +265,7 @@ function generatePantiesPiecesMarkup(g, options = {}) {
             <g transform="translate(${frontOriginX}, ${(Math.max(g.frontHeight, g.backHeight) + 4.5) * CM})">
                 <rect x="0" y="0" width="${(g.frontTopHalfW + g.backTopHalfW + g.gussetBackHalfW + 10) * CM}" height="32" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
                 <text x="12" y="16" font-family="Inter, sans-serif" font-size="9.5" font-weight="bold" fill="#0f172a">✂️ Припуски на швы:</text>
-                <text x="135" y="16" font-family="Inter, sans-serif" font-size="9" fill="#475569">0.7 см под резинку или оверлок; 0 см под ажурное фестончатое кружево.</text>
+                <text x="135" y="16" font-family="Inter, sans-serif" font-size="9" fill="#475569">${g.model === 'dolphin-shorts' ? '0 см по низу (окантовка косой бейкой), 1.0 см по поясу' : '0.7 см под резинку или оверлок; 0 см под ажурное фестончатое кружево.'}</text>
                 <text x="12" y="27" font-family="Inter, sans-serif" font-size="8.5" fill="#64748b">Об=${g.ob} см (расчетный с эластичностью: ${g.obCalc.toFixed(1)} см, растяжение ${(100 - g.stretch*100).toFixed(0)}%) | От=${g.ot} см</text>
             </g>
         `

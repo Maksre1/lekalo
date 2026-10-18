@@ -220,12 +220,31 @@ function calculateGeometry() {
     let V_neck_c1 = { x: V3_neck.x, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
     let V_neck_c2 = { x: V3_neck.x + W_neck * 0.55, y: V4_neck.y };
     let V_corner_sq = null;
+    let keyhole = null;
 
     if (necklineType === 'v-neck') {
         V3_neck = { x: V3.x - 0.5, y: V3.y };
         V4_neck = { x: X_G3, y: V4.y + 2.5 + necklineDepth };
         V_neck_c1 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.35 + 0.6, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
         V_neck_c2 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.75 + 0.3, y: V4_neck.y - 0.5 };
+    } else if (necklineType === 'deep-v') {
+        // Глубокое декольте V-образное
+        V3_neck = { x: V3.x - 0.8, y: V3.y };
+        V4_neck = { x: X_G3, y: V4.y + 5.5 + necklineDepth };
+        V_neck_c1 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.35 + 0.4, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
+        V_neck_c2 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.75 + 0.2, y: V4_neck.y - 0.5 };
+    } else if (necklineType === 'keyhole') {
+        // Вырез-капелька по центру полочки
+        const kTopY = V4.y + 1.2;
+        const kBotY = V4.y + 7.5 + necklineDepth * 0.5;
+        const kHalfW = 2.2;
+        keyhole = {
+            topY: kTopY,
+            botY: kBotY,
+            halfW: kHalfW,
+            centerX: X_G3,
+            path: `M ${X_G3 * CM} ${kTopY * CM} C ${(X_G3 - kHalfW) * CM} ${(kTopY + 1.5) * CM}, ${(X_G3 - kHalfW) * CM} ${(kBotY - 1.5) * CM}, ${X_G3 * CM} ${kBotY * CM} C ${(X_G3 + kHalfW) * CM} ${(kBotY - 1.5) * CM}, ${(X_G3 + kHalfW) * CM} ${(kTopY + 1.5) * CM}, ${X_G3 * CM} ${kTopY * CM} Z`
+        };
     } else if (necklineType === 'boat') {
         // Лодочка: плечо открывается наружу к пройме на 3.2 см
         const shiftBoat = 3.2;
@@ -381,6 +400,7 @@ function calculateGeometry() {
         sleeveLengthType,
         necklineType, necklineDepth,
         V3_neck, V4_neck, V_neck_c1, V_neck_c2, V_corner_sq,
+        keyhole,
         A4_neck, A5_neck,
         dartPosition,
         S_d1, S_d2, S_apex,

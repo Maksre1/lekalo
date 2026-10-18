@@ -604,9 +604,82 @@ function updateExportDimensions(g) {
     setBadge('modal-pages-all', tAll);
 }
 
+// Управление динамическими контекстными вкладками (чистый интерфейс без лишнего)
+function updateContextualTabs(garmentType) {
+    const tabsBar = document.getElementById('tabs-header-bar');
+    const tabMeasures = document.getElementById('tab-measures');
+    const tabStyle = document.getElementById('tab-style');
+    const tabFit = document.getElementById('tab-fit');
+    const tabLayout = document.getElementById('tab-layout');
+    const tabExport = document.getElementById('tab-export');
+    if (!tabsBar || !tabMeasures || !tabStyle || !tabExport) return;
+
+    // Сброс тепловой карты для поясных и бельевых изделий
+    if (garmentType !== 'dress' && state.showFitHeatmap) {
+        state.showFitHeatmap = false;
+        const btnHeatmap = document.getElementById('btn-toggle-heatmap');
+        if (btnHeatmap) {
+            btnHeatmap.className = "w-full py-2 px-3 text-xs font-semibold rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 flex items-center justify-center gap-2 transition cursor-pointer";
+            btnHeatmap.innerHTML = `<span>🌡️ Показать карту прилегания (Heatmap)</span>`;
+        }
+    }
+
+    if (garmentType === 'panties') {
+        // Трусики: только 3 логичных шага: Мерки -> Модель -> Печать
+        tabsBar.className = "grid grid-cols-3 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500";
+        tabMeasures.textContent = "1. Мерки";
+        tabStyle.textContent = "2. Модель";
+        tabExport.textContent = "3. Печать";
+        if (tabFit) tabFit.classList.add('hidden');
+        if (tabLayout) tabLayout.classList.add('hidden');
+        if (tabExport) tabExport.classList.remove('hidden');
+
+        // Если была открыта скрытая вкладка, переключаем на модель
+        const panelFit = document.getElementById('panel-fit');
+        const panelLayout = document.getElementById('panel-layout');
+        if ((panelFit && !panelFit.classList.contains('hidden')) || (panelLayout && !panelLayout.classList.contains('hidden'))) {
+            switchTab('style');
+        }
+    } else if (garmentType === 'skirt') {
+        // Юбка: 4 шага: Мерки -> Фасон -> Ткань -> Печать (Посадка скрыта)
+        tabsBar.className = "grid grid-cols-4 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500";
+        tabMeasures.textContent = "1. Мерки";
+        tabStyle.textContent = "2. Фасон";
+        if (tabLayout) {
+            tabLayout.textContent = "3. Ткань";
+            tabLayout.classList.remove('hidden');
+        }
+        tabExport.textContent = "4. Печать";
+        if (tabFit) tabFit.classList.add('hidden');
+        if (tabExport) tabExport.classList.remove('hidden');
+
+        // Если была открыта Посадка, переключаем на фасон
+        const panelFit = document.getElementById('panel-fit');
+        if (panelFit && !panelFit.classList.contains('hidden')) {
+            switchTab('style');
+        }
+    } else {
+        // Платье / Топ: все 5 шагов
+        tabsBar.className = "grid grid-cols-5 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500";
+        tabMeasures.textContent = "1. Мерки";
+        tabStyle.textContent = "2. Фасон";
+        if (tabFit) {
+            tabFit.textContent = "3. Посадка";
+            tabFit.classList.remove('hidden');
+        }
+        if (tabLayout) {
+            tabLayout.textContent = "4. Ткань";
+            tabLayout.classList.remove('hidden');
+        }
+        tabExport.textContent = "5. Печать";
+        tabExport.classList.remove('hidden');
+    }
+}
+
 // Управление типами изделий (Платье, Юбка, Трусики)
 function setGarmentType(type) {
     state.garmentType = type;
+    updateContextualTabs(type);
 
     ['dress', 'skirt', 'panties'].forEach(t => {
         const btn = document.getElementById(`btn-garment-${t}`);

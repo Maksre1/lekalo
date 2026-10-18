@@ -30,7 +30,7 @@ const state = {
 
     // Моделирование фасонов
     dartPosition: 'shoulder', // 'shoulder' (в плечо) | 'side' (в боковой шов) | 'waist' (в талию) | 'armhole' (в пройму)
-    necklineType: 'round',    // 'round' (круглая) | 'v-neck' (V-образная) | 'boat' (лодочка) | 'square' (каре)
+    necklineType: 'round',    // 'round' (круглая) | 'v-neck' (V-образная) | 'boat' (лодочка) | 'square' (каре) | 'keyhole' (капелька) | 'deep-v' (глубокое декольте)
     necklineDepth: 0,         // доп. углубление выреза горловины (см: 0..8)
     sleeveLengthType: 'long', // 'long' (длинный) | 'three-quarter' (3/4) | 'short' (короткий)
     silhouette: 'straight',   // 'straight' (прямой) | 'flare' (трапеция/клеш)
@@ -40,13 +40,13 @@ const state = {
 
     // Моделирование юбок
     skirtLength: 60,          // Длина юбки (см: 30..105)
-    skirtStyle: 'a-line',     // 'mini-trapeze' | 'mini-pleated' | 'mini-wrap' | 'mini-slit' | 'mini-skater' | 'a-line' | 'half-sun' | 'sun' | 'straight' | 'pencil'
+    skirtStyle: 'a-line',     // 'mini-laceup' | 'mini-ruched' | 'mini-micro' | 'mini-trapeze' | 'mini-pleated' | 'mini-wrap' | 'mini-slit' | 'mini-skater' | 'a-line' | 'half-sun' | 'sun' | 'straight' | 'pencil'
     skirtRise: 'natural',     // 'natural' (на талии) | 'low' (на бедрах) | 'high' (высокая корсетная)
     skirtPt: 1.0,             // Прибавка по талии для юбки (см)
     skirtPb: 2.0,             // Прибавка по бедрам для юбки (см)
 
     // Моделирование женских трусиков
-    pantiesModel: 'slips',    // 'slips' (Слипы) | 'braziliana' (Бразилиана) | 'high-waist' (Ретро) | 'thong' (Стринги)
+    pantiesModel: 'slips',    // 'slips' (Слипы) | 'braziliana' (Бразилиана) | 'high-waist' (Ретро) | 'thong' (Стринги) | 'dolphin-shorts' (Шорты Dolphin) | 'strappy' (Стрепы/V-waist)
     pantiesRise: 'mid',       // 'high' (высокая) | 'mid' (средняя) | 'low' (низкая)
     pantiesLegCut: 'classic', // 'classic' (классический) | 'high' (высокий французский)
     pantiesStretch: 0.90,     // Коэффициент растяжимости ткани (0.90 - трикотаж 10%, 0.85 - кружево 15%, 0.95 - хлопок 5%)

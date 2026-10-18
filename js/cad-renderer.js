@@ -488,6 +488,10 @@ function renderPattern() {
         <g id="piece-front" transform="translate(${p.frontShiftX}, 0)" stroke="${p.colFront}" stroke-width="1.9" fill="none" stroke-linejoin="round" stroke-linecap="round">
             <path d="${p.frontOutlinePath}" />
             <path d="${p.frontDiamondPath}" />
+            ${g.keyhole ? `
+                <path d="${g.keyhole.path}" stroke="#e11d48" stroke-width="2.0" fill="rgba(225, 29, 72, 0.08)"/>
+                <text x="${g.keyhole.centerX * CM - 18}" y="${((g.keyhole.topY + g.keyhole.botY) / 2) * CM}" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="#e11d48" text-anchor="end">✂ ВЫРЕЗ КАПЕЛЬКА</text>
+            ` : ''}
         </g>
     `;
 

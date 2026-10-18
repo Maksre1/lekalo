@@ -48,6 +48,12 @@ function getSkirtPieceExportData(pieceType) {
                     <line x1="0" y1="${g.yokeHeight * CM}" x2="${g.X_side * CM}" y2="${g.yokeHeight * CM}" stroke="#4f46e5" stroke-width="1.2" stroke-dasharray="4,3"/>
                     <text x="${(g.X_side * 0.5) * CM}" y="${(g.yokeHeight - 1.2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#4f46e5">ЛИНИЯ КОКЕТКИ (ниже — складки плиссе)</text>
                 ` : ''}
+                ${g.hasLaceup ? `
+                    <circle cx="${g.B_hem_side.x * CM - 6}" cy="${(g.skirtLength - 3) * CM}" r="2.5" fill="#f43f5e"/>
+                    <circle cx="${g.B_hem_side.x * CM - 6}" cy="${(g.skirtLength - 8) * CM}" r="2.5" fill="#f43f5e"/>
+                    <circle cx="${g.B_hem_side.x * CM - 6}" cy="${(g.skirtLength - 13) * CM}" r="2.5" fill="#f43f5e"/>
+                    <text x="${g.B_hem_side.x * CM - 10}" y="${(g.skirtLength - 8) * CM}" text-anchor="end" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#f43f5e">⚡ ЛЮВЕРСЫ (d=4мм)</text>
+                ` : ''}
             </g>
         `;
         return {
@@ -71,6 +77,18 @@ function getSkirtPieceExportData(pieceType) {
                     <line x1="${g.F_dart_apex.x * CM}" y1="${g.F_hem_side.y * CM}" x2="${g.F_dart_apex.x * CM}" y2="${(g.skirtLength - g.slitHeight) * CM}" stroke="#e11d48" stroke-width="2.0" stroke-dasharray="4,2"/>
                     <circle cx="${g.F_dart_apex.x * CM}" cy="${(g.skirtLength - g.slitHeight) * CM}" r="3" fill="#e11d48"/>
                     <text x="${g.F_dart_apex.x * CM + 6}" y="${(g.skirtLength - g.slitHeight * 0.45) * CM}" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">✂ РАЗРЕЗ ${g.slitHeight.toFixed(0)} см</text>
+                ` : ''}
+                ${g.hasLaceup ? `
+                    <circle cx="${g.F_hem_side.x * CM + 6}" cy="${(g.skirtLength - 3) * CM}" r="2.5" fill="#f43f5e"/>
+                    <circle cx="${g.F_hem_side.x * CM + 6}" cy="${(g.skirtLength - 8) * CM}" r="2.5" fill="#f43f5e"/>
+                    <circle cx="${g.F_hem_side.x * CM + 6}" cy="${(g.skirtLength - 13) * CM}" r="2.5" fill="#f43f5e"/>
+                    <text x="${g.F_hem_side.x * CM + 10}" y="${(g.skirtLength - 8) * CM}" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#f43f5e">⚡ ШНУРОВКА</text>
+                ` : ''}
+                ${g.hasRuched ? `
+                    <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.skirtLength - 4) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#7c3aed">✨ КУЛИСКА 2.5 см (сборка длины шнуром)</text>
+                ` : ''}
+                ${g.isMicro ? `
+                    <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.skirtLength - 2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#db2777">🔥 Y2K ULTRA-MINI (30 см)</text>
                 ` : ''}
                 ${g.isWrap ? `
                     <path d="M ${g.W_grid * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} ${(g.skirtLength - 5) * CM} L ${g.W_grid * CM} ${g.skirtLength * CM} Z" fill="none" stroke="#d97706" stroke-width="1.6" stroke-dasharray="5,3"/>
@@ -255,6 +273,10 @@ function getPieceExportData(pieceType) {
                 <circle cx="${g.G7.x * CM}" cy="${g.G7.y * CM}" r="2.5" fill="#09090b"/>
                 <circle cx="${g.V8.x * CM}" cy="${g.V8.y * CM}" r="2" fill="#2563eb"/>
                 <text x="${(g.X_G3 * CM) - 10}" y="${(g.Y_T - 4) * CM}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#52525b" transform="rotate(-90 ${(g.X_G3 * CM) - 10} ${(g.Y_T - 4) * CM})">[ ЛИНИЯ ПОЛУЗАНОСА ]</text>
+                ${g.keyhole ? `
+                    <path d="${g.keyhole.path}" stroke="#e11d48" stroke-width="2.0" fill="none"/>
+                    <text x="${g.keyhole.centerX * CM - 18}" y="${((g.keyhole.topY + g.keyhole.botY) / 2) * CM}" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#e11d48" text-anchor="end">✂ ВЫРЕЗ КАПЕЛЬКА</text>
+                ` : ''}
             </g>
             <text x="${((g.X_G2 + g.X_G3) * 0.5) * CM}" y="${(g.Y_G - 2.5) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">ПОЛОЧКА (1 дет. со сгибом / 2 дет.)</text>
             <text x="${((g.X_G2 + g.X_G3) * 0.5) * CM}" y="${(g.Y_G - 0.8) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Ог=${state.og} | От=${state.ot} | Вг=${state.vg} | Осанка: ${state.posture}</text>
