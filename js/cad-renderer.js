@@ -459,8 +459,81 @@ function renderTopPattern() {
     if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
 }
 
+function renderCorsetPattern() {
+    const g = calculateCorsetGeometry();
+    const svg = document.getElementById('pattern-svg');
+    if (!svg) return;
+
+    if (typeof updateCalculationTable === 'function') updateCalculationTable(g);
+    if (typeof updateExportDimensions === 'function') updateExportDimensions(g);
+
+    const isSeparate = state.separate;
+    const sepBtn = document.getElementById('btn-separate-mode');
+    if (sepBtn) {
+        sepBtn.innerHTML = isSeparate
+            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельные лекала</span>'
+            : '<i data-lucide="grid" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенная сетка</span>';
+        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    const p = generateCorsetPiecesMarkup(g);
+    const totalWidthCm = p.totalWidthCm;
+    const totalHeightCm = p.totalHeightCm;
+
+    let html = `<g id="viewport" transform="translate(${viewState.panX}, ${viewState.panY}) scale(${viewState.scale})">`;
+    html += `
+        <defs>
+            <marker id="arrow-start" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#27272a"/>
+            </marker>
+            <marker id="arrow-end" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#27272a"/>
+            </marker>
+        </defs>
+    `;
+
+    // 0. Сетка листов А4
+    if (state.showA4Grid) {
+        const a4W = 18.0 * CM;
+        const a4H = 26.7 * CM;
+        const startX = -2.0 * CM;
+        const startY = -2.0 * CM;
+        const cols = Math.ceil((totalWidthCm * CM) / a4W) + 1;
+        const rows = Math.ceil((totalHeightCm * CM) / a4H) + 1;
+
+        html += `<g id="a4-grid-layer" opacity="0.35">`;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const x = startX + c * a4W;
+                const y = startY + r * a4H;
+                html += `
+                    <rect x="${x}" y="${y}" width="${a4W}" height="${a4H}" fill="none" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="6,4"/>
+                    <text x="${x + 8}" y="${y + 14}" font-family="JetBrains Mono, monospace" font-size="9" font-weight="bold" fill="#2563eb">A4 [${r+1}-${c+1}]</text>
+                `;
+            }
+        }
+        html += `</g>`;
+    }
+
+    // Детали изделия
+    html += p.markup;
+
+    // Контрольный проверочный квадрат 50×50 мм
+    html += renderScaleSquareMarkup(8 * CM, (totalHeightCm - 5) * CM);
+
+    html += `</g>`;
+    svg.innerHTML = html;
+
+    if (typeof updateFabricLayoutUI === 'function') updateFabricLayoutUI(g);
+    if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
+}
+
 function renderPattern() {
     const garment = state.garmentType || 'dress';
+    if (garment === 'corset') {
+        renderCorsetPattern();
+        return;
+    }
     if (garment === 'skirt') {
         renderSkirtPattern();
         return;

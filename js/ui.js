@@ -630,6 +630,20 @@ function updateCalculationTable(g) {
             { name: 'Подгрудный пояс', abbr: 'Пояс', formula: 'Отрицательная прибавка k=0.82', val: `${topG.elasticSpec ? topG.elasticSpec.underbustBandLength : 72} см` },
             { name: 'Быстрое снятие', abbr: 'Планка', formula: topG.isQuickRelease ? 'Планка под кнопки +1.8 см' : 'Без планки', val: topG.isQuickRelease ? 'Да (+1.8 см)' : 'Нет' }
         ];
+    } else if (garment === 'corset') {
+        const corsetG = (g && g.type === 'corset') ? g : calculateCorsetGeometry();
+        rows = [
+            { name: 'Модель корсета/образа', abbr: 'Фасон', formula: (corsetG.style || '').toUpperCase(), val: corsetG.style },
+            { name: 'Обхват талии фигуры', abbr: 'От', formula: 'Анатомический замер талии', val: `${corsetG.ot} см` },
+            { name: 'Утяжка талии', abbr: 'Утяжка', formula: 'Корсетный перехват', val: `-${corsetG.reduction} см` },
+            { name: 'Талия в корсете', abbr: 'От_цель', formula: 'От - Утяжка', val: `${corsetG.targetWaist} см` },
+            { name: 'Количество деталей', abbr: 'Панели', formula: 'Профилированные рельефы', val: `${corsetG.spec.panelsCount || (corsetG.extraPieces ? corsetG.extraPieces.length : 8)} деталей` },
+            { name: 'Косточки / Регилин', abbr: 'Кулиски', formula: 'Туннели шириной 8 мм', val: `${corsetG.spec.boningTotal || 16} шт.` },
+            { name: 'Шнуровка / Люверсы', abbr: 'Застежка', formula: 'Планка с шагом 2.5 см', val: corsetG.spec.eyeletsCount ? `${corsetG.spec.eyeletsCount} люверсов` : 'Планка / Завязки' }
+        ];
+        if (corsetG.spec && corsetG.spec.ruffleTotalLength) {
+            rows.push({ name: 'Длина кружевных оборок', abbr: 'Оборки', formula: `Периметр × k${corsetG.spec.gatherCoeff}`, val: `${corsetG.spec.ruffleTotalLength} см` });
+        }
     } else {
         const dressG = (g && g.W_back !== undefined) ? g : calculateGeometry();
         rows = [
@@ -804,6 +818,42 @@ function updateExportDimensions(g) {
         return;
     }
 
+    if (garment === 'corset') {
+        const corsetG = (g && g.type === 'corset') ? g : calculateCorsetGeometry();
+        setText('export-title-back', '1. Спинка / Панели спинки');
+        setText('export-title-front', '2. Полочка / Передние детали');
+        setText('export-title-sleeve', '3. Пояс / Рукава / Оборки');
+        setText('export-title-all', '4. Полный комплект сценического изделия');
+        setText('modal-title-back', '1. Спинка / Панели спинки');
+        setText('modal-title-front', '2. Полочка / Передние детали');
+        setText('modal-title-sleeve', '3. Пояс / Рукава / Оборки');
+        setText('modal-title-all', '4. Полный комплект сценического изделия');
+        setText('modal-desc-back', 'Панели спинки с кулисками под косточки и планкой шнуровки.');
+        setText('modal-desc-front', 'Панели переда с анатомическим подгрудным вырезом.');
+        setText('modal-desc-sleeve', 'Аксессуары, пояс, рукава или кружевные оборки.');
+        setText('modal-desc-all', 'Все лекала с припусками на швы и туннелями под косточки.');
+
+        const wStr = corsetG.widthCm.toFixed(1);
+        const hStr = corsetG.heightCm.toFixed(1);
+        if (elBack) elBack.textContent = `${(corsetG.widthCm * 0.45).toFixed(1)} × ${hStr} см`;
+        if (elFront) elFront.textContent = `${(corsetG.widthCm * 0.55).toFixed(1)} × ${hStr} см`;
+        if (elSleeve) elSleeve.textContent = `Спецификация`;
+        if (elAll) elAll.textContent = `${wStr} × ${hStr} см`;
+
+        const tAll = calcTiles(corsetG.widthCm, corsetG.heightCm);
+        const tBack = calcTiles(corsetG.widthCm * 0.45, corsetG.heightCm);
+        const tFront = calcTiles(corsetG.widthCm * 0.55, corsetG.heightCm);
+        setBadge('pages-back', tBack);
+        setBadge('pages-front', tFront);
+        setBadge('pages-sleeve', '1-2 стр.');
+        setBadge('pages-all', tAll);
+        setBadge('modal-pages-back', tBack);
+        setBadge('modal-pages-front', tFront);
+        setBadge('modal-pages-sleeve', '1-2 стр.');
+        setBadge('modal-pages-all', tAll);
+        return;
+    }
+
     // Платье (по умолчанию)
     setText('export-title-back', '1. Спинка (со сгибом)');
     setText('export-title-front', '2. Полочка (перед)');
@@ -898,13 +948,13 @@ function syncStageControls() {
     });
 }
 
-// Управление типами изделий (Платье, Майки и топы, Юбки и Шорты, Белье)
+// Управление типами изделий (Платье, Майки и топы, Юбки и Шорты, Белье, Корсеты и Образы)
 function setGarmentType(type) {
     state.garmentType = type;
     updateContextualTabs(type);
     syncStageControls();
 
-    ['dress', 'top', 'skirt', 'panties'].forEach(t => {
+    ['dress', 'top', 'skirt', 'panties', 'corset'].forEach(t => {
         const headerBtn = document.getElementById(`header-garment-${t}`);
         const isActive = (t === type);
         if (headerBtn) {
@@ -916,16 +966,18 @@ function setGarmentType(type) {
 
     const badge = document.getElementById('garment-type-badge');
     if (badge) {
-        badge.textContent = type === 'skirt' ? 'Поясное (Юбки и Шорты)' : (type === 'panties' ? 'Белье (Трусики)' : (type === 'top' ? 'Плечевое (Майки и Топы)' : 'Плечевое (Платье)'));
+        badge.textContent = type === 'skirt' ? 'Поясное (Юбки и Шорты)' : (type === 'panties' ? 'Белье (Трусики)' : (type === 'top' ? 'Плечевое (Майки и Топы)' : (type === 'corset' ? 'Сценическое (Образы и Корсеты)' : 'Плечевое (Платье)')));
     }
 
     const dressMeasures = document.getElementById('measures-dress-container');
     const skirtMeasures = document.getElementById('measures-skirt-container');
     const pantiesMeasures = document.getElementById('measures-panties-container');
-    // Общие мерки корпуса для платья и топа:
-    if (dressMeasures) dressMeasures.classList.toggle('hidden', type !== 'dress' && type !== 'top');
+    const corsetMeasures = document.getElementById('measures-corset-container');
+    // Общие мерки корпуса для платья, топа и корсетов:
+    if (dressMeasures) dressMeasures.classList.toggle('hidden', type !== 'dress' && type !== 'top' && type !== 'corset');
     if (skirtMeasures) skirtMeasures.classList.toggle('hidden', type !== 'skirt');
     if (pantiesMeasures) pantiesMeasures.classList.toggle('hidden', type !== 'panties');
+    if (corsetMeasures) corsetMeasures.classList.toggle('hidden', type !== 'corset');
 
     // Скрытие или показ рукава для топов и платьев
     const sleeveInputs = document.getElementById('measures-sleeve');
@@ -936,6 +988,9 @@ function setGarmentType(type) {
         } else if (type === 'dress') {
             sleeveInputs.parentElement.classList.remove('hidden');
             state.showSleeve = true;
+        } else if (type === 'corset') {
+            sleeveInputs.parentElement.classList.add('hidden');
+            state.showSleeve = false;
         }
     }
     const chkSleeve = document.getElementById('chk-sleeve');
@@ -945,10 +1000,12 @@ function setGarmentType(type) {
     const topStyle = document.getElementById('style-top-container');
     const skirtStyle = document.getElementById('style-skirt-container');
     const pantiesStyle = document.getElementById('style-panties-container');
+    const corsetStyle = document.getElementById('style-corset-container');
     if (dressStyle) dressStyle.classList.toggle('hidden', type !== 'dress');
     if (topStyle) topStyle.classList.toggle('hidden', type !== 'top');
     if (skirtStyle) skirtStyle.classList.toggle('hidden', type !== 'skirt');
     if (pantiesStyle) pantiesStyle.classList.toggle('hidden', type !== 'panties');
+    if (corsetStyle) corsetStyle.classList.toggle('hidden', type !== 'corset');
 
     if (type === 'skirt' && typeof renderSkirtStyleCatalog === 'function') {
         renderSkirtStyleCatalog();
@@ -960,13 +1017,16 @@ function setGarmentType(type) {
     } else if (type === 'panties') {
         if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
         else if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
+    } else if (type === 'corset') {
+        if (typeof renderCorsetStyleCatalog === 'function') renderCorsetStyleCatalog();
+        else if (typeof renderCorsetActiveDetails === 'function') renderCorsetActiveDetails();
     }
 
     resetView();
     renderPattern();
     if (typeof StorageManager !== 'undefined') StorageManager.save();
 
-    const titleRu = type === 'skirt' ? 'Выбрана выкройка юбки' : (type === 'panties' ? 'Выбрана выкройка белья' : (type === 'top' ? 'Выбрана выкройка майки / топа' : 'Выбрана выкройка платья'));
+    const titleRu = type === 'skirt' ? 'Выбрана выкройка юбки' : (type === 'panties' ? 'Выбрана выкройка белья' : (type === 'top' ? 'Выбрана выкройка майки / топа' : (type === 'corset' ? 'Выбраны Образы и Корсеты' : 'Выбрана выкройка платья')));
     showNotification(titleRu);
 
     if (window.lucide && typeof lucide.createIcons === 'function') {
@@ -1100,6 +1160,30 @@ function setGussetType(type) {
     if (typeof StorageManager !== 'undefined') StorageManager.save();
 }
 
+// --- УПРАВЛЕНИЕ КОРСЕТАМИ И СЦЕНИЧЕСКИМИ ДЕТАЛЯМИ ---
+function setCorsetReduction(val) {
+    state.corsetReduction = parseFloat(val);
+    const label = document.getElementById('label-corset-reduction');
+    if (label) label.textContent = `-${state.corsetReduction.toFixed(1)} см`;
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+function toggleShrugHood(val) {
+    state.shrugWithHood = Boolean(val);
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+function toggleZeroWasteAccessories(val) {
+    state.zeroWasteAccessories = Boolean(val);
+    const badge = document.getElementById('zero-waste-details-badge');
+    if (badge) badge.classList.toggle('hidden', !state.zeroWasteAccessories);
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    showNotification(state.zeroWasteAccessories ? 'Zero-Waste: аксессуары добавлены на раскладку!' : 'Раскладка ткани возвращена в стандартный вид');
+}
+
 function setTopLengthType(lenType) {
     state.topLengthType = lenType;
     const labelMap = {
@@ -1170,7 +1254,8 @@ function saveMyProfile() {
         'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
         'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb', 'skirtVb', 'skirtBalance',
         'topStyle', 'topLengthType', 'topAntiRideup', 'topElasticStretch', 'topUnderbustFit',
-        'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch'
+        'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch',
+        'corsetStyle', 'corsetReduction', 'shrugWithHood', 'zeroWasteAccessories'
     ];
     const profileData = {
         name: 'Мои мерки',

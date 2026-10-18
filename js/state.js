@@ -66,6 +66,14 @@ const state = {
     pantiesLegCut: 'classic', // 'classic' (классический) | 'high' (высокий французский)
     pantiesStretch: 0.90,     // Коэффициент растяжимости ткани (0.90 - трикотаж 10%, 0.85 - кружево 15%, 0.95 - хлопок 5%)
 
+    // Моделирование корсетов и сценических образов
+    corsetStyle: 'underbust-corset', // 'underbust-corset' | 'waspie-belt' | 'boudoir-kimono' | 'bell-peignoir' | 'super-crop-shrug' | 'lounge-romper' | 'french-maid-apron'
+    corsetReduction: 5.0,            // Утяжка талии корсета (см: 3..8, базовая От - 5 см)
+    corsetHeight: 28.0,              // Высота корсета по центру переда (см)
+    shrugWithHood: true,             // Болеро: включить выкройку капюшона (Hoodie)
+    zeroWasteAccessories: false,     // Бонус: раскрой комплекта аксессуаров (митенки, гетры, чокер+подвязка) на свободных выпадах ткани
+    apronRuffleGather: 1.8,          // Коэффициент сборки оборок передника (1.8 - 2.0x)
+
     // Инженерный конструктор деталей и трансформация (Киллер-фичи)
     vCutWaist: false,         // Посадка пояса «V-Cut» (галочка спереди для комфорта в сидячих позах на стримах)
     vCutDepth: 5.0,           // Глубина выреза галочки V-Cut (см: 4..7)

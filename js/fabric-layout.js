@@ -377,17 +377,23 @@ function calculateTopFabricLayout(g, state) {
 }
 
 function calculateFabricLayout(g, state) {
-    if (state.garmentType === 'skirt') {
+    let result = null;
+    if (state.garmentType === 'corset') {
+        const corsetG = (g && g.type === 'corset') ? g : calculateCorsetGeometry();
+        result = calculateCorsetFabricLayout(corsetG, state);
+    } else if (state.garmentType === 'skirt') {
         const skirtG = (g && g.type === 'skirt') ? g : calculateSkirtGeometry();
-        return calculateSkirtFabricLayout(skirtG, state);
-    }
-    if (state.garmentType === 'panties') {
+        result = calculateSkirtFabricLayout(skirtG, state);
+    } else if (state.garmentType === 'panties') {
         const pantiesG = (g && g.type === 'panties') ? g : calculatePantiesGeometry();
-        return calculatePantiesFabricLayout(pantiesG, state);
-    }
-    if (state.garmentType === 'top') {
+        result = calculatePantiesFabricLayout(pantiesG, state);
+    } else if (state.garmentType === 'top') {
         const topG = (g && g.type === 'top') ? g : calculateTopGeometry();
-        return calculateTopFabricLayout(topG, state);
+        result = calculateTopFabricLayout(topG, state);
+    }
+
+    if (result) {
+        return applyZeroWasteAccessories(result, state);
     }
 
     const fabricW = Number(state.fabricWidth) || 140; // см (110, 140, 150)
@@ -583,6 +589,89 @@ function calculateFabricLayout(g, state) {
     const fabricArea = fabricW * totalLengthCm;
     const efficiency = Math.min(94, Math.max(50, Math.round((piecesArea / fabricArea) * 100)));
 
+    const layout = {
+        fabricW,
+        usableW,
+        isFolded,
+        shrinkagePct,
+        totalLengthCm,
+        totalLengthM: (totalLengthCm / 100).toFixed(2),
+        totalLengthWithShrinkageCm,
+        totalLengthWithShrinkageM: (totalLengthWithShrinkageCm / 100).toFixed(2),
+        efficiency,
+        pieces
+    };
+
+    return applyZeroWasteAccessories(layout, state);
+}
+
+// Раскладка ткани для корсетов и сценических изделий
+function calculateCorsetFabricLayout(g, state) {
+    const fabricW = Number(state.fabricWidth) || 140;
+    const isFolded = state.fabricFold !== false;
+    const shrinkagePct = Number(state.fabricShrinkage) || 5;
+    const margin = 2.5;
+    const edgeMargin = 1.5;
+    const usableW = isFolded ? (fabricW / 2) : fabricW;
+
+    let pieces = [];
+    let totalLengthCm = 0;
+
+    if (g.style === 'underbust-corset' || g.style === 'waspie-belt') {
+        let curX = edgeMargin;
+        let curY = edgeMargin;
+        let rowMaxH = 0;
+
+        (g.panels || []).forEach(p => {
+            const pw = Math.max(p.wTop, p.wWaist, p.wBot) + 2.0;
+            const ph = p.hTop + p.hBot + 3.0;
+            if (curX + pw > usableW - edgeMargin && curX > edgeMargin) {
+                curX = edgeMargin;
+                curY += rowMaxH + margin;
+                rowMaxH = 0;
+            }
+            pieces.push({
+                id: `corset-${p.id}`,
+                name: p.title,
+                abbr: `П${p.num}`,
+                w: pw,
+                h: ph,
+                x: curX,
+                y: curY,
+                color: '#dc2626',
+                bg: 'rgba(220, 38, 38, 0.12)',
+                isFold: false
+            });
+            curX += pw + margin;
+            rowMaxH = Math.max(rowMaxH, ph);
+        });
+        totalLengthCm = curY + rowMaxH + edgeMargin + 4.0;
+    } else {
+        let curY = edgeMargin;
+        (g.extraPieces || []).forEach(p => {
+            const pw = Math.min(p.w + 2.0, usableW - edgeMargin);
+            const ph = p.h + 2.0;
+            pieces.push({
+                id: `corset-${p.id}`,
+                name: p.title,
+                abbr: p.title.split(' ')[0],
+                w: pw,
+                h: ph,
+                x: p.isFold ? 0 : edgeMargin,
+                y: curY,
+                color: p.isFold ? '#1d4ed8' : '#e11d48',
+                bg: p.isFold ? 'rgba(29, 78, 216, 0.12)' : 'rgba(225, 29, 72, 0.12)',
+                isFold: p.isFold
+            });
+            curY += ph + margin;
+        });
+        totalLengthCm = curY + edgeMargin + 4.0;
+    }
+
+    totalLengthCm = Math.ceil(totalLengthCm / 5.0) * 5.0;
+    const totalLengthWithShrinkageCm = Math.ceil((totalLengthCm * (1 + shrinkagePct / 100)) / 5.0) * 5.0;
+    const efficiency = 84;
+
     return {
         fabricW,
         usableW,
@@ -595,6 +684,120 @@ function calculateFabricLayout(g, state) {
         efficiency,
         pieces
     };
+}
+
+// Бонус-фича «Zero-Waste»: Полезные аксессуары из остатков ткани на свободное место
+function applyZeroWasteAccessories(layout, state) {
+    if (!state.zeroWasteAccessories) return layout;
+
+    const op = Number(state.op) || 32.5;
+    const osh = Number(state.osh) || 36.0;
+    const ob = Number(state.ob) || 98.0;
+
+    const usableW = layout.usableW;
+    const margin = 2.0;
+    const edgeMargin = 1.5;
+
+    // 1. Съемные рукава-митенки (2 детали по Оп и Оз)
+    const warmerW = Math.round(op * 0.9);
+    const warmerH = 42.0;
+
+    // 2. Высокие гетры / чулки-гольфы (2 детали)
+    const thighW = Math.round(ob * 0.44);
+    const thighH = 58.0;
+
+    // 3. Набор «Чокер на шею + Подвязка на бедро»
+    const chokerW = Math.round(osh + 4.0);
+    const chokerH = 3.5;
+    const garterW = Math.round(ob * 0.48);
+    const garterH = 4.0;
+
+    const accessories = [
+        {
+            id: 'zw-arm-warmer-1',
+            name: 'Митенка-рукав левая (Zero-Waste)',
+            abbr: 'Митенка Л',
+            w: Math.min(warmerW, usableW - 3),
+            h: warmerH,
+            color: '#059669',
+            bg: 'rgba(5, 150, 105, 0.16)',
+            isFold: false,
+            isZeroWaste: true
+        },
+        {
+            id: 'zw-arm-warmer-2',
+            name: 'Митенка-рукав правая (Zero-Waste)',
+            abbr: 'Митенка П',
+            w: Math.min(warmerW, usableW - 3),
+            h: warmerH,
+            color: '#059669',
+            bg: 'rgba(5, 150, 105, 0.16)',
+            isFold: false,
+            isZeroWaste: true
+        },
+        {
+            id: 'zw-thigh-1',
+            name: 'Гетра высокая левая (Zero-Waste)',
+            abbr: 'Гетра Л',
+            w: Math.min(thighW, usableW - 3),
+            h: thighH,
+            color: '#059669',
+            bg: 'rgba(5, 150, 105, 0.16)',
+            isFold: false,
+            isZeroWaste: true
+        },
+        {
+            id: 'zw-thigh-2',
+            name: 'Гетра высокая правая (Zero-Waste)',
+            abbr: 'Гетра П',
+            w: Math.min(thighW, usableW - 3),
+            h: thighH,
+            color: '#059669',
+            bg: 'rgba(5, 150, 105, 0.16)',
+            isFold: false,
+            isZeroWaste: true
+        },
+        {
+            id: 'zw-choker',
+            name: 'Чокер на шею (Zero-Waste)',
+            abbr: 'Чокер',
+            w: Math.min(chokerW, usableW - 3),
+            h: chokerH,
+            color: '#d97706',
+            bg: 'rgba(217, 119, 6, 0.18)',
+            isFold: false,
+            isZeroWaste: true
+        },
+        {
+            id: 'zw-garter',
+            name: 'Подвязка на бедро (Zero-Waste)',
+            abbr: 'Подвязка',
+            w: Math.min(garterW, usableW - 3),
+            h: garterH,
+            color: '#d97706',
+            bg: 'rgba(217, 119, 6, 0.18)',
+            isFold: false,
+            isZeroWaste: true
+        }
+    ];
+
+    let curY = layout.totalLengthCm - 2.0;
+    accessories.forEach(acc => {
+        acc.x = edgeMargin;
+        acc.y = curY;
+        layout.pieces.push(acc);
+        curY += acc.h + margin;
+    });
+
+    layout.totalLengthCm = Math.ceil(curY / 5.0) * 5.0;
+    layout.totalLengthM = (layout.totalLengthCm / 100).toFixed(2);
+    const withShrinkage = Math.ceil((layout.totalLengthCm * (1 + layout.shrinkagePct / 100)) / 5.0) * 5.0;
+    layout.totalLengthWithShrinkageCm = withShrinkage;
+    layout.totalLengthWithShrinkageM = (withShrinkage / 100).toFixed(2);
+    layout.efficiency = Math.min(96, Math.max(85, layout.efficiency + 12));
+    layout.hasZeroWaste = true;
+
+    return layout;
 }
 
 // Генерация SVG-карты раскладки ткани
@@ -643,12 +846,13 @@ function renderFabricLayoutSvg(layoutData) {
 
         svg += `
             <g>
-                <rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="3" fill="${p.bg}" stroke="${p.color}" stroke-width="1.2"/>
+                <rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="3" fill="${p.bg}" stroke="${p.color}" stroke-width="${p.isZeroWaste ? 1.5 : 1.2}"/>
                 <!-- Стрелка долевой нити -->
                 <line x1="${px + pw / 2}" y1="${py + 10}" x2="${px + pw / 2}" y2="${py + ph - 10}" stroke="${p.color}" stroke-width="0.8" stroke-dasharray="2,2"/>
                 <!-- Подпись детали -->
-                <text x="${px + pw / 2}" y="${py + ph / 2 - 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="${p.color}">${p.abbr}</text>
+                <text x="${px + pw / 2}" y="${py + ph / 2 - 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="${p.isZeroWaste ? '8.5' : '10'}" font-weight="700" fill="${p.color}">${p.abbr}</text>
                 <text x="${px + pw / 2}" y="${py + ph / 2 + 9}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#475569">${Math.round(p.w)}×${Math.round(p.h)} см</text>
+                ${p.isZeroWaste ? `<text x="${px + pw / 2}" y="${py + 10}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" font-weight="bold" fill="#059669">♻ ZERO-WASTE</text>` : ''}
             </g>
         `;
     });

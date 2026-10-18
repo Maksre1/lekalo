@@ -317,7 +317,36 @@ function getTopPieceExportData(pieceType) {
     return { minX, minY, widthMm, heightMm, contentSvg, fileTitle, pieceLabelRu };
 }
 
+function getCorsetPieceExportData(pieceType) {
+    const g = calculateCorsetGeometry();
+    const pAll = generateCorsetPiecesMarkup(g, { showClassic: true, separate: true });
+
+    let minX = -25;
+    let minY = -25;
+    let widthMm = Math.ceil(g.widthCm * CM) + 50;
+    let heightMm = Math.ceil(g.heightCm * CM) + 50;
+    let fileTitle = `corset_${g.style}_OT${state.ot}`;
+    let pieceLabelRu = `Сценическое изделие: ${g.style} (От ${state.ot})`;
+    let contentSvg = `<g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">${pAll.markup}</g>`;
+
+    if (pieceType === 'front') {
+        fileTitle = `corset_pered_${g.style}_OT${state.ot}`;
+        pieceLabelRu = `Полочка / Передние детали (${g.style})`;
+    } else if (pieceType === 'back') {
+        fileTitle = `corset_spinka_${g.style}_OT${state.ot}`;
+        pieceLabelRu = `Спинка / Задние панели (${g.style})`;
+    } else if (pieceType === 'sleeve') {
+        fileTitle = `corset_detali_${g.style}`;
+        pieceLabelRu = `Пояс / Рукава / Оборки (${g.style})`;
+    }
+
+    return { minX, minY, widthMm, heightMm, contentSvg, fileTitle, pieceLabelRu };
+}
+
 function getPieceExportData(pieceType) {
+    if (state.garmentType === 'corset') {
+        return getCorsetPieceExportData(pieceType);
+    }
     if (state.garmentType === 'skirt') {
         return getSkirtPieceExportData(pieceType);
     }

@@ -758,6 +758,107 @@ const STYLE_CATALOG = {
             cutTip: 'Две горизонтальные кулиски сверху и снизу с продетыми шнурками',
             vectorType: 'top-curtain-top'
         }
+    ],
+
+    corset: [
+        {
+            id: 'underbust-corset',
+            name: 'Подгрудный корсет (Underbust)',
+            category: 'corset',
+            badge: 'Утяжка -5 см',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Анатомический корсет под грудь из 6–8 профилированных вертикальных панелей. Создает соблазнительную талию «песочные часы» с утяжкой 4–6 см.',
+            fabrics: 'Корсетный сатин, плотный жаккард, шелковый атлас, тик, спиральные кости 8 мм',
+            difficulty: 'Высокая (корсетная техника)',
+            time: '4 – 5 часов',
+            cutTip: '8 деталей по долевой + люверсы d=4мм + кулиски под кости',
+            vectorType: 'corset-underbust-corset'
+        },
+        {
+            id: 'waspie-belt',
+            name: 'Шнурованный пояс-корсаж (Waspie)',
+            category: 'corset',
+            badge: 'Waspie',
+            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+            image: null,
+            summary: 'Фигурный пояс шириной 14 см с высоким мысом по центру переда и выемками над бедрами для свободного движения. Собирается на шнуровку.',
+            fabrics: 'Экокожа, бархат, корсетная парча, деним, регилин/китовый ус',
+            difficulty: 'Средняя',
+            time: '2 часа',
+            cutTip: '6 профилированных панелей, выемки над бедрами, люверсы',
+            vectorType: 'corset-waspie-belt'
+        },
+        {
+            id: 'boudoir-kimono',
+            name: 'Шелковое кимоно (Boudoir Robe)',
+            category: 'wrap',
+            badge: 'Шелк / Кружево',
+            badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
+            image: null,
+            summary: 'Роскошное распашное кимоно без вытачек со спущенным плечом, широкими летящими рукавами и глубоким запахом под пояс.',
+            fabrics: 'Натуральный шелк, атлас, кружевное полотно шантильи, шифон',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Спущенная линия плеча, широкий рукав 38 см, пояс 160×7 см',
+            vectorType: 'corset-boudoir-kimono'
+        },
+        {
+            id: 'bell-peignoir',
+            name: 'Сетчатый пеньюар Bell-Sleeve',
+            category: 'wrap',
+            badge: 'Bell-Sleeve',
+            badgeColor: 'bg-pink-100 text-pink-700 border-pink-200',
+            image: null,
+            summary: 'Воздушная накидка на завязках под грудью (ампир). Рукав аккуратно облегает руку до локтя и затем конически расширяется в 2.1 раза.',
+            fabrics: 'Эластичная евросетка, полупрозрачный шифон, кружево, органза',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Рукав-колокол клеш от локтя, кулиска под грудью',
+            vectorType: 'corset-bell-peignoir'
+        },
+        {
+            id: 'super-crop-shrug',
+            name: 'Экстремальное болеро / Худи',
+            category: 'wrap',
+            badge: 'Super-Crop',
+            badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            image: null,
+            summary: 'Ультракороткое болеро, закрывающее только плечи и спину до лопаток, оставляя грудь полностью открытой. Рукава с отверстием под палец и капюшоном.',
+            fabrics: 'Трикотаж рубчик, рибана, футер 2-нитка, бифлекс, сетка-стрейч',
+            difficulty: 'Легко',
+            time: '1.5 часа',
+            cutTip: 'Глубокий фигурный вырез над грудью, прорезь под палец 4.5 см, капюшон',
+            vectorType: 'corset-super-crop-shrug'
+        },
+        {
+            id: 'lounge-romper',
+            name: 'Домашний микро-ромпер (Teddy)',
+            category: 'romper',
+            badge: 'Teddy Romper',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Приталенный комбинезон-пижама, объединяющий открытый топ на бретелях с передней планкой на кнопках и мини-шортики с ластовицей.',
+            fabrics: 'Хлопковый трикотаж пенье, шелковый сатин, вискоза, кулирка',
+            difficulty: 'Средняя',
+            time: '2.5 часа',
+            cutTip: 'Планка на 5 кнопок, кулиска талии, ластовица, бретели с регуляторами',
+            vectorType: 'corset-lounge-romper'
+        },
+        {
+            id: 'french-maid-apron',
+            name: 'Кокетливый мини-передник',
+            category: 'roleplay',
+            badge: 'French Maid',
+            badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            image: null,
+            summary: 'Фигурный полукруглый фартук с кокетливым нагрудником, длинным поясом-бантом и автоматическим расчетом длины кружевных оборок (k=1.8).',
+            fabrics: 'Белый батист, поплин, фатин, хлопковое кружево со сборкой',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Полукруглый фартук 34 см, пояс-бант 140 см, полосы оборок k=1.8',
+            vectorType: 'corset-french-maid-apron'
+        }
     ]
 };
 
@@ -1466,6 +1567,115 @@ function getStyleVectorSvg(type, size = 64) {
                 <line x1="45" y1="24" x2="46" y2="42" stroke="#f472b6" stroke-width="1.0" stroke-dasharray="2,2"/>
                 <path d="M 26 22 Q 22 20 20 23 M 54 22 Q 58 20 60 23" stroke="#ec4899" stroke-width="1.2" fill="none"/>
                 <path d="M 26 44 Q 22 46 20 49 M 54 44 Q 58 46 60 49" stroke="#ec4899" stroke-width="1.2" fill="none"/>
+            `;
+            break;
+
+        case 'corset-underbust-corset':
+            content = `
+                <!-- Подгрудный корсет -->
+                <path d="M 24 30 Q 32 26 40 32 Q 48 26 56 30 L 53 58 Q 40 64 27 58 Z" fill="#ffe4e6" stroke="#e11d48" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Талиевый перехват и косточки -->
+                <path d="M 27 43 Q 40 45 53 43" stroke="#e11d48" stroke-width="1.2" stroke-dasharray="2,2" fill="none"/>
+                <line x1="32" y1="28" x2="33" y2="59" stroke="#be123c" stroke-width="1.3"/>
+                <line x1="40" y1="32" x2="40" y2="63" stroke="#be123c" stroke-width="1.5"/>
+                <line x1="48" y1="28" x2="47" y2="59" stroke="#be123c" stroke-width="1.3"/>
+                <!-- Застежка/люверсы по центру -->
+                <circle cx="40" cy="38" r="1.5" fill="#be123c"/>
+                <circle cx="40" cy="46" r="1.5" fill="#be123c"/>
+                <circle cx="40" cy="54" r="1.5" fill="#be123c"/>
+            `;
+            break;
+
+        case 'corset-waspie-belt':
+            content = `
+                <!-- Пояс-корсаж Waspie -->
+                <path d="M 25 36 Q 40 30 55 36 L 53 52 Q 40 58 27 52 Z" fill="#fef3c7" stroke="#d97706" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <line x1="33" y1="34" x2="34" y2="53" stroke="#b45309" stroke-width="1.4"/>
+                <line x1="40" y1="30" x2="40" y2="57" stroke="#b45309" stroke-width="1.6"/>
+                <line x1="47" y1="34" x2="46" y2="53" stroke="#b45309" stroke-width="1.4"/>
+                <!-- Шнуровка крест-накрест -->
+                <line x1="38" y1="36" x2="42" y2="42" stroke="#d97706" stroke-width="1.2"/>
+                <line x1="42" y1="36" x2="38" y2="42" stroke="#d97706" stroke-width="1.2"/>
+                <line x1="38" y1="44" x2="42" y2="50" stroke="#d97706" stroke-width="1.2"/>
+                <line x1="42" y1="44" x2="38" y2="50" stroke="#d97706" stroke-width="1.2"/>
+            `;
+            break;
+
+        case 'corset-boudoir-kimono':
+            content = `
+                <!-- Шелковое кимоно -->
+                <path d="M 28 20 L 52 20 L 58 35 L 50 35 L 53 66 L 27 66 L 30 35 L 22 35 Z" fill="#f3e8ff" stroke="#7e22ce" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Запах кимоно -->
+                <path d="M 33 20 L 48 45 L 30 66" stroke="#9333ea" stroke-width="1.4" fill="none"/>
+                <!-- Пояс с бантом -->
+                <rect x="28" y="42" width="24" height="4" rx="1" fill="#7e22ce"/>
+                <circle cx="48" cy="44" r="2.5" fill="#a855f7"/>
+                <path d="M 49 45 L 53 56" stroke="#7e22ce" stroke-width="1.6"/>
+            `;
+            break;
+
+        case 'corset-bell-peignoir':
+            content = `
+                <!-- Сетчатый пеньюар Bell-Sleeve -->
+                <path d="M 32 20 L 48 20 L 49 32 L 60 68 L 20 68 L 31 32 Z" fill="#fdf2f8" stroke="#db2777" stroke-width="${strokeWidth}" stroke-dasharray="100" stroke-linejoin="round"/>
+                <!-- Рукава-колокол -->
+                <path d="M 32 20 L 18 36 L 10 58 Q 16 60 22 56 L 26 36" fill="#fce7f3" stroke="#db2777" stroke-width="1.4"/>
+                <path d="M 48 20 L 62 36 L 70 58 Q 64 60 58 56 L 54 36" fill="#fce7f3" stroke="#db2777" stroke-width="1.4"/>
+                <!-- Завязки под грудью -->
+                <line x1="31" y1="33" x2="49" y2="33" stroke="#f43f5e" stroke-width="1.8"/>
+                <circle cx="40" cy="33" r="2" fill="#e11d48"/>
+                <path d="M 39 34 L 37 42 M 41 34 L 43 42" stroke="#e11d48" stroke-width="1.3"/>
+            `;
+            break;
+
+        case 'corset-super-crop-shrug':
+            content = `
+                <!-- Экстремальное болеро с капюшоном -->
+                <path d="M 30 20 Q 40 16 50 20 L 52 28 Q 40 32 28 28 Z" fill="#ecfdf5" stroke="#059669" stroke-width="${strokeWidth}"/>
+                <!-- Длинные рукава с прорезью -->
+                <path d="M 30 20 L 16 48 L 12 66 L 18 67 L 24 48 L 28 28" fill="#d1fae5" stroke="#059669" stroke-width="1.4"/>
+                <path d="M 50 20 L 64 48 L 68 66 L 62 67 L 56 48 L 52 28" fill="#d1fae5" stroke="#059669" stroke-width="1.4"/>
+                <!-- Прорези для пальцев -->
+                <line x1="14" y1="61" x2="16" y2="61" stroke="#047857" stroke-width="2.0"/>
+                <line x1="64" y1="61" x2="66" y2="61" stroke="#047857" stroke-width="2.0"/>
+                <!-- Капюшон сзади -->
+                <path d="M 32 20 Q 40 10 48 20" stroke="#059669" stroke-width="1.5" stroke-dasharray="2,2" fill="none"/>
+            `;
+            break;
+
+        case 'corset-lounge-romper':
+            content = `
+                <!-- Домашний микро-ромпер -->
+                <path d="M 32 18 L 32 24 L 30 42 L 26 58 Q 33 62 40 54 Q 47 62 54 58 L 50 42 L 48 24 L 48 18 Z" fill="#fff1f2" stroke="#e11d48" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Бретели -->
+                <line x1="33" y1="18" x2="33" y2="24" stroke="#e11d48" stroke-width="1.2"/>
+                <line x1="47" y1="18" x2="47" y2="24" stroke="#e11d48" stroke-width="1.2"/>
+                <!-- Планка с кнопками -->
+                <line x1="40" y1="24" x2="40" y2="42" stroke="#be123c" stroke-width="1.2"/>
+                <circle cx="40" cy="28" r="1.2" fill="#be123c"/>
+                <circle cx="40" cy="34" r="1.2" fill="#be123c"/>
+                <circle cx="40" cy="40" r="1.2" fill="#be123c"/>
+                <!-- Кулиска талии -->
+                <line x1="30" y1="42" x2="50" y2="42" stroke="#f43f5e" stroke-width="1.4" stroke-dasharray="2,1"/>
+            `;
+            break;
+
+        case 'corset-french-maid-apron':
+            content = `
+                <!-- Кокетливый мини-передник -->
+                <!-- Нагрудник -->
+                <path d="M 34 22 L 46 22 L 48 34 L 32 34 Z" fill="#f8fafc" stroke="#4338ca" stroke-width="1.4"/>
+                <!-- Бретели с оборками -->
+                <line x1="34" y1="22" x2="30" y2="34" stroke="#4338ca" stroke-width="1.2"/>
+                <line x1="46" y1="22" x2="50" y2="34" stroke="#4338ca" stroke-width="1.2"/>
+                <!-- Пояс -->
+                <rect x="26" y="34" width="28" height="4" fill="#3730a3"/>
+                <!-- Полукруглый фартук с кружевной оборкой -->
+                <path d="M 28 38 Q 28 58 40 58 Q 52 58 52 38 Z" fill="#ffffff" stroke="#4338ca" stroke-width="${strokeWidth}"/>
+                <!-- Рюши по краю -->
+                <path d="M 26 38 Q 25 60 40 60 Q 55 60 54 38" stroke="#818cf8" stroke-width="1.4" stroke-dasharray="3,2" fill="none"/>
+                <!-- Бант сзади -->
+                <path d="M 26 36 L 20 40 M 54 36 L 60 40" stroke="#3730a3" stroke-width="1.6"/>
             `;
             break;
 
@@ -2494,6 +2704,210 @@ function renderTopStyleCatalog() {
     `;
 
     renderTopActiveDetails();
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+}
+
+// --- КАТАЛОГ И АКТИВНЫЕ ДЕТАЛИ КОРСЕТОВ И СЦЕНИЧЕСКИХ ОБРАЗОВ ---
+
+function renderCorsetActiveDetails() {
+    const target = document.getElementById('corset-active-details');
+    if (!target) return;
+
+    const info = getStyleInfo('corset', state.corsetStyle || 'underbust-corset');
+    if (!info) return;
+
+    const g = (typeof calculateCorsetGeometry === 'function') ? calculateCorsetGeometry() : null;
+
+    let extraSpecHtml = '';
+    if (g && g.spec) {
+        if (g.style === 'underbust-corset' || g.style === 'waspie-belt') {
+            extraSpecHtml = `
+                <div class="p-2.5 rounded-xl bg-[#FFF5F3] border border-[#FCDAD5] space-y-1.5 text-[11px] text-[#78716C]">
+                    <div class="font-bold text-[#2C2825] flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><i data-lucide="shield" class="w-3.5 h-3.5 text-[#E05A47]"></i>Спецификация корсета:</span>
+                        <span class="text-[#E05A47] font-bold mono">Утяжка: -${g.reduction} см</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+                        <div class="p-1.5 rounded-lg bg-white border border-[#F0ECE1]">
+                            <div class="text-[9px] uppercase tracking-wider text-[#A8A29E]">Талия в корсете</div>
+                            <div class="font-bold mono text-[#2C2825]">${g.targetWaist} см <span class="text-[9px] font-normal text-[#78716C]">(было ${state.ot})</span></div>
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-white border border-[#F0ECE1]">
+                            <div class="text-[9px] uppercase tracking-wider text-[#A8A29E]">Косточки / Люверсы</div>
+                            <div class="font-bold mono text-[#2C2825]">${g.spec.boningTotal || 16} костей / ${g.spec.eyeletsCount || 20} шт.</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (g.style === 'french-maid-apron') {
+            extraSpecHtml = `
+                <div class="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#F0ECE1] space-y-1 text-[11px] text-[#78716C]">
+                    <div class="font-bold text-[#2C2825] flex items-center gap-1.5"><i data-lucide="scissors" class="w-3.5 h-3.5 text-[#E05A47]"></i>Расчет длины кружевных оборок:</div>
+                    <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+                        <div class="p-1.5 rounded-lg bg-white border border-[#F0ECE1]">
+                            <div class="text-[9px] uppercase text-[#A8A29E]">Оборка подола (k=${g.spec.gatherCoeff})</div>
+                            <div class="font-bold mono text-[#2C2825]">${g.spec.ruffleTotalLength} см × 5 см</div>
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-white border border-[#F0ECE1]">
+                            <div class="text-[9px] uppercase text-[#A8A29E]">Оборки бретелей (2 шт.)</div>
+                            <div class="font-bold mono text-[#2C2825]">${g.spec.strapRuffleLength} см × 4 см</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (g.style === 'super-crop-shrug') {
+            extraSpecHtml = `
+                <div class="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#F0ECE1] flex items-center justify-between text-xs">
+                    <span class="text-[#2C2825] font-semibold flex items-center gap-1.5"><i data-lucide="sparkles" class="w-4 h-4 text-[#059669]"></i>Прорезь для большого пальца</span>
+                    <span class="text-[#059669] font-bold mono">4.5 см на рукаве 65 см</span>
+                </div>
+            `;
+        }
+    }
+
+    const photoBadge = `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
+
+    const visual = `<div onclick="openLookbookModal('corset', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs bg-[#FAF8F5] flex items-center justify-center cursor-zoom-in group/img">
+           ${getStyleVectorSvg(info.vectorType, 84)}
+           ${photoBadge}
+           <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+               <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
+           </div>
+       </div>`;
+
+    target.innerHTML = `
+        <div class="bg-gradient-to-br from-[#FFF5F3] to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl p-3.5 shadow-xs space-y-3">
+            <div class="flex items-start gap-3">
+                ${visual}
+                <div class="flex-1 min-w-0 space-y-1.5">
+                    <div class="flex items-center justify-between gap-1 flex-wrap">
+                        <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                            <button onclick="openLookbookModal('corset', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-[#78716C] leading-snug">${info.summary}</p>
+                    <div class="text-[10px] text-[#78716C] pt-0.5 space-y-1">
+                        <div><b>Ткани:</b> ${info.fabrics}</div>
+                        <div><b>Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-[#2C2825] font-medium">
+                            <span><b>Сложность:</b> ${info.difficulty}</span>
+                            <span>•</span>
+                            <span><b>Пошив:</b> ${info.time}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ${extraSpecHtml}
+        </div>
+    `;
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+}
+
+function selectCorsetStyle(styleId) {
+    state.corsetStyle = styleId;
+    state.showSleeve = false; // у корсетов рукав не классический
+
+    document.querySelectorAll('.corset-style-card').forEach(el => {
+        const isMatch = el.dataset.corsetStyle === styleId;
+        el.className = `corset-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isMatch ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}`;
+    });
+
+    renderCorsetActiveDetails();
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+
+    const info = getStyleInfo('corset', styleId);
+    showNotification(`Выбран образ: «${info ? info.name : styleId}»`);
+}
+
+function renderCorsetStyleCatalog() {
+    const container = document.getElementById('corset-catalog-container');
+    if (!container) return;
+
+    const styles = STYLE_CATALOG.corset || [];
+    const corsetGroup = styles.filter(s => s.category === 'corset');
+    const wrapGroup = styles.filter(s => s.category === 'wrap');
+    const roleplayGroup = styles.filter(s => s.category === 'romper' || s.category === 'roleplay');
+
+    const renderCard = (item) => {
+        const isActive = (state.corsetStyle || 'underbust-corset') === item.id;
+        const photoBadge = `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
+
+        const visualContent = `<div class="relative w-full h-full group/thumb flex items-center justify-center">
+            ${getStyleVectorSvg(item.vectorType, 60)}
+            ${photoBadge}
+            <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
+            </div>
+        </div>`;
+
+        return `
+            <div onclick="selectCorsetStyle('${item.id}')"
+                 data-corset-style="${item.id}"
+                 class="corset-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isActive ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}">
+                <div onclick="event.stopPropagation(); openLightbox('', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
+                     title="Нажмите для увеличения эскиза"
+                     class="w-16 h-20 rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 border border-[#F0ECE1] flex items-center justify-center relative cursor-zoom-in">
+                    ${visualContent}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-xs font-bold text-[#2C2825] group-hover:text-[#E05A47] truncate">${item.name}</span>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('corset', '${item.id}');" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-semibold hover:underline cursor-pointer">Детали ↗</button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-[#78716C] line-clamp-2 mt-1 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-2 text-[10px] text-[#78716C]">
+                        <span class="inline-flex items-center gap-1 font-medium"><i data-lucide="clock" class="w-3 h-3 text-[#A8A29E]"></i>${item.time}</span>
+                        <span>•</span>
+                        <span class="text-[#78716C] font-medium">${item.difficulty}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    container.innerHTML = `
+        <!-- 1. Корсетная группа (Утяжка и акцент на талию) -->
+        <div class="space-y-2">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center justify-between pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="shield" class="w-3.5 h-3.5 text-rose-500"></i>1. Корсетная группа (Утяжка талии)</span>
+                <span class="text-[10px] font-semibold text-[#E05A47]">${corsetGroup.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">${corsetGroup.map(renderCard).join('')}</div>
+        </div>
+
+        <!-- 2. Накидки и трансформеры -->
+        <div class="space-y-2 pt-2">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center justify-between pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="feather" class="w-3.5 h-3.5 text-purple-500"></i>2. Накидки и трансформеры (Верхний слой)</span>
+                <span class="text-[10px] font-semibold text-[#E05A47]">${wrapGroup.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">${wrapGroup.map(renderCard).join('')}</div>
+        </div>
+
+        <!-- 3. Слитные силуэты и Ролевые элементы -->
+        <div class="space-y-2 pt-2">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center justify-between pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="wand-2" class="w-3.5 h-3.5 text-amber-500"></i>3. Слитные силуэты и Ролевые элементы</span>
+                <span class="text-[10px] font-semibold text-[#E05A47]">${roleplayGroup.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">${roleplayGroup.map(renderCard).join('')}</div>
+        </div>
+    `;
+
+    renderCorsetActiveDetails();
     if (window.lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
     }
