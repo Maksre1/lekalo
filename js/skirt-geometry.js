@@ -18,11 +18,11 @@ function calculateSkirtGeometry() {
 
     const effectiveLength = Math.max(30, skirtLength - Math.max(0, riseDrop));
 
-    // --- ВАРИАНТ 1: ПОЛУСОЛНЦЕ И СОЛНЦЕ (Клеш) ---
-    if (style === 'half-sun' || style === 'sun') {
+    // --- ВАРИАНТ 1: ПОЛУСОЛНЦЕ, СОЛНЦЕ И МИНИ-СКЕЙТЕР (Клеш) ---
+    if (style === 'half-sun' || style === 'sun' || style === 'mini-skater') {
         const isSun = (style === 'sun');
         const circumference = (ot + pt * 2);
-        const rWaist = circumference / (isSun ? (2 * Math.PI) : Math.PI);
+        const rWaist = circumference / (isSun ? (2 * Math.PI) : (style === 'mini-skater' ? (1.5 * Math.PI) : Math.PI));
         const rHem = rWaist + effectiveLength;
 
         return {
@@ -30,6 +30,7 @@ function calculateSkirtGeometry() {
             style,
             isCircular: true,
             isSun,
+            isSkater: (style === 'mini-skater'),
             ot, ob, vb, skirtLength: effectiveLength,
             pt, pb, rise,
             rWaist, rHem,
@@ -40,7 +41,7 @@ function calculateSkirtGeometry() {
         };
     }
 
-    // --- ВАРИАНТ 2: КОНСТРУКТИВНЫЕ ЮБКИ (А-силуэт/Трапеция, Прямая, Карандаш) ---
+    // --- ВАРИАНТ 2: КОНСТРУКТИВНЫЕ ЮБКИ (А-силуэт/Трапеция, Прямая, Карандаш, Мини-фасоны) ---
     const St = (ot / 2) + pt;
     const Sb = (ob / 2) + pb;
 
@@ -57,22 +58,59 @@ function calculateSkirtGeometry() {
     const backDart = totalDart * 0.32;
     const frontDart = totalDart * 0.18;
 
-    // Моделирование подола
+    // Моделирование подола, длины и специфики фасона
     let flareOffset = 0;
     let hemCurveLift = 0;
+    let backDartLen = 13.0; // см
+    let frontDartLen = 9.5;  // см
+    let hasSlit = false;
+    let slitHeight = 0;
+    let isWrap = false;
+    let wrapOverlap = 0;
+    let isPleated = false;
+    let yokeHeight = 0;
+    let pleatStep = 0;
+
     if (style === 'a-line') {
-        // Трапеция / А-силуэт: расклешение бокового шва
+        // Трапеция / А-силуэт миди: расклешение бокового шва
         flareOffset = 6.5; // +6.5 см по низу с каждой стороны
         hemCurveLift = 1.2; // подъем бока для ровного подола
+    } else if (style === 'mini-trapeze') {
+        // Мини-трапеция (А-силуэт короткая)
+        flareOffset = 5.2;
+        hemCurveLift = 0.9;
+        backDartLen = Math.min(10.0, effectiveLength * 0.28);
+        frontDartLen = Math.min(7.0, effectiveLength * 0.20);
+    } else if (style === 'mini-slit') {
+        // Мини с разрезом по ноге
+        flareOffset = 0.5;
+        hemCurveLift = 0;
+        hasSlit = true;
+        slitHeight = Math.min(10.0, effectiveLength * 0.25);
+        backDartLen = Math.min(11.0, effectiveLength * 0.30);
+        frontDartLen = Math.min(8.0, effectiveLength * 0.22);
+    } else if (style === 'mini-wrap') {
+        // Мини с запахом (асимметрия)
+        flareOffset = 4.2;
+        hemCurveLift = 0.9;
+        isWrap = true;
+        wrapOverlap = 12.0;
+        backDartLen = Math.min(10.0, effectiveLength * 0.28);
+        frontDartLen = Math.min(7.0, effectiveLength * 0.20);
+    } else if (style === 'mini-pleated') {
+        // Теннисная мини со складками плиссе и кокеткой
+        flareOffset = 0;
+        hemCurveLift = 0;
+        isPleated = true;
+        yokeHeight = 9.0;
+        pleatStep = 3.5;
+        backDartLen = Math.min(8.5, yokeHeight - 0.5);
+        frontDartLen = Math.min(7.0, yokeHeight - 1.5);
     } else if (style === 'pencil') {
         // Зауженная юбка-карандаш
         flareOffset = -3.2; // -3.2 см к низу
         hemCurveLift = 0;
     }
-
-    // Длина вытачек
-    const backDartLen = 13.0; // см
-    const frontDartLen = 9.5;  // см
 
     // Позиция задней вытачки
     const X_backDart = X_side * 0.44;
@@ -110,6 +148,9 @@ function calculateSkirtGeometry() {
         St, Sb, W_grid, X_side,
         totalDart, sideDart, backDart, frontDart,
         flareOffset, hemCurveLift,
+        hasSlit, slitHeight,
+        isWrap, wrapOverlap,
+        isPleated, yokeHeight, pleatStep,
         // Точки ЗП
         B_waist_center, B_dart_left, B_dart_apex, B_dart_right, B_waist_side,
         B_hip_side, B_hem_side, B_hem_center, B_hip_center,
@@ -117,7 +158,7 @@ function calculateSkirtGeometry() {
         F_waist_side, F_dart_left, F_dart_apex, F_dart_right, F_waist_center,
         F_hip_side, F_hem_side, F_hem_center, F_hip_center,
         // Габариты
-        widthCm: Math.ceil(W_grid + Math.abs(flareOffset) * 2 + 10),
+        widthCm: Math.ceil(W_grid + Math.abs(flareOffset) * 2 + (isWrap ? wrapOverlap : 0) + 10),
         heightCm: Math.ceil(effectiveLength + 10),
         // Пояс
         beltLength: ot + pt * 2 + 4.0,
@@ -227,7 +268,39 @@ function generateSkirtPiecesMarkup(g, options = {}) {
     const beltH = g.beltWidth * CM;
     const beltY = (g.heightCm + 3) * CM;
 
-    const styleTitleRu = g.style === 'a-line' ? 'ТРАПЕЦИЯ (А-СИЛУЭТ)' : (g.style === 'pencil' ? 'КАРАНДАШ (ЗАУЖЕННАЯ)' : 'ПРЯМАЯ КЛАССИЧЕСКАЯ');
+    let styleTitleRu = 'ПРЯМАЯ КЛАССИЧЕСКАЯ';
+    if (g.style === 'a-line') styleTitleRu = 'ТРАПЕЦИЯ МИДИ (А-СИЛУЭТ)';
+    else if (g.style === 'mini-trapeze') styleTitleRu = 'МИНИ-ТРАПЕЦИЯ (А-СИЛУЭТ)';
+    else if (g.style === 'mini-pleated') styleTitleRu = 'ТЕННИСНАЯ МИНИ (ПЛИССЕ)';
+    else if (g.style === 'mini-wrap') styleTitleRu = 'МИНИ С ЗАПАХОМ';
+    else if (g.style === 'mini-slit') styleTitleRu = 'МИНИ С РАЗРЕЗОМ';
+    else if (g.style === 'mini-skater') styleTitleRu = 'МИНИ-СКЕЙТЕР (КЛЕШ)';
+    else if (g.style === 'pencil') styleTitleRu = 'КАРАНДАШ (ЗАУЖЕННАЯ)';
+
+    const slitMarkup = g.hasSlit ? `
+        <!-- Вертикальный разрез по ноге -->
+        <line x1="${g.F_dart_apex.x * CM}" y1="${g.F_hem_side.y * CM}" x2="${g.F_dart_apex.x * CM}" y2="${(g.skirtLength - g.slitHeight) * CM}" stroke="#e11d48" stroke-width="2.0" stroke-dasharray="4,2"/>
+        <circle cx="${g.F_dart_apex.x * CM}" cy="${(g.skirtLength - g.slitHeight) * CM}" r="3" fill="#e11d48"/>
+        <text x="${g.F_dart_apex.x * CM + 6}" y="${(g.skirtLength - g.slitHeight * 0.45) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">✂ РАЗРЕЗ ${g.slitHeight.toFixed(0)} см</text>
+    ` : '';
+
+    const wrapMarkup = g.isWrap ? `
+        <!-- Нахлест запаха переда (+12 см) -->
+        <path d="M ${g.W_grid * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} ${(g.skirtLength - 5) * CM} L ${g.W_grid * CM} ${g.skirtLength * CM} Z" fill="rgba(245, 158, 11, 0.08)" stroke="#d97706" stroke-width="1.6" stroke-dasharray="5,3"/>
+        <text x="${(g.W_grid + g.wrapOverlap * 0.5) * CM}" y="${(g.skirtLength * 0.5) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#d97706" transform="rotate(-90 ${(g.W_grid + g.wrapOverlap * 0.5) * CM} ${(g.skirtLength * 0.5) * CM})">[ ЗАПАХ +${g.wrapOverlap} см ]</text>
+    ` : '';
+
+    const pleatedMarkupBack = g.isPleated ? `
+        <!-- Линия кокетки ЗП -->
+        <line x1="0" y1="${g.yokeHeight * CM}" x2="${g.X_side * CM}" y2="${g.yokeHeight * CM}" stroke="#4f46e5" stroke-width="1.2" stroke-dasharray="4,3"/>
+        <text x="${(g.X_side * 0.5) * CM}" y="${(g.yokeHeight - 1.2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="#4f46e5">ЛИНИЯ КОКЕТКИ (ниже — складки)</text>
+    ` : '';
+
+    const pleatedMarkupFront = g.isPleated ? `
+        <!-- Линия кокетки ПП -->
+        <line x1="${g.X_side * CM}" y1="${g.yokeHeight * CM}" x2="${g.W_grid * CM}" y2="${g.yokeHeight * CM}" stroke="#4f46e5" stroke-width="1.2" stroke-dasharray="4,3"/>
+        <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.yokeHeight - 1.2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="#4f46e5">ЛИНИЯ КОКЕТКИ (ниже — складки)</text>
+    ` : '';
 
     return {
         isCircular: false,
@@ -249,6 +322,7 @@ function generateSkirtPiecesMarkup(g, options = {}) {
                 <!-- Подписи -->
                 <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="${colBack}">ЗАДНЕЕ ПОЛОТНИЩЕ</text>
                 <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb + 0) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">${styleTitleRu} | 1 деталь со сгибом</text>
+                ${pleatedMarkupBack}
             </g>
 
             <!-- Переднее полотнище юбки -->
@@ -263,6 +337,9 @@ function generateSkirtPiecesMarkup(g, options = {}) {
                 <!-- Подписи -->
                 <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="${colFront}">ПЕРЕДНЕЕ ПОЛОТНИЩЕ</text>
                 <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb + 0) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">1 деталь со сгибом (От ${g.ot}, Об ${g.ob})</text>
+                ${slitMarkup}
+                ${wrapMarkup}
+                ${pleatedMarkupFront}
             </g>
 
             <!-- Пояс юбки -->

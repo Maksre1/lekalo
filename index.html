@@ -242,19 +242,20 @@
                                     <span class="text-[10px] mono text-indigo-700 font-bold ml-1" id="label-skirtLength">60 см</span>
                                 </div>
                                 <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50 shrink-0">
-                                    <button type="button" onclick="setSkirtLength(Math.max(35, state.skirtLength - 5))" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold">−</button>
-                                    <input type="number" id="num-skirtLength" value="60" min="35" max="105" step="1"
+                                    <button type="button" onclick="setSkirtLength(Math.max(30, state.skirtLength - 5))" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold">−</button>
+                                    <input type="number" id="num-skirtLength" value="60" min="30" max="105" step="1"
                                         oninput="setSkirtLength(this.value); document.getElementById('label-skirtLength').textContent = this.value + ' см';"
                                         class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-300 py-1 focus:outline-none">
                                     <button type="button" onclick="setSkirtLength(Math.min(105, state.skirtLength + 5))" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold">+</button>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-3 gap-1 text-[11px]">
-                                <button type="button" onclick="setSkirtLength(45); document.getElementById('label-skirtLength').textContent='45 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition">Мини (45 см)</button>
-                                <button type="button" onclick="setSkirtLength(65); document.getElementById('label-skirtLength').textContent='65 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition">Миди (65 см)</button>
-                                <button type="button" onclick="setSkirtLength(90); document.getElementById('label-skirtLength').textContent='90 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition">Макси (90 см)</button>
+                            <div class="grid grid-cols-4 gap-1 text-[11px]">
+                                <button type="button" onclick="setSkirtLength(38); document.getElementById('label-skirtLength').textContent='38 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Мини (38)</button>
+                                <button type="button" onclick="setSkirtLength(45); document.getElementById('label-skirtLength').textContent='45 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Короткая (45)</button>
+                                <button type="button" onclick="setSkirtLength(65); document.getElementById('label-skirtLength').textContent='65 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Миди (65)</button>
+                                <button type="button" onclick="setSkirtLength(90); document.getElementById('label-skirtLength').textContent='90 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Макси (90)</button>
                             </div>
-                            <input type="range" id="rng-skirtLength" value="60" min="35" max="105" step="1"
+                            <input type="range" id="rng-skirtLength" value="60" min="30" max="105" step="1"
                                 oninput="setSkirtLength(this.value); document.getElementById('label-skirtLength').textContent = this.value + ' см';" class="w-full">
                         </div>
 
@@ -335,6 +336,8 @@
                 <div id="panel-style" class="space-y-4 hidden">
                     <!-- СТИЛИ ДЛЯ ПЛАТЬЯ / БЛУЗЫ -->
                     <div id="style-dress-container" class="space-y-4">
+                        <div id="dress-active-details"></div>
+
                         <!-- 1. Нагрудная вытачка -->
                         <div>
                             <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">1. Перевод нагрудной вытачки</div>
@@ -414,30 +417,17 @@
 
                     <!-- СТИЛИ ДЛЯ ЮБКИ -->
                     <div id="style-skirt-container" class="space-y-4 hidden">
-                        <!-- 1. Фасон юбки -->
+                        <!-- Детальная карточка активного фасона с рекомендациями -->
+                        <div id="skirt-active-details"></div>
+
+                        <!-- 1. Фасон юбки (Визуальный каталог с превью и бейджами) -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">1. Фасон и силуэт юбки</div>
-                            <div class="grid grid-cols-2 gap-2 text-xs">
-                                <button onclick="setSkirtStyle('a-line')" data-style="a-line" class="skirt-style-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer">
-                                    <div class="font-bold flex items-center justify-between">Трапеция (А-силуэт) <span class="text-[10px] text-indigo-700 mono bg-white px-1 rounded border border-indigo-200">Хит</span></div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Универсальный летящий силуэт</div>
-                                </button>
-                                <button onclick="setSkirtStyle('half-sun')" data-style="half-sun" class="skirt-style-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold flex items-center justify-between">Полусолнце <span class="text-[10px] text-stone-500 mono bg-stone-100 px-1 rounded">Клеш</span></div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Кружащаяся юбка с мягкими складками</div>
-                                </button>
-                                <button onclick="setSkirtStyle('sun')" data-style="sun" class="skirt-style-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold">Солнце (360°)</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Максимальный объем и фалды</div>
-                                </button>
-                                <button onclick="setSkirtStyle('straight')" data-style="straight" class="skirt-style-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold">Прямая базовая</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Классика со шлицей сзади</div>
-                                </button>
-                                <button onclick="setSkirtStyle('pencil')" data-style="pencil" class="skirt-style-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer col-span-2">
-                                    <div class="font-bold">Карандаш (зауженная книзу)</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Подчеркивает изгиб бедер и фигуру</div>
-                                </button>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1 flex items-center justify-between">
+                                <span>1. Каталог и фасоны юбок</span>
+                                <span class="text-[10px] text-indigo-600 font-semibold lowercase">10 моделей</span>
+                            </div>
+                            <div id="skirt-catalog-container" class="space-y-3">
+                                <!-- Рендерится через renderSkirtStyleCatalog() -->
                             </div>
                         </div>
 
@@ -454,6 +444,8 @@
 
                     <!-- СТИЛИ ДЛЯ ТРУСИКОВ -->
                     <div id="style-panties-container" class="space-y-4 hidden">
+                        <div id="panties-active-details"></div>
+
                         <!-- 1. Модель трусиков -->
                         <div>
                             <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">1. Модель белья</div>
@@ -991,6 +983,7 @@
     <script src="js/fabric-layout.js"></script>
     <script src="js/cad-renderer.js"></script>
     <script src="js/export-pdf.js"></script>
+    <script src="js/style-illustrations.js"></script>
     <script src="js/ui.js"></script>
 
     <script>
@@ -999,6 +992,9 @@
                 buildInputs();
                 initCanvasNavigation();
                 resetView();
+                if (typeof renderDressActiveDetails === 'function') renderDressActiveDetails();
+                if (typeof renderSkirtStyleCatalog === 'function') renderSkirtStyleCatalog();
+                if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
                 // На мобильных экранах по умолчанию открываем холст
                 if (window.innerWidth < 768) {
                     setMobileView('canvas');

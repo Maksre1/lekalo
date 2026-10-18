@@ -159,6 +159,16 @@ function switchTab(tabName) {
         activeBtn.classList.add('border-indigo-600', 'text-indigo-600', 'bg-white', 'font-bold');
         activeBtn.classList.remove('border-transparent', 'text-stone-500', 'font-medium');
     }
+
+    if (tabName === 'style') {
+        if (state.garmentType === 'skirt' && typeof renderSkirtStyleCatalog === 'function') {
+            renderSkirtStyleCatalog();
+        } else if (state.garmentType === 'dress' && typeof renderDressActiveDetails === 'function') {
+            renderDressActiveDetails();
+        } else if (state.garmentType === 'panties' && typeof renderPantiesActiveDetails === 'function') {
+            renderPantiesActiveDetails();
+        }
+    }
 }
 
 // --- МОДЕЛИРОВАНИЕ ФАСОНОВ ---
@@ -171,6 +181,9 @@ function setDartPosition(pos) {
             btn.className = "dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
         }
     });
+    if (typeof renderDressActiveDetails === 'function') {
+        renderDressActiveDetails();
+    }
     renderPattern();
 }
 
@@ -263,6 +276,9 @@ function toggleFitHeatmap() {
 }
 
 function updateFitIndicatorUI(g) {
+    if (!g || state.garmentType !== 'dress' || !g.bustFitLabel) {
+        return;
+    }
     const badgeCategory = document.getElementById('fit-category-badge');
     const badgeCategoryDesc = document.getElementById('fit-category-desc');
     if (badgeCategory) {
@@ -626,30 +642,42 @@ function setGarmentType(type) {
     if (skirtStyle) skirtStyle.classList.toggle('hidden', type !== 'skirt');
     if (pantiesStyle) pantiesStyle.classList.toggle('hidden', type !== 'panties');
 
+    if (type === 'skirt' && typeof renderSkirtStyleCatalog === 'function') {
+        renderSkirtStyleCatalog();
+    } else if (type === 'dress' && typeof renderDressActiveDetails === 'function') {
+        renderDressActiveDetails();
+    } else if (type === 'panties' && typeof renderPantiesActiveDetails === 'function') {
+        renderPantiesActiveDetails();
+    }
+
     resetView();
     renderPattern();
 
-    const titleRu = type === 'skirt' ? '🩱 Выбрана Юбка (А-силуэт, клеш, прямая)' : (type === 'panties' ? '🩲 Выбраны Женские трусики' : '👗 Выбрано Платье / Блуза');
+    const titleRu = type === 'skirt' ? '🩱 Выбрана Юбка (А-силуэт, клеш, прямая, мини)' : (type === 'panties' ? '🩲 Выбраны Женские трусики' : '👗 Выбрано Платье / Блуза');
     showNotification(titleRu);
 }
 
 function setSkirtStyle(style) {
-    state.skirtStyle = style;
-    document.querySelectorAll('.skirt-style-btn').forEach(btn => {
-        const isActive = btn.dataset.style === style;
-        btn.className = isActive
-            ? "skirt-style-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
-            : "skirt-style-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
-    });
-    renderPattern();
+    if (typeof selectSkirtStyle === 'function') {
+        const info = (typeof getStyleInfo === 'function') ? getStyleInfo('skirt', style) : null;
+        selectSkirtStyle(style, info ? info.recLength : 60);
+    } else {
+        state.skirtStyle = style;
+        renderPattern();
+    }
 }
 
 function setSkirtLength(val) {
     state.skirtLength = Number(val);
     const numEl = document.getElementById('num-skirtLength');
     const rngEl = document.getElementById('rng-skirtLength');
+    const lblEl = document.getElementById('label-skirtLength');
     if (numEl && document.activeElement !== numEl) numEl.value = val;
     if (rngEl && document.activeElement !== rngEl) rngEl.value = val;
+    if (lblEl) lblEl.textContent = val + ' см';
+    if (typeof renderSkirtActiveDetails === 'function') {
+        renderSkirtActiveDetails();
+    }
     renderPattern();
 }
 
@@ -672,6 +700,9 @@ function setPantiesModel(model) {
             ? "panties-model-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
             : "panties-model-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
     });
+    if (typeof renderPantiesActiveDetails === 'function') {
+        renderPantiesActiveDetails();
+    }
     renderPattern();
 }
 

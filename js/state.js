@@ -39,8 +39,8 @@ const state = {
     garmentType: 'dress',
 
     // Моделирование юбок
-    skirtLength: 60,          // Длина юбки (см: 35..105)
-    skirtStyle: 'a-line',     // 'a-line' (Трапеция) | 'half-sun' (Полусолнце) | 'sun' (Солнце) | 'straight' (Прямая) | 'pencil' (Карандаш)
+    skirtLength: 60,          // Длина юбки (см: 30..105)
+    skirtStyle: 'a-line',     // 'mini-trapeze' | 'mini-pleated' | 'mini-wrap' | 'mini-slit' | 'mini-skater' | 'a-line' | 'half-sun' | 'sun' | 'straight' | 'pencil'
     skirtRise: 'natural',     // 'natural' (на талии) | 'low' (на бедрах) | 'high' (высокая корсетная)
     skirtPt: 1.0,             // Прибавка по талии для юбки (см)
     skirtPb: 2.0,             // Прибавка по бедрам для юбки (см)

@@ -28,7 +28,7 @@ function getSkirtPieceExportData(pieceType) {
         return {
             minX, minY, widthMm, heightMm, contentSvg,
             fileTitle: `yubka_${g.style}_OT${state.ot}`,
-            pieceLabelRu: `${g.isSun ? 'Юбка Солнце' : 'Юбка Полусолнце'} (От ${state.ot})`
+            pieceLabelRu: `${g.isSun ? 'Юбка Солнце (360°)' : (g.isSkater ? 'Мини-скейтер клеш (270°)' : 'Юбка Полусолнце (180°)')} (От ${state.ot})`
         };
     }
 
@@ -44,6 +44,10 @@ function getSkirtPieceExportData(pieceType) {
                 <text x="14" y="${(g.skirtLength * 0.5) * CM}" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#09090b" transform="rotate(-90 14 ${(g.skirtLength * 0.5) * CM})">[ СГИБ ТКАНИ ]</text>
                 <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#09090b">ЗАДНЕЕ ПОЛОТНИЩЕ ЮБКИ</text>
                 <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb + 1) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#3f3f46">1 дет. со сгибом | От=${g.ot} | Об=${g.ob} | Дю=${g.skirtLength}</text>
+                ${g.isPleated ? `
+                    <line x1="0" y1="${g.yokeHeight * CM}" x2="${g.X_side * CM}" y2="${g.yokeHeight * CM}" stroke="#4f46e5" stroke-width="1.2" stroke-dasharray="4,3"/>
+                    <text x="${(g.X_side * 0.5) * CM}" y="${(g.yokeHeight - 1.2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#4f46e5">ЛИНИЯ КОКЕТКИ (ниже — складки плиссе)</text>
+                ` : ''}
             </g>
         `;
         return {
@@ -52,7 +56,7 @@ function getSkirtPieceExportData(pieceType) {
             pieceLabelRu: `Заднее полотнище юбки (От ${state.ot}, Об ${state.ob})`
         };
     } else if (pieceType === 'front') {
-        const frontW = Math.ceil((g.W_grid - g.X_side + Math.max(0, -g.flareOffset)) * CM) + 40;
+        const frontW = Math.ceil((g.W_grid - g.X_side + Math.max(0, -g.flareOffset) + (g.isWrap ? g.wrapOverlap : 0)) * CM) + 40;
         const frontH = Math.ceil(g.skirtLength * CM) + 40;
         const minX = Math.floor(g.F_waist_side.x * CM) - 20;
         const minY = -20;
@@ -63,6 +67,19 @@ function getSkirtPieceExportData(pieceType) {
                 <text x="${(g.W_grid * CM) - 14}" y="${(g.skirtLength * 0.5) * CM}" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#09090b" transform="rotate(-90 ${(g.W_grid * CM) - 14} ${(g.skirtLength * 0.5) * CM})">[ СГИБ ТКАНИ ]</text>
                 <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#09090b">ПЕРЕДНЕЕ ПОЛОТНИЩЕ ЮБКИ</text>
                 <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb + 1) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#3f3f46">1 дет. со сгибом | От=${g.ot} | Об=${g.ob} | Дю=${g.skirtLength}</text>
+                ${g.hasSlit ? `
+                    <line x1="${g.F_dart_apex.x * CM}" y1="${g.F_hem_side.y * CM}" x2="${g.F_dart_apex.x * CM}" y2="${(g.skirtLength - g.slitHeight) * CM}" stroke="#e11d48" stroke-width="2.0" stroke-dasharray="4,2"/>
+                    <circle cx="${g.F_dart_apex.x * CM}" cy="${(g.skirtLength - g.slitHeight) * CM}" r="3" fill="#e11d48"/>
+                    <text x="${g.F_dart_apex.x * CM + 6}" y="${(g.skirtLength - g.slitHeight * 0.45) * CM}" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">✂ РАЗРЕЗ ${g.slitHeight.toFixed(0)} см</text>
+                ` : ''}
+                ${g.isWrap ? `
+                    <path d="M ${g.W_grid * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} ${(g.skirtLength - 5) * CM} L ${g.W_grid * CM} ${g.skirtLength * CM} Z" fill="none" stroke="#d97706" stroke-width="1.6" stroke-dasharray="5,3"/>
+                    <text x="${(g.W_grid + g.wrapOverlap * 0.5) * CM}" y="${(g.skirtLength * 0.5) * CM}" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#d97706" transform="rotate(-90 ${(g.W_grid + g.wrapOverlap * 0.5) * CM} ${(g.skirtLength * 0.5) * CM})">[ ЗАПАХ +${g.wrapOverlap} см ]</text>
+                ` : ''}
+                ${g.isPleated ? `
+                    <line x1="${g.X_side * CM}" y1="${g.yokeHeight * CM}" x2="${g.W_grid * CM}" y2="${g.yokeHeight * CM}" stroke="#4f46e5" stroke-width="1.2" stroke-dasharray="4,3"/>
+                    <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.yokeHeight - 1.2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#4f46e5">ЛИНИЯ КОКЕТКИ (ниже — складки плиссе)</text>
+                ` : ''}
             </g>
         `;
         return {

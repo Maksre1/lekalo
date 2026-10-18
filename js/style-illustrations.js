@@ -1,0 +1,687 @@
+// js/style-illustrations.js - Каталог фасонов, фэшн-иллюстрации и векторные эскизы
+// Содержит подробные данные о каждом фасоне: силуэт, расход, ткани, время пошива и превью
+
+const STYLE_CATALOG = {
+    skirt: [
+        // --- МИНИ-ЮБКИ ---
+        {
+            id: 'mini-trapeze',
+            name: 'Мини-трапеция',
+            category: 'mini',
+            badge: 'Хит',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: 'img/styles/skirt_mini_aline.jpg',
+            recLength: 40,
+            summary: 'Короткая юбка А-силуэта с идеальным балансом расклешения. Визуально удлиняет ноги и отлично держит форму.',
+            fabrics: 'Плотный хлопок, твид, деним, вельвет, экокожа, костюмная шерсть',
+            difficulty: 'Легко (для начинающих)',
+            time: '1.5 – 2 часа',
+            cutTip: 'Раскрой в сгиб ткани, переднее и заднее полотнища + пояс со сгибом',
+            vectorType: 'mini-trapeze'
+        },
+        {
+            id: 'mini-pleated',
+            name: 'Теннисная плиссе',
+            category: 'mini',
+            badge: 'Тренд',
+            badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            image: 'img/styles/skirt_mini_pleated.jpg',
+            recLength: 38,
+            summary: 'Стильная мини-юбка с кокеткой по бедрам и круговыми складками. Знаковый фасон preppy и теннисного стиля.',
+            fabrics: 'Костюмная поливискоза с шерстью, габардин, хлопковый твил (ткани, хорошо держащие стрелки складок)',
+            difficulty: 'Средняя (требуется аккуратная заутюжка)',
+            time: '2.5 – 3 часа',
+            cutTip: 'Кокетка по фигуре + широкая полоса ткани в складку (коэффициент 1:3)',
+            vectorType: 'mini-pleated'
+        },
+        {
+            id: 'mini-wrap',
+            name: 'Мини с запахом',
+            category: 'mini',
+            badge: 'Модель 2026',
+            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+            image: 'img/styles/skirt_mini_wrap.jpg',
+            recLength: 40,
+            summary: 'Асимметричная мини-юбка с диагональным запахом и застежкой на пуговицы. Очень комфортна при ходьбе.',
+            fabrics: 'Шерстяной твид, лен, плотный хлопок, микровельвет, замша',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Переднее полотнище с увеличенным нахлестом +12 см',
+            vectorType: 'mini-wrap'
+        },
+        {
+            id: 'mini-slit',
+            name: 'Мини с разрезом',
+            category: 'mini',
+            badge: 'Элегантно',
+            badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
+            image: null,
+            recLength: 40,
+            summary: 'Прямая короткая юбка с аккуратным вертикальным разрезом по ноге (8-10 см). Минимализм и женственность.',
+            fabrics: 'Костюмная ткань, деним, экокожа, плотный трикотаж понте-рома',
+            difficulty: 'Легко',
+            time: '1.5 часа',
+            cutTip: 'Разрез по вертикали передней вытачки с аккуратной закрепкой',
+            vectorType: 'mini-slit'
+        },
+        {
+            id: 'mini-skater',
+            name: 'Мини-скейтер (клеш)',
+            category: 'mini',
+            badge: 'Легкий пошив',
+            badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            image: null,
+            recLength: 40,
+            summary: 'Летящая короткая юбка-солнце с пышными фалдами. Кружащийся романтичный силуэт.',
+            fabrics: 'Неопрен, хлопок, шелк, легкая шерсть, плательная вискоза',
+            difficulty: 'Очень легко (без боковых вытачек)',
+            time: '1 час',
+            cutTip: 'Круговой раскрой без вытачек, пояс на резинке или притачной',
+            vectorType: 'mini-skater'
+        },
+
+        // --- МИДИ И МАКСИ ---
+        {
+            id: 'a-line',
+            name: 'Трапеция миди',
+            category: 'midi',
+            badge: 'База',
+            badgeColor: 'bg-blue-100 text-blue-700 border-blue-200',
+            image: null,
+            recLength: 65,
+            summary: 'Универсальная миди-юбка А-силуэта. Подходит для любого типа фигуры, скрывает бедра и подчеркивает талию.',
+            fabrics: 'Лен, шерсть, деним, хлопок, вельвет',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Расклешение +6.5 см по боковому срезу',
+            vectorType: 'a-line'
+        },
+        {
+            id: 'half-sun',
+            name: 'Полусолнце',
+            category: 'midi',
+            badge: 'Хит',
+            badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            image: null,
+            recLength: 65,
+            summary: 'Струящаяся юбка с мягкими складками, экономнее юбки-солнце по расходу ткани.',
+            fabrics: 'Штапель, вискоза, плательная шерсть, шелк, лен',
+            difficulty: 'Легко',
+            time: '1.5 часа',
+            cutTip: 'Раскрой по дуге 180 градусов, один или два шва',
+            vectorType: 'half-sun'
+        },
+        {
+            id: 'sun',
+            name: 'Солнце (360°)',
+            category: 'midi',
+            badge: 'Праздничный',
+            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+            image: null,
+            recLength: 65,
+            summary: 'Максимально пышная юбка с волнами по всему кругу. Идеальна для танцев и вечерних образов.',
+            fabrics: 'Шифон, тафта, шелк, фатин, тонкий хлопок',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Круг 360 градусов, выравнивание подола на фигуре',
+            vectorType: 'sun'
+        },
+        {
+            id: 'pencil',
+            name: 'Карандаш',
+            category: 'midi',
+            badge: 'Офис',
+            badgeColor: 'bg-stone-100 text-stone-700 border-stone-200',
+            image: null,
+            recLength: 65,
+            summary: 'Облегающая юбка с заужением книзу и шлицей сзади для свободы шага.',
+            fabrics: 'Костюмная шерсть с эластаном, плотный твид, экокожа',
+            difficulty: 'Средняя (обработка шлицы и потайной молнии)',
+            time: '2.5 часа',
+            cutTip: 'Заужение -3.2 см к низу, шлица 18-20 см сзади',
+            vectorType: 'pencil'
+        },
+        {
+            id: 'straight',
+            name: 'Прямая классика',
+            category: 'midi',
+            badge: 'Основа',
+            badgeColor: 'bg-stone-100 text-stone-700 border-stone-200',
+            image: null,
+            recLength: 60,
+            summary: 'Базовая прямая юбка ЦНИИШП со шлицей сзади. Идеальная основа для любого гардероба.',
+            fabrics: 'Любые костюмные и плательные ткани',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Прямой боковой срез, вытачки 50/32/18%',
+            vectorType: 'straight'
+        }
+    ],
+
+    panties: [
+        {
+            id: 'slips',
+            name: 'Слипы',
+            badge: 'База',
+            badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            image: null,
+            summary: 'Самый удобный анатомический фасон на каждый день. Закрытая спинка и комфортный вырез по ноге.',
+            fabrics: 'Кулирная гладь с лайкрой (95% хлопок, 5% эластан), микрофибра, модал',
+            difficulty: 'Очень легко',
+            time: '30 минут',
+            cutTip: 'Расход 30-35 см ткани, шьется эластичным зигзагом или оверлоком',
+            vectorType: 'panties-slips'
+        },
+        {
+            id: 'braziliana',
+            name: 'Бразилиана',
+            badge: 'Хит',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Кокетливый фасон с соблазнительным V-образным вырезом сзади, открывающим половину ягодиц.',
+            fabrics: 'Эластичное кружево, микрофибра, шелковый трикотаж',
+            difficulty: 'Легко',
+            time: '30 минут',
+            cutTip: 'Спинка со сгибом или со швом для красивой отделки кружевом',
+            vectorType: 'panties-braziliana'
+        },
+        {
+            id: 'high-waist',
+            name: 'Высокие ретро',
+            badge: 'Тренд',
+            badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
+            image: null,
+            summary: 'Винтажный силуэт с посадкой до талии/пупка. Эффектно моделирует фигуру и поддерживает живот.',
+            fabrics: 'Утягивающий трикотаж, плотный хлопковый трикотаж, кружево',
+            difficulty: 'Легко',
+            time: '40 минут',
+            cutTip: 'Высокая талия, мягкая эластичная тесьма или бейка',
+            vectorType: 'panties-high-waist'
+        },
+        {
+            id: 'thong',
+            name: 'Стринги',
+            badge: 'Минимум',
+            badgeColor: 'bg-stone-100 text-stone-700 border-stone-200',
+            image: null,
+            summary: 'Минималистичные трусики с узкой задней планкой. Незаметны под облегающей одеждой.',
+            fabrics: 'Микрофибра, тонкое кружево, бельевой эластан',
+            difficulty: 'Легко',
+            time: '25 минут',
+            cutTip: 'Минимальный расход — всего 20 см ткани',
+            vectorType: 'panties-thong'
+        }
+    ],
+
+    dress: [
+        {
+            id: 'shoulder',
+            name: 'В плечевой шов',
+            badge: 'База ЦНИИШП',
+            badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            image: null,
+            summary: 'Классическая плечевая вытачка базовой конструкции. Идеальна под пиджак или жакет.',
+            fabrics: 'Костюмная шерсть, хлопок, лен, вискоза',
+            vectorType: 'dress-shoulder'
+        },
+        {
+            id: 'side',
+            name: 'Французская (в бок)',
+            badge: 'Хит',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Вытачка переведена в боковой шов под пройму. Плечи остаются абсолютно чистыми.',
+            fabrics: 'Плательный шелк, креп, вискоза, батист',
+            vectorType: 'dress-side'
+        },
+        {
+            id: 'waist',
+            name: 'В талию',
+            badge: 'Силуэт',
+            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+            summary: 'Вертикальная вытачка из линии талии. Подчеркивает изгиб фигуры и создает эффект осиной талии.',
+            fabrics: 'Плотный хлопок, деним, жаккард',
+            vectorType: 'dress-waist'
+        },
+        {
+            id: 'armhole',
+            name: 'В пройму',
+            badge: 'Рельеф',
+            badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            summary: 'Плавная изогнутая вытачка из проймы рукава. Изящный женственный рельеф.',
+            fabrics: 'Тонкая шерсть, плательный лен, креп-шифон',
+            vectorType: 'dress-armhole'
+        }
+    ]
+};
+
+// Генератор точных векторных фэшн-эскизов (SVG)
+function getStyleVectorSvg(type, size = 64) {
+    const stroke = '#18181b';
+    const strokeWidth = 1.6;
+    const fill = '#f8fafc';
+    const accent = '#6366f1';
+
+    let content = '';
+
+    switch (type) {
+        case 'mini-trapeze':
+            content = `
+                <!-- Мини-трапеция -->
+                <path d="M 28 20 L 52 20 L 52 26 L 28 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 26 L 19 66 Q 40 70 61 66 L 52 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Вытачки -->
+                <line x1="34" y1="26" x2="34" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="46" y1="26" x2="46" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+                <!-- Подгибка -->
+                <path d="M 21 62 Q 40 66 59 62" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3,2" fill="none"/>
+            `;
+            break;
+
+        case 'mini-pleated':
+            content = `
+                <!-- Теннисная юбка плиссе -->
+                <path d="M 28 18 L 52 18 L 52 23 L 28 23 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Кокетка -->
+                <path d="M 28 23 L 52 23 L 55 35 L 25 35 Z" fill="#f1f5f9" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Складки плиссе -->
+                <path d="M 25 35 L 17 68 Q 40 72 63 68 L 55 35 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <line x1="29" y1="35" x2="23" y2="69" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="34" y1="35" x2="30" y2="70" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="40" y1="35" x2="40" y2="70.5" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="46" y1="35" x2="50" y2="70" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="51" y1="35" x2="57" y2="69" stroke="${stroke}" stroke-width="1.1"/>
+            `;
+            break;
+
+        case 'mini-wrap':
+            content = `
+                <!-- Мини с запахом -->
+                <path d="M 27 20 L 53 20 L 53 25 L 27 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Нижнее полотнище -->
+                <path d="M 27 25 L 20 66 L 50 66 L 53 25 Z" fill="#f1f5f9" stroke="${stroke}" stroke-width="1.1"/>
+                <!-- Верхний запах с диагональю -->
+                <path d="M 27 25 L 53 25 L 60 62 L 32 68 L 22 45 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Пуговицы на поясе -->
+                <circle cx="31" cy="22.5" r="1.3" fill="${accent}"/>
+                <circle cx="35" cy="22.5" r="1.3" fill="${accent}"/>
+            `;
+            break;
+
+        case 'mini-slit':
+            content = `
+                <!-- Мини с разрезом -->
+                <path d="M 28 20 L 52 20 L 52 26 L 28 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 26 L 24 66 L 56 66 L 52 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Вытачки -->
+                <line x1="34" y1="26" x2="34" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="46" y1="26" x2="46" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+                <!-- Разрез на ноге -->
+                <line x1="46" y1="66" x2="46" y2="52" stroke="#e11d48" stroke-width="1.6"/>
+                <circle cx="46" cy="51" r="1.5" fill="#e11d48"/>
+            `;
+            break;
+
+        case 'mini-skater':
+            content = `
+                <!-- Мини-скейтер / клеш -->
+                <path d="M 28 20 L 52 20 L 52 25 L 28 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 25 Q 12 50 14 65 Q 26 73 40 70 Q 54 73 66 65 Q 68 50 52 25 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Волны клеша -->
+                <path d="M 28 25 Q 27 48 26 71" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
+                <path d="M 40 25 Q 40 48 40 70" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
+                <path d="M 52 25 Q 53 48 54 71" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
+            `;
+            break;
+
+        case 'a-line':
+            content = `
+                <!-- Трапеция миди -->
+                <path d="M 29 18 L 51 18 L 51 23 L 29 23 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 29 23 L 14 74 Q 40 78 66 74 L 51 23 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <line x1="35" y1="23" x2="35" y2="39" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="45" y1="23" x2="45" y2="39" stroke="${stroke}" stroke-width="1.1"/>
+                <path d="M 16 70 Q 40 74 64 70" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3,2" fill="none"/>
+            `;
+            break;
+
+        case 'half-sun':
+        case 'sun':
+            content = `
+                <!-- Солнце / полусолнце -->
+                <path d="M 30 18 L 50 18 L 50 23 L 30 23 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 30 23 Q 8 48 10 74 Q 25 80 40 77 Q 55 80 70 74 Q 72 48 50 23 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Складки солнца -->
+                <path d="M 25 76 Q 30 45 35 23" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
+                <path d="M 40 77 Q 40 50 40 23" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
+                <path d="M 55 76 Q 50 45 45 23" stroke="#94a3b8" stroke-width="0.9" fill="none"/>
+            `;
+            break;
+
+        case 'pencil':
+            content = `
+                <!-- Карандаш миди -->
+                <path d="M 30 18 L 50 18 L 50 24 L 30 24 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 30 24 Q 24 35 25 45 L 29 74 L 51 74 L 55 45 Q 56 35 50 24 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <line x1="35" y1="24" x2="35" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="45" y1="24" x2="45" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+                <!-- Шлица сзади -->
+                <line x1="40" y1="74" x2="40" y2="60" stroke="#64748b" stroke-width="1.1" stroke-dasharray="3,2"/>
+            `;
+            break;
+
+        case 'straight':
+            content = `
+                <!-- Прямая классическая -->
+                <path d="M 30 18 L 50 18 L 50 24 L 30 24 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 30 24 Q 25 35 26 45 L 26 74 L 54 74 L 54 45 Q 55 35 50 24 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <line x1="35" y1="24" x2="35" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+                <line x1="45" y1="24" x2="45" y2="38" stroke="${stroke}" stroke-width="1.1"/>
+            `;
+            break;
+
+        case 'panties-slips':
+            content = `
+                <!-- Трусики слипы -->
+                <path d="M 20 28 Q 40 29 60 28 L 59 36 Q 47 48 44 60 L 36 60 Q 33 48 21 36 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Ластовица пунктир -->
+                <path d="M 35 52 Q 40 53 45 52" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="2,2"/>
+                <!-- Эластичная отделка -->
+                <path d="M 20 28 Q 40 29 60 28" stroke="${accent}" stroke-width="1.2" fill="none"/>
+            `;
+            break;
+
+        case 'panties-braziliana':
+            content = `
+                <!-- Бразилиана с V-вырезом -->
+                <path d="M 18 28 Q 40 32 62 28 L 61 34 Q 45 42 42 61 L 38 61 Q 35 42 19 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 18 28 Q 40 32 62 28" stroke="#f43f5e" stroke-width="1.3" fill="none"/>
+                <!-- V-линия сзади -->
+                <path d="M 40 32 L 40 55" stroke="#f43f5e" stroke-width="0.8" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'panties-high-waist':
+            content = `
+                <!-- Ретро высокая талия -->
+                <path d="M 23 16 Q 40 17 57 16 L 58 35 Q 48 46 44 62 L 36 62 Q 32 46 22 35 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <line x1="23" y1="16" x2="57" y2="16" stroke="${accent}" stroke-width="1.4"/>
+                <!-- Вертикальные рельефы -->
+                <line x1="33" y1="18" x2="31" y2="40" stroke="#cbd5e1" stroke-width="0.8"/>
+                <line x1="47" y1="18" x2="49" y2="40" stroke="#cbd5e1" stroke-width="0.8"/>
+            `;
+            break;
+
+        case 'panties-thong':
+            content = `
+                <!-- Стринги -->
+                <path d="M 16 28 Q 40 32 64 28 L 63 32 Q 44 38 42 62 L 38 62 Q 36 38 17 32 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <line x1="16" y1="28" x2="64" y2="28" stroke="${stroke}" stroke-width="1.2"/>
+            `;
+            break;
+
+        case 'dress-shoulder':
+            content = `
+                <!-- Платье: вытачка в плечо -->
+                <path d="M 26 18 Q 40 24 54 18 L 59 34 L 54 36 L 52 48 L 52 74 L 28 74 L 28 48 L 26 36 L 21 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Плечевая вытачка -->
+                <line x1="45" y1="19.5" x2="41" y2="38" stroke="#2563eb" stroke-width="1.6"/>
+            `;
+            break;
+
+        case 'dress-side':
+            content = `
+                <!-- Платье: французская вытачка -->
+                <path d="M 26 18 Q 40 24 54 18 L 59 34 L 54 36 L 52 48 L 52 74 L 28 74 L 28 48 L 26 36 L 21 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Французская вытачка под проймой -->
+                <line x1="53" y1="41" x2="41" y2="38" stroke="#e11d48" stroke-width="1.6"/>
+            `;
+            break;
+
+        case 'dress-waist':
+            content = `
+                <!-- Платье: вытачка в талию -->
+                <path d="M 26 18 Q 40 24 54 18 L 59 34 L 54 36 L 52 48 L 52 74 L 28 74 L 28 48 L 26 36 L 21 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Талиевая вытачка -->
+                <line x1="41" y1="48" x2="41" y2="38" stroke="#d97706" stroke-width="1.6"/>
+            `;
+            break;
+
+        case 'dress-armhole':
+            content = `
+                <!-- Платье: вытачка в пройму -->
+                <path d="M 26 18 Q 40 24 54 18 L 59 34 L 54 36 L 52 48 L 52 74 L 28 74 L 28 48 L 26 36 L 21 34 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Вытачка из проймы -->
+                <path d="M 52 28 Q 45 32 41 38" stroke="#059669" stroke-width="1.6" fill="none"/>
+            `;
+            break;
+
+        default:
+            content = `<rect x="25" y="25" width="30" height="30" fill="#e2e8f0" stroke="${stroke}"/>`;
+    }
+
+    return `
+        <svg viewBox="0 0 80 84" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" class="block shrink-0 drop-shadow-sm">
+            <rect width="80" height="84" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+            ${content}
+        </svg>
+    `;
+}
+
+// Возвращает объект описания фасона по ID
+function getStyleInfo(garmentType, styleId) {
+    const list = STYLE_CATALOG[garmentType] || [];
+    return list.find(item => item.id === styleId) || list[0];
+}
+
+// --- ИНТЕРАКТИВНЫЙ КАТАЛОГ И ИЛЛЮСТРАЦИИ В ИНТЕРФЕЙСЕ ---
+
+function renderSkirtStyleCatalog() {
+    const container = document.getElementById('skirt-catalog-container');
+    if (!container) return;
+
+    const styles = STYLE_CATALOG.skirt;
+    const miniStyles = styles.filter(s => s.category === 'mini');
+    const midiStyles = styles.filter(s => s.category === 'midi');
+
+    const renderCard = (item) => {
+        const isActive = state.skirtStyle === item.id;
+        const visualContent = item.image
+            ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+               <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>`
+            : `<div class="w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>`;
+
+        return `
+            <div onclick="selectSkirtStyle('${item.id}', ${item.recLength})"
+                 data-skirt-style="${item.id}"
+                 class="skirt-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
+                <div class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative">
+                    ${visualContent}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
+                        <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border shrink-0 ${item.badgeColor}">${item.badge}</span>
+                    </div>
+                    <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-400">
+                        <span class="text-stone-600 font-medium">⏱ ${item.time}</span>
+                        <span>•</span>
+                        <span class="text-indigo-700 font-bold bg-indigo-50 border border-indigo-100 px-1 py-0.2 rounded">~${item.recLength} см</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    container.innerHTML = `
+        <!-- Секция: МИНИ-ЮБКИ -->
+        <div class="space-y-2">
+            <div class="flex items-center justify-between border-b border-rose-100 pb-1">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
+                    <span>🔥 МИНИ-ЮБКИ (30 – 45 см)</span>
+                </div>
+                <span class="text-[10px] text-rose-500 font-medium">5 моделей</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+                ${miniStyles.map(renderCard).join('')}
+            </div>
+        </div>
+
+        <!-- Секция: МИДИ И МАКСИ -->
+        <div class="space-y-2 pt-2">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-1">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
+                    <span>👗 МИДИ И МАКСИ (50 – 100 см)</span>
+                </div>
+                <span class="text-[10px] text-stone-400 font-medium">5 моделей</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+                ${midiStyles.map(renderCard).join('')}
+            </div>
+        </div>
+    `;
+
+    renderSkirtActiveDetails();
+}
+
+function renderSkirtActiveDetails() {
+    const target = document.getElementById('skirt-active-details');
+    if (!target) return;
+
+    const info = getStyleInfo('skirt', state.skirtStyle);
+    if (!info) return;
+
+    const curLen = Number(state.skirtLength) || 60;
+    const isLenDiff = Math.abs(curLen - info.recLength) > 4;
+
+    const visual = info.image
+        ? `<div class="relative w-24 h-28 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm shrink-0 bg-stone-100">
+               <img src="${info.image}" alt="${info.name}" class="w-full h-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+               <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 84)}</div>
+           </div>`
+        : `<div class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 84)}</div>`;
+
+    target.innerHTML = `
+        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2.5">
+            <div class="flex items-start gap-3">
+                ${visual}
+                <div class="flex-1 min-w-0 space-y-1">
+                    <div class="flex items-center justify-between gap-1 flex-wrap">
+                        <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
+                        <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                    </div>
+                    <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
+                    <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
+                        <div><b>🧵 Ткани:</b> ${info.fabrics}</div>
+                        <div><b>✂ Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-stone-600 font-medium">
+                            <span><b>Сложность:</b> ${info.difficulty}</span>
+                            <span>•</span>
+                            <span><b>Пошив:</b> ${info.time}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            ${isLenDiff ? `
+                <div class="flex items-center justify-between bg-white/95 border border-amber-300 rounded-xl p-2 text-[11px] shadow-xs">
+                    <span class="text-amber-900 font-medium">Длина на лекале <b>${curLen} см</b> (для этого фасона советуем <b>${info.recLength} см</b>)</span>
+                    <button onclick="setSkirtLength(${info.recLength}); renderSkirtActiveDetails();" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-[10px] transition shrink-0 ml-2 shadow-xs cursor-pointer">
+                        ⚡ Сделать ${info.recLength} см
+                    </button>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+function selectSkirtStyle(styleId, recLength) {
+    state.skirtStyle = styleId;
+    const info = getStyleInfo('skirt', styleId);
+
+    // Если переключились на мини-юбку и текущая длина > 50 см, авто-адаптируем длину под мини
+    if (info && info.category === 'mini' && state.skirtLength > 50) {
+        state.skirtLength = recLength || info.recLength || 40;
+        const numEl = document.getElementById('num-skirtLength');
+        const rngEl = document.getElementById('rng-skirtLength');
+        const lblEl = document.getElementById('label-skirtLength');
+        if (numEl) numEl.value = state.skirtLength;
+        if (rngEl) rngEl.value = state.skirtLength;
+        if (lblEl) lblEl.textContent = state.skirtLength + ' см';
+    }
+
+    // Подсветка карточек каталога
+    document.querySelectorAll('[data-skirt-style]').forEach(el => {
+        const isMatch = el.dataset.skirtStyle === styleId;
+        el.className = `skirt-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isMatch ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}`;
+    });
+
+    renderSkirtActiveDetails();
+    renderPattern();
+    if (typeof showNotification === 'function') {
+        showNotification(`Выбран фасон: ${info ? info.name : styleId}`);
+    }
+}
+
+function renderPantiesActiveDetails() {
+    const target = document.getElementById('panties-active-details');
+    if (!target) return;
+
+    const info = getStyleInfo('panties', state.pantiesModel || 'slips');
+    if (!info) return;
+
+    target.innerHTML = `
+        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2">
+            <div class="flex items-start gap-3">
+                <div class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center">
+                    ${getStyleVectorSvg(info.vectorType, 72)}
+                </div>
+                <div class="flex-1 min-w-0 space-y-1">
+                    <div class="flex items-center justify-between gap-1 flex-wrap">
+                        <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
+                        <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                    </div>
+                    <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
+                    <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
+                        <div><b>🧵 Ткани:</b> ${info.fabrics}</div>
+                        <div><b>✂ Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-stone-600 font-medium">
+                            <span><b>Сложность:</b> ${info.difficulty}</span>
+                            <span>•</span>
+                            <span><b>Пошив:</b> ${info.time}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderDressActiveDetails() {
+    const target = document.getElementById('dress-active-details');
+    if (!target) return;
+
+    const info = getStyleInfo('dress', state.dartPosition || 'shoulder');
+    if (!info) return;
+
+    target.innerHTML = `
+        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2">
+            <div class="flex items-start gap-3">
+                <div class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center">
+                    ${getStyleVectorSvg(info.vectorType, 72)}
+                </div>
+                <div class="flex-1 min-w-0 space-y-1">
+                    <div class="flex items-center justify-between gap-1 flex-wrap">
+                        <h4 class="text-xs font-bold text-indigo-950">Вытачка: ${info.name}</h4>
+                        <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                    </div>
+                    <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
+                    <div class="text-[10px] text-stone-500 pt-0.5">
+                        <b>🧵 Рекомендуемые ткани:</b> ${info.fabrics}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
