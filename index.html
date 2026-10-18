@@ -29,7 +29,7 @@
         </div>
 
         <!-- Единый переключатель изделия в шапке (Floating Pill Segmented Control) -->
-        <div class="flex items-center justify-center p-1 rounded-full bg-[#FAF8F5] border border-[#F0ECE1] shadow-xs">
+        <div data-tour="garment-selector" class="flex items-center justify-center p-1 rounded-full bg-[#FAF8F5] border border-[#F0ECE1] shadow-xs">
             <button onclick="setGarmentType('dress')" id="header-garment-dress" class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-[#E05A47] text-white shadow-xs transition flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                 <span>Платье / Топ</span>
@@ -44,11 +44,17 @@
             </button>
         </div>
 
-        <!-- Правая часть: Мои мерки (Popover), ГОСТ размеры и кнопка Экспорта -->
-        <div class="flex items-center gap-2.5">
+        <!-- Правая часть: Обучение, Мои мерки (Popover), ГОСТ размеры и кнопка Экспорта -->
+        <div class="flex items-center gap-2 sm:gap-2.5">
+            <!-- Кнопка интерактивного обучения -->
+            <button onclick="startOnboardingTour()" class="px-2.5 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Интерактивный тур: как работает конструктор">
+                <i data-lucide="compass" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                <span class="hidden sm:inline">Обучение</span>
+            </button>
+
             <!-- Выпадающее Popover-меню «Мои мерки» -->
             <div class="relative">
-                <button onclick="toggleProfilePopover()" id="btn-my-profile" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Управление профилем мерок">
+                <button onclick="toggleProfilePopover()" id="btn-my-profile" data-tour="profile-menu" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Управление профилем мерок">
                     <i data-lucide="user" class="w-3.5 h-3.5 text-[#E05A47]"></i>
                     <span class="hidden sm:inline">Мои мерки</span>
                     <i data-lucide="chevron-down" class="w-3 h-3 text-[#78716C]"></i>
@@ -106,7 +112,7 @@
             </div>
 
             <!-- Главная кнопка экспорта и печати -->
-            <button onclick="openExportModal()" class="px-3.5 py-1.5 text-xs font-bold bg-[#E05A47] hover:bg-[#D04835] text-white rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+            <button onclick="openExportModal()" data-tour="export-button" class="px-3.5 py-1.5 text-xs font-bold bg-[#E05A47] hover:bg-[#D04835] text-white rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                 <i data-lucide="printer" class="w-4 h-4"></i>
                 <span>Скачать выкройку</span>
             </button>
@@ -133,15 +139,15 @@
 
             <!-- Вкладки управления (4 шага в одну строку, Segmented Control без горизонтального скролла) -->
             <div id="tabs-header-bar" class="grid grid-cols-4 p-1.5 bg-[#FAF8F5] border-b border-[#F0ECE1] gap-1 text-[11px] font-semibold text-[#78716C]">
-                <button onclick="switchTab('measures')" id="tab-measures" class="py-2 rounded-xl bg-white text-[#2C2825] font-bold shadow-xs transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <button onclick="switchTab('measures')" id="tab-measures" data-tour="measures-tab" class="py-2 rounded-xl bg-white text-[#2C2825] font-bold shadow-xs transition flex flex-col items-center justify-center gap-1 cursor-pointer">
                     <i data-lucide="ruler" class="w-4 h-4 text-[#E05A47]"></i>
                     <span>Мерки</span>
                 </button>
-                <button onclick="switchTab('style')" id="tab-style" class="py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <button onclick="switchTab('style')" id="tab-style" data-tour="style-tab" class="py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer">
                     <i data-lucide="sparkles" class="w-4 h-4"></i>
                     <span>Фасон</span>
                 </button>
-                <button onclick="switchTab('fit')" id="tab-fit" class="py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <button onclick="switchTab('fit')" id="tab-fit" data-tour="fit-tab" class="py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer">
                     <i data-lucide="sliders" class="w-4 h-4"></i>
                     <span>Посадка</span>
                 </button>
@@ -751,7 +757,7 @@
         <main id="cad-canvas-container" class="flex-1 flex flex-col relative cad-canvas-bg overflow-hidden h-full">
             
             <!-- Панель управления над холстом: Раздвинуть/Совместить + Зум (Floating Glassmorphic Capsules) -->
-            <div class="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none z-10">
+            <div data-tour="canvas-toolbar" class="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none z-10">
                 <div class="bg-white/90 backdrop-blur-md border border-[#F0ECE1] p-1 rounded-2xl shadow-float flex items-center gap-1 text-xs pointer-events-auto">
                     <button onclick="toggleSeparateMode()" id="btn-separate-mode" class="hover:bg-[#FAF8F5] text-[#2C2825] font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i>
@@ -1123,6 +1129,7 @@
     <script src="js/export-pdf.js"></script>
     <script src="js/style-illustrations.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/onboarding-tour.js"></script>
 
     <script>
         function initApp() {
@@ -1178,6 +1185,11 @@
                 // Преобразуем все иконки Lucide
                 if (window.lucide && typeof lucide.createIcons === 'function') {
                     lucide.createIcons();
+                }
+
+                // Проверка первого визита и предложение пройти онбординг-тур
+                if (typeof OnboardingTour !== 'undefined' && typeof OnboardingTour.checkFirstVisit === 'function') {
+                    OnboardingTour.checkFirstVisit();
                 }
             } catch (err) {
                 console.error('Ошибка инициализации САПР:', err);
