@@ -32,33 +32,54 @@ function calculatePantiesGeometry() {
         sideSeam = Math.min(sideSeam, 4.5);
     } else if (model === 'thong') {
         sideSeam = Math.min(sideSeam, 3.0);
+    } else if (model === 'tie-side-thong') {
+        sideSeam = 0.5; // микро-бока на завязках
+    } else if (model === 'cage-lingerie') {
+        sideSeam = 2.0; // портупеи
     } else if (model === 'strappy') {
         sideSeam = 2.0; // ультра-узкий бок под эластичные стрепы
     } else if (model === 'dolphin-shorts') {
         frontHeight += 3.5;
         backHeight += 3.5;
         sideSeam = 8.0;
+    } else if (model === 'high-leg-bodysuit') {
+        // Цельнокроеное боди с учетом вертикального натяжения торса
+        const dts = Number(state.dts) || 40.0;
+        const vertStretch = Number(state.bodysuitStretchVertical) || 0.90;
+        const torsoH = dts * vertStretch;
+        frontHeight += torsoH * 0.45;
+        backHeight += torsoH * 0.45;
+        sideSeam = 2.0; // ультра-высокий вырез бедра в стиле 90-х
     }
 
+    // Инженерные фичи: V-Cut талия и Scrunch
+    const isVCut = Boolean(state.vCutWaist);
+    const vCutDepth = Number(state.vCutDepth) || 5.0;
+    const isScrunch = Boolean(state.scrunchEffect);
+    const gussetType = state.gussetType || 'classic';
+
     // Ширина верха переда (половина со сгибом)
-    const frontTopHalfW = (obCalc / 4) * (model === 'dolphin-shorts' ? 1.05 : 0.88);
+    const frontWFactor = (model === 'dolphin-shorts') ? 1.05 : (model === 'tie-side-thong' ? 0.65 : (model === 'high-leg-bodysuit' ? 0.85 : 0.88));
+    const frontTopHalfW = (obCalc / 4) * frontWFactor;
+
     // Ширина верха спинки (половина со сгибом)
-    const backTopHalfW = (obCalc / 4) * (model === 'dolphin-shorts' ? 1.10 : 0.94);
+    const backWFactor = (model === 'dolphin-shorts') ? 1.10 : (model === 'tie-side-thong' ? 0.50 : (model === 'high-leg-bodysuit' ? 0.90 : 0.94));
+    const backTopHalfW = (obCalc / 4) * backWFactor;
 
     // Размеры ластовицы (половина со сгибом)
-    const gussetLen = 12.0;
+    const gussetLen = 12.0 + (gussetType === 'buttons' ? 2.0 : 0);
     const gussetFrontHalfW = 3.2; // полная 6.4 см
     const gussetBackHalfW = 3.9;  // полная 7.8 см
 
     // Точки передней детали (Front) - сгиб по X = 0
-    const F_top_center = { x: 0, y: model === 'dolphin-shorts' ? 0 : 1.2 };
-    const F_top_side = { x: frontTopHalfW, y: 0 };
+    const F_top_center = { x: 0, y: (model === 'dolphin-shorts' ? 0 : 1.2) + (isVCut ? vCutDepth : 0) };
+    const F_top_side = { x: frontTopHalfW, y: isVCut ? -1.0 : 0 };
     const F_bot_side = { x: frontTopHalfW - (frontHeight - sideSeam) * 0.22, y: sideSeam };
     const F_gusset_join = { x: gussetFrontHalfW, y: frontHeight };
     const F_gusset_center = { x: 0, y: frontHeight };
 
     // Точки выреза ноги переда (контрольные точки Безье)
-    const legDepthMult = (legCut === 'high' ? 0.35 : (model === 'dolphin-shorts' ? 0.70 : 0.50));
+    const legDepthMult = (legCut === 'high' || model === 'high-leg-bodysuit') ? 0.30 : (model === 'dolphin-shorts' ? 0.70 : 0.50);
     const F_leg_ctrl1 = {
         x: F_bot_side.x * (model === 'dolphin-shorts' ? 0.90 : 0.55),
         y: F_bot_side.y + (frontHeight - F_bot_side.y) * 0.35
@@ -69,15 +90,15 @@ function calculatePantiesGeometry() {
     };
 
     // Точки задней детали (Back) - сгиб по X = 0
-    const B_top_center = { x: 0, y: model === 'dolphin-shorts' ? 0 : -0.8 };
-    const B_top_side = { x: backTopHalfW, y: 0 };
+    const B_top_center = { x: 0, y: (model === 'dolphin-shorts' ? 0 : -0.8) - (isVCut ? 1.2 : 0) };
+    const B_top_side = { x: backTopHalfW, y: isVCut ? -1.0 : 0 };
     const B_bot_side = { x: backTopHalfW - (backHeight - sideSeam) * 0.20, y: sideSeam };
-    const B_gusset_join = { x: gussetBackHalfW, y: backHeight };
-    const B_gusset_center = { x: 0, y: backHeight };
+    const B_gusset_join = { x: gussetBackHalfW, y: backHeight + (isScrunch ? 2.5 : 0) };
+    const B_gusset_center = { x: 0, y: backHeight + (isScrunch ? 2.5 : 0) };
 
     // Оформление выреза спинки в зависимости от модели
     let B_leg_ctrl1, B_leg_ctrl2;
-    if (model === 'braziliana' || model === 'strappy') {
+    if (model === 'braziliana' || model === 'strappy' || model === 'cage-lingerie') {
         // V-образный дерзкий вырез Бразилиана / Стрепы
         B_leg_ctrl1 = {
             x: B_bot_side.x * 0.28,
@@ -87,10 +108,20 @@ function calculatePantiesGeometry() {
             x: gussetBackHalfW + 0.8,
             y: backHeight - 1.5
         };
-    } else if (model === 'thong') {
+    } else if (model === 'thong' || model === 'tie-side-thong') {
         // Стринги: узкая спинка
-        B_leg_ctrl1 = { x: 1.8, y: B_bot_side.y + 4.0 };
-        B_leg_ctrl2 = { x: 1.5, y: backHeight - 2.0 };
+        B_leg_ctrl1 = { x: 1.6, y: B_bot_side.y + 3.5 };
+        B_leg_ctrl2 = { x: 1.4, y: backHeight - 2.0 };
+    } else if (model === 'high-leg-bodysuit') {
+        // Ультра-высокий вырез бедра боди
+        B_leg_ctrl1 = {
+            x: B_bot_side.x * 0.35,
+            y: B_bot_side.y + (backHeight - B_bot_side.y) * 0.45
+        };
+        B_leg_ctrl2 = {
+            x: gussetBackHalfW + 1.2,
+            y: backHeight - 2.0
+        };
     } else if (model === 'dolphin-shorts') {
         // Округлый вырез шортиков Dolphin
         B_leg_ctrl1 = {
@@ -194,7 +225,14 @@ function generatePantiesPiecesMarkup(g, options = {}) {
         Z
     `;
 
-    const modelRu = g.model === 'braziliana' ? 'БРАЗИЛИАНА' : (g.model === 'high-waist' ? 'РЕТРО (ВЫСОКАЯ ТАЛИЯ)' : (g.model === 'thong' ? 'СТРИНГИ' : (g.model === 'dolphin-shorts' ? 'ШОРТИКИ DOLPHIN' : (g.model === 'strappy' ? 'СТРЕПЫ / V-WAIST' : 'СЛИПЫ'))));
+    const modelRu = g.model === 'braziliana' ? 'БРАЗИЛИАНА'
+        : (g.model === 'high-waist' ? 'РЕТРО (ВЫСОКАЯ ТАЛИЯ)'
+        : (g.model === 'thong' ? 'СТРИНГИ'
+        : (g.model === 'tie-side-thong' ? 'НА БОКОВЫХ ЗАВЯЗКАХ (МИКРО)'
+        : (g.model === 'cage-lingerie' ? 'ПОРТУПЕЙНОЕ БЕЛЬЕ'
+        : (g.model === 'high-leg-bodysuit' ? 'БОДИ HIGH-LEG (ЦЕЛЬНОКРОЕНОЕ)'
+        : (g.model === 'dolphin-shorts' ? 'ШОРТИКИ DOLPHIN'
+        : (g.model === 'strappy' ? 'СТРЕПЫ / V-WAIST' : 'СЛИПЫ')))))));
 
     const strappySideMarkup = g.model === 'strappy' ? `
         <!-- Линии стреп на бедрах -->
@@ -202,6 +240,42 @@ function generatePantiesPiecesMarkup(g, options = {}) {
         <line x1="${g.F_bot_side.x * CM}" y1="${g.F_bot_side.y * CM}" x2="${(g.F_bot_side.x + 3.5) * CM}" y2="${g.F_bot_side.y * CM + 4}" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="3,2"/>
         <text x="${(g.F_top_side.x + 0.5) * CM}" y="-8" font-family="Inter, sans-serif" font-size="7.5" font-weight="bold" fill="#f43f5e">⚡ СТРЕПЫ (резинка 12 мм)</text>
     ` : '';
+
+    const tieSideMarkup = g.model === 'tie-side-thong' ? `
+        <!-- Завязки по бокам -->
+        <line x1="${g.F_top_side.x * CM}" y1="${g.F_top_side.y * CM}" x2="${(g.F_top_side.x + 5.0) * CM}" y2="${g.F_top_side.y * CM - 15}" stroke="#e11d48" stroke-width="2.0" stroke-dasharray="5,2"/>
+        <text x="${(g.F_top_side.x + 2.0) * CM}" y="${g.F_top_side.y * CM - 18}" font-family="JetBrains Mono" font-size="7.5" font-weight="bold" fill="#e11d48">🎀 ЗАВЯЗКА (4 дет. по 32 см)</text>
+    ` : '';
+
+    const cageMarkup = g.model === 'cage-lingerie' ? `
+        <!-- Спецификация портупейного пояса -->
+        <line x1="0" y1="-12" x2="${g.F_top_side.x * CM}" y2="-12" stroke="#e11d48" stroke-width="2.2" stroke-dasharray="4,2"/>
+        <text x="${(g.frontTopHalfW * 0.45) * CM}" y="-16" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" font-weight="bold" fill="#e11d48">⚡ ПОЯС ПОРТУПЕИ (${Math.round(g.ot * g.stretch)} см)</text>
+    ` : '';
+
+    const bodysuitMarkup = g.model === 'high-leg-bodysuit' ? `
+        <text x="${(g.frontTopHalfW * 0.45) * CM}" y="20" text-anchor="middle" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#4338ca">✨ HIGH-LEG БОДИ (удлинение торса с натяжением 0.90)</text>
+    ` : '';
+
+    const vCutMarkup = Boolean(state.vCutWaist) ? `
+        <text x="${(g.frontTopHalfW * 0.45) * CM}" y="32" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" font-weight="bold" fill="#e11d48">⚡ V-CUT ГАЛОЧКА (−${state.vCutDepth} см под живот)</text>
+    ` : '';
+
+    const scrunchMarkup = Boolean(state.scrunchEffect) ? `
+        <text x="12" y="${(g.backHeight * 0.25) * CM}" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#7c3aed" transform="rotate(-90 12 ${(g.backHeight * 0.25) * CM})">✨ SCRUNCH 1.5x (сборка ягодиц)</text>
+    ` : '';
+
+    const gussetSpecifics = state.gussetType === 'buttons' ? `
+        <!-- Разъемная ластовица на кнопках -->
+        <circle cx="${(g.gussetBackHalfW * 0.25) * CM}" cy="${(g.gussetLen - 1.2) * CM}" r="3" fill="#047857"/>
+        <circle cx="${(g.gussetBackHalfW * 0.50) * CM}" cy="${(g.gussetLen - 1.2) * CM}" r="3" fill="#047857"/>
+        <circle cx="${(g.gussetBackHalfW * 0.75) * CM}" cy="${(g.gussetLen - 1.2) * CM}" r="3" fill="#047857"/>
+        <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${(g.gussetLen - 2.2) * CM}" text-anchor="middle" font-family="JetBrains Mono" font-size="7" font-weight="bold" fill="#047857">КНОПКИ (РАЗЪЕМНАЯ)</text>
+    ` : (state.gussetType === 'frame' ? `
+        <!-- Открытая рамка из бейки -->
+        <rect x="4" y="8" width="${(g.gussetBackHalfW - 0.8) * CM}" height="${(g.gussetLen - 2) * CM}" rx="4" fill="none" stroke="#e11d48" stroke-width="1.2" stroke-dasharray="3,2"/>
+        <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${(g.gussetLen * 0.5) * CM}" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" font-weight="bold" fill="#e11d48">РАМКА-БЕЙКА</text>
+    ` : '');
 
     const dolphinSideMarkup = g.model === 'dolphin-shorts' ? `
         <!-- Контрастный кант Dolphin -->
@@ -233,6 +307,10 @@ function generatePantiesPiecesMarkup(g, options = {}) {
                 <!-- Отметка длины бокового шва -->
                 <text x="${g.F_top_side.x * CM + 4}" y="${(g.sideSeam * 0.5) * CM}" font-family="JetBrains Mono, monospace" font-size="8" fill="#be123c">бок ${g.sideSeam} см</text>
                 ${strappySideMarkup}
+                ${tieSideMarkup}
+                ${cageMarkup}
+                ${bodysuitMarkup}
+                ${vCutMarkup}
                 ${dolphinSideMarkup}
             </g>
 
@@ -248,6 +326,7 @@ function generatePantiesPiecesMarkup(g, options = {}) {
                 <text x="${(g.backTopHalfW * 0.45) * CM}" y="45" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="${colBack}">СПИНКА (${modelRu})</text>
                 <text x="${(g.backTopHalfW * 0.45) * CM}" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" fill="#52525b">1 дет. со сгибом</text>
                 <text x="${(g.backTopHalfW * 0.45) * CM}" y="${(g.backHeight * CM) - 10}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#71717a">⬇ шов ластовицы</text>
+                ${scrunchMarkup}
             </g>
 
             <!-- 3. ЛАСТОВИЦА -->
@@ -256,9 +335,10 @@ function generatePantiesPiecesMarkup(g, options = {}) {
                 <line x1="0" y1="0" x2="0" y2="${g.gussetLen * CM}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,3"/>
                 <text x="10" y="${(g.gussetLen * 0.5) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#52525b" transform="rotate(-90 10 ${(g.gussetLen * 0.5) * CM})">[ СГИБ ]</text>
                 <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${(g.gussetLen * 0.4) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="bold" fill="${colGusset}">ЛАСТОВИЦА</text>
-                <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${(g.gussetLen * 0.4) * CM + 14}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#52525b">2 дет. (хлопок 100%)</text>
+                <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${(g.gussetLen * 0.4) * CM + 14}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#52525b">${state.gussetType === 'buttons' ? 'Разъемная на кнопках' : (state.gussetType === 'frame' ? 'Открытая рамка' : '2 дет. (хлопок 100%)')}</text>
                 <text x="${(g.gussetFrontHalfW * 0.5) * CM}" y="-6" text-anchor="middle" font-family="Inter, sans-serif" font-size="7.5" font-weight="bold" fill="#047857">▲ К ПЕРЕДУ</text>
                 <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${g.gussetLen * CM + 12}" text-anchor="middle" font-family="Inter, sans-serif" font-size="7.5" font-weight="bold" fill="#4338ca">▼ К СПИНКЕ</text>
+                ${gussetSpecifics}
             </g>
 
             <!-- Информационная плашка для швеи -->

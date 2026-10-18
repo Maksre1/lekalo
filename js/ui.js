@@ -853,27 +853,44 @@ function updateContextualTabs(garmentType) {
         }
     }
 
-    if (garmentType === 'panties') {
-        if (tabFit) tabFit.classList.add('hidden');
-        if (tabsBar) tabsBar.className = "grid grid-cols-3 p-1 m-3.5 bg-[#F5F2EB] rounded-2xl border border-[#F0ECE1] text-xs";
-        const panelFit = document.getElementById('panel-fit');
-        if (panelFit && !panelFit.classList.contains('hidden')) {
-            switchTab('style');
-        }
-    } else {
-        if (tabFit) tabFit.classList.remove('hidden');
-        if (tabsBar) tabsBar.className = "grid grid-cols-4 p-1 m-3.5 bg-[#F5F2EB] rounded-2xl border border-[#F0ECE1] text-xs";
-    }
+    if (tabFit) tabFit.classList.remove('hidden');
+    if (tabsBar) tabsBar.className = "grid grid-cols-4 p-1 m-3.5 bg-[#F5F2EB] rounded-2xl border border-[#F0ECE1] text-xs";
 
     if (window.lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
     }
 }
 
-// Управление типами изделий (Платье, Майки и топы, Юбка, Трусики)
+// Синхронизация состояния конструктора сценических деталей в UI
+function syncStageControls() {
+    const chkVCut = document.getElementById('chk-v-cut-waist');
+    if (chkVCut) chkVCut.checked = Boolean(state.vCutWaist);
+    const vCutDepthEl = document.getElementById('v-cut-depth-controls');
+    if (vCutDepthEl) vCutDepthEl.style.display = state.vCutWaist ? 'block' : 'none';
+    const rangeVCut = document.getElementById('range-v-cut-depth');
+    if (rangeVCut) rangeVCut.value = state.vCutDepth || 5.0;
+    const labelVCut = document.getElementById('label-v-cut-depth');
+    if (labelVCut) labelVCut.textContent = `${(state.vCutDepth || 5.0).toFixed(1)} см`;
+
+    const chkScrunch = document.getElementById('chk-scrunch-effect');
+    if (chkScrunch) chkScrunch.checked = Boolean(state.scrunchEffect);
+
+    const chkQuick = document.getElementById('chk-quick-release');
+    if (chkQuick) chkQuick.checked = Boolean(state.quickRelease);
+
+    document.querySelectorAll('.gusset-btn').forEach(btn => {
+        const isActive = btn.dataset.gusset === (state.gussetType || 'classic');
+        btn.className = isActive
+            ? "gusset-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer"
+            : "gusset-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer";
+    });
+}
+
+// Управление типами изделий (Платье, Майки и топы, Юбки и Шорты, Белье)
 function setGarmentType(type) {
     state.garmentType = type;
     updateContextualTabs(type);
+    syncStageControls();
 
     ['dress', 'top', 'skirt', 'panties'].forEach(t => {
         const headerBtn = document.getElementById(`header-garment-${t}`);
@@ -887,7 +904,7 @@ function setGarmentType(type) {
 
     const badge = document.getElementById('garment-type-badge');
     if (badge) {
-        badge.textContent = type === 'skirt' ? 'Поясное (Юбка)' : (type === 'panties' ? 'Белье (Трусики)' : (type === 'top' ? 'Плечевое (Майка / Топ)' : 'Плечевое (Платье)'));
+        badge.textContent = type === 'skirt' ? 'Поясное (Юбки и Шорты)' : (type === 'panties' ? 'Белье (Трусики)' : (type === 'top' ? 'Плечевое (Майки и Топы)' : 'Плечевое (Платье)'));
     }
 
     const dressMeasures = document.getElementById('measures-dress-container');
@@ -1022,6 +1039,51 @@ function setPantiesStretch(stretch) {
             ? "panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
             : "panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
     });
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+// --- КИЛЛЕР-ФИЧИ (STAGE & TRANSFORM) ---
+function toggleVCutWaist(val) {
+    state.vCutWaist = Boolean(val);
+    const depthEl = document.getElementById('v-cut-depth-controls');
+    if (depthEl) depthEl.style.display = val ? 'block' : 'none';
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+function setVCutDepth(val) {
+    state.vCutDepth = parseFloat(val);
+    const label = document.getElementById('label-v-cut-depth');
+    if (label) label.textContent = `${state.vCutDepth.toFixed(1)} см`;
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+function toggleScrunchEffect(val) {
+    state.scrunchEffect = Boolean(val);
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+function toggleQuickRelease(val) {
+    state.quickRelease = Boolean(val);
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+function setGussetType(type) {
+    state.gussetType = type;
+    document.querySelectorAll('.gusset-btn').forEach(btn => {
+        const isActive = btn.dataset.gusset === type;
+        btn.className = isActive
+            ? "gusset-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer"
+            : "gusset-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer";
+    });
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
 function setTopLengthType(lenType) {
     state.topLengthType = lenType;
     const labelMap = {

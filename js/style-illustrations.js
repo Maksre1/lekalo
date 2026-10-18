@@ -200,6 +200,82 @@ const STYLE_CATALOG = {
             time: '2 часа',
             cutTip: 'Прямой боковой срез, вытачки 50/32/18%',
             vectorType: 'straight'
+        },
+        // --- СЦЕНИЧЕСКИЕ, СТРИМ И БУДУАРНЫЕ ДИЗАЙНЫ ---
+        {
+            id: 'wrap-micro-pleated',
+            name: 'Микро с запахом и складками',
+            category: 'mini',
+            badge: 'Микро-плиссе',
+            badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            image: null,
+            recLength: 26,
+            summary: 'Ультракороткая сценическая микро-юбка с запахом и мелкими складками (18–28 см). Идеальна для кадров сидя и активных движений.',
+            fabrics: 'Костюмная поливискоза, габардин, хлопковый твил, шотландка',
+            difficulty: 'Средняя',
+            time: '2 часа',
+            cutTip: 'Длина 24-28 см, мелкие складки плиссе 1.5-2 см и функциональный нахлест с запахом',
+            vectorType: 'skirt-wrap-micro-pleated'
+        },
+        {
+            id: 'double-high-slit',
+            name: 'Юбка с двумя высокими разрезами',
+            category: 'midi',
+            badge: 'Двойной разрез',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            recLength: 75,
+            summary: 'Вечерняя струящаяся юбка с двумя экстремально высокими разрезами по передним рельефам до линии бедер/талии. Полная свобода и выразительность в кадре.',
+            fabrics: 'Шелковый атлас, вискоза, струящийся креп, тонкий трикотаж масло',
+            difficulty: 'Легко',
+            time: '1.5 – 2 часа',
+            cutTip: 'Два разреза по вертикалям передних вытачек от талии/бедер с усиленной закрепкой',
+            vectorType: 'skirt-double-high-slit'
+        },
+        {
+            id: 'ruched-drawstring',
+            name: 'Юбка с асимметричной кулиской',
+            category: 'mini',
+            badge: 'Драпировка',
+            badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
+            image: null,
+            recLength: 42,
+            summary: 'Асимметричная драпированная юбка с кулиской и шнурком. Регулирует посадку и создает объемную диагональную сборку с коэффициентом 1.6x.',
+            fabrics: 'Бифлекс, вискозный трикотаж с эластаном, стрейч-сетка, тонкий сатин',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Припуск на вертикальную кулиску +3 см, шнур со стопорами или концевиками',
+            vectorType: 'skirt-ruched-drawstring'
+        },
+        {
+            id: 'booty-shorts',
+            name: 'Микро-шорты с вырезом ягодиц',
+            category: 'mini',
+            badge: 'Booty Cut',
+            badgeColor: 'bg-pink-100 text-pink-700 border-pink-200',
+            image: null,
+            recLength: 22,
+            summary: 'Экстремально короткие шорты с высокой фигурной дугой задней половинки, подчеркивающей контур ягодиц. Комфортная посадка без пережимания.',
+            fabrics: 'Эластичный деним стрейч, бифлекс, плотный рубчик, хлопок с эластаном',
+            difficulty: 'Легко',
+            time: '1 – 1.5 часа',
+            cutTip: 'Высокая подрезка задней половинки, отделка эластичным кантом или подгибкой',
+            vectorType: 'skirt-booty-shorts'
+        },
+        {
+            id: 'garter-peplum',
+            name: 'Пояс-баска с пажами для чулок',
+            category: 'mini',
+            badge: 'Пажи для чулок',
+            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+            image: null,
+            recLength: 16,
+            summary: 'Будуарный пояс-баска длиной 12–16 см с 4–6 регулируемыми пажами (подвязками) для чулок с клипсами. Эффектный акцент на талию и бедра.',
+            fabrics: 'Корсетный жаккард, плотная экокожа, бархат, эластичная кордовая сетка',
+            difficulty: 'Средняя',
+            time: '1.5 часа',
+            cutTip: 'Баска 14 см, 4-6 эластичных лент 20 мм с регуляторами и металлическими клипсами',
+            vectorType: 'skirt-garter-peplum'
         }
     ],
 
@@ -281,6 +357,45 @@ const STYLE_CATALOG = {
             time: '30 минут',
             cutTip: 'V-образная талия, боковые стрепы регулируются под обхват',
             vectorType: 'panties-strappy'
+        },
+        {
+            id: 'tie-side-thong',
+            name: 'Стринги на тонких завязках',
+            badge: 'Side-Tie',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Трусики-стринги с боковыми регулируемыми завязками из эластичного рулика (по 32 см). Полная трансформация и моментальная регулировка под любой обхват.',
+            fabrics: 'Эластичная микрофибра, бельевой шелк, кружево, бифлекс',
+            difficulty: 'Очень легко',
+            time: '25 минут',
+            cutTip: '4 завязки из эластичного спагетти-рулика длиной по 32 см',
+            vectorType: 'panties-tie-side-thong'
+        },
+        {
+            id: 'cage-lingerie',
+            name: 'Портупейные трусики (Cage)',
+            badge: 'Стреп-каркас',
+            badgeColor: 'bg-pink-100 text-pink-700 border-pink-200',
+            image: null,
+            summary: 'Архитектурный будуарный дизайн с перекрестными эластичными лентами-портупеями вокруг бедер и талии с кольцами.',
+            fabrics: 'Бельевая стреп-лента 10-15 мм, ажурные кружевные треугольники, O-Ring Ø15 мм',
+            difficulty: 'Легко',
+            time: '35 минут',
+            cutTip: 'Отрицательная прибавка k=0.85, стрепы регулируются под ребра и талию',
+            vectorType: 'panties-cage-lingerie'
+        },
+        {
+            id: 'high-leg-bodysuit',
+            name: 'Слитное боди с высоким бедром',
+            badge: 'High-Leg',
+            badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            image: null,
+            summary: 'Слитный боди-купальник с экстремально высоким французским вырезом бедра до линии талии. Визуально вытягивает ноги и силуэт.',
+            fabrics: 'Бифлекс, матовый спандекс, рибана, эластичная сетка power net',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Коэффициент вертикального растяжения k=0.90, высокий дугообразный срез бедра',
+            vectorType: 'panties-high-leg-bodysuit'
         }
     ],
 
@@ -586,6 +701,62 @@ const STYLE_CATALOG = {
             time: '1 час',
             cutTip: 'Центральное кольцо Ø30 мм в межгрудной впадине, 4 стрепа с запасом под притачивание',
             vectorType: 'top-o-ring-top'
+        },
+        {
+            id: 'extreme-crop',
+            name: 'Ультра-короткий кроп-топ',
+            category: 'boudoir',
+            badge: 'Underbust',
+            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Экстремально короткий топ в обтяжку с нижним срезом ровно по подгрудной складке (Вг). Идеально сидит при наклонах и движении.',
+            fabrics: 'Эластичный рубчик кашкорсе, микрофибра, латекс/экокожа с эластаном',
+            difficulty: 'Очень легко',
+            time: '30 минут',
+            cutTip: 'Нижний срез точно по подгрудной линии (Вг + 1.5 см на подгибку), отрицательная прибавка',
+            vectorType: 'top-extreme-crop'
+        },
+        {
+            id: 'front-laceup',
+            name: 'Топ на передней шнуровке',
+            category: 'sensual',
+            badge: 'Шнуровка',
+            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+            image: null,
+            summary: 'Разрезная полочка с регулируемым раскрытием декольте на люверсах или навесных петлях. Удобно надевать и регулировать глубину декольте.',
+            fabrics: 'Хлопковый твил, экокожа, шелковый атлас, корсетный сатин',
+            difficulty: 'Легко',
+            time: '1.5 часа',
+            cutTip: 'Разрезная полочка с планкой под петли/люверсы, шнур 120 см',
+            vectorType: 'top-front-laceup'
+        },
+        {
+            id: 'keyhole-halter',
+            name: 'Холтер-топ с капелькой и ошейником',
+            category: 'boudoir',
+            badge: 'Choker & Drop',
+            badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
+            image: null,
+            summary: 'Воротник-чокер на шее с застежкой сзади и овальный вырез-капелька по центру груди. Эффектный акцент в стрим-кадре.',
+            fabrics: 'Бархат, эластичная замша, экокожа, плотный трикотаж масло',
+            difficulty: 'Средняя',
+            time: '1.5 часа',
+            cutTip: 'Воротник-чокер высотой 3.5 см, капелька 10x6 см с эластичной обтачкой',
+            vectorType: 'top-keyhole-halter'
+        },
+        {
+            id: 'curtain-top',
+            name: 'Топ со сборками-шторками',
+            category: 'sensual',
+            badge: 'Curtain',
+            badgeColor: 'bg-pink-100 text-pink-700 border-pink-200',
+            image: null,
+            summary: 'Топ на кулисках-шторках сверху и снизу. Ширина чашек регулируется вручную от полного покрытия до минималистичных треугольников.',
+            fabrics: 'Шелк, струящийся шифон, тонкий бифлекс, жатый муслин',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Две горизонтальные кулиски сверху и снизу с продетыми шнурками',
+            vectorType: 'top-curtain-top'
         }
     ]
 };
@@ -1130,6 +1301,171 @@ function getStyleVectorSvg(type, size = 64) {
                 <line x1="36" y1="34" x2="26" y2="42" stroke="#d97706" stroke-width="1.8"/>
                 <line x1="44" y1="34" x2="54" y2="42" stroke="#d97706" stroke-width="1.8"/>
                 <path d="M 26 42 Q 40 45 54 42" stroke="#d97706" stroke-width="2.0" fill="none"/>
+            `;
+            break;
+
+        case 'skirt-wrap-micro-pleated':
+            content = `
+                <!-- Микро с запахом и складками -->
+                <path d="M 28 20 L 52 20 L 52 24 L 28 24 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 24 L 22 52 L 48 52 L 52 24 Z" fill="#f1f5f9" stroke="${stroke}" stroke-width="1.0"/>
+                <path d="M 28 24 L 52 24 L 58 50 L 36 53 L 26 42 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Мелкие складки -->
+                <line x1="30" y1="28" x2="28" y2="52" stroke="#6366f1" stroke-width="0.9"/>
+                <line x1="35" y1="28" x2="33" y2="52.5" stroke="#6366f1" stroke-width="0.9"/>
+                <line x1="40" y1="28" x2="39" y2="52.5" stroke="#6366f1" stroke-width="0.9"/>
+                <line x1="45" y1="28" x2="45" y2="51.5" stroke="#6366f1" stroke-width="0.9"/>
+                <line x1="50" y1="28" x2="51" y2="50.5" stroke="#6366f1" stroke-width="0.9"/>
+            `;
+            break;
+
+        case 'skirt-double-high-slit':
+            content = `
+                <!-- Юбка с двумя высокими разрезами -->
+                <path d="M 29 18 L 51 18 L 51 23 L 29 23 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 29 23 L 20 76 L 27 76 L 31 38 L 49 38 L 53 76 L 60 76 L 51 23 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Центральное полотнище -->
+                <path d="M 32 38 L 33 76 L 47 76 L 48 38 Z" fill="#f8fafc" stroke="${stroke}" stroke-width="1.0"/>
+                <!-- Линии разрезов с акцентными точками -->
+                <line x1="31" y1="38" x2="31" y2="76" stroke="#f43f5e" stroke-width="1.4"/>
+                <line x1="49" y1="38" x2="49" y2="76" stroke="#f43f5e" stroke-width="1.4"/>
+                <circle cx="31" cy="38" r="1.3" fill="#f43f5e"/>
+                <circle cx="49" cy="38" r="1.3" fill="#f43f5e"/>
+            `;
+            break;
+
+        case 'skirt-ruched-drawstring':
+            content = `
+                <!-- Юбка с асимметричной кулиской -->
+                <path d="M 28 20 L 52 20 L 52 24 L 28 24 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 24 L 22 68 Q 38 70 54 52 L 52 24 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Диагональные складки сборки 1.6x -->
+                <path d="M 25 36 Q 38 33 53 30" stroke="#a855f7" stroke-width="1.1" fill="none"/>
+                <path d="M 24 48 Q 38 45 53.5 40" stroke="#a855f7" stroke-width="1.1" fill="none"/>
+                <path d="M 23 60 Q 38 56 54 50" stroke="#a855f7" stroke-width="1.1" fill="none"/>
+                <!-- Кулиска справа с завязками -->
+                <line x1="52" y1="24" x2="54" y2="52" stroke="#a855f7" stroke-width="1.6" stroke-dasharray="2,2"/>
+                <path d="M 54 52 Q 52 59 50 64 M 54 52 Q 57 59 56 65" stroke="#7c3aed" stroke-width="1.3" fill="none"/>
+            `;
+            break;
+
+        case 'skirt-booty-shorts':
+            content = `
+                <!-- Микро-шорты с вырезом ягодиц -->
+                <path d="M 24 24 L 56 24 L 56 29 L 24 29 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 24 29 L 22 42 Q 28 47 36 43 L 40 40 L 44 43 Q 52 47 58 42 L 56 29 Z" fill="#fdf2f8" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Фигурная дуга среза Booty Cut -->
+                <path d="M 22 42 Q 28 47 36 43" stroke="#ec4899" stroke-width="1.6" fill="none"/>
+                <path d="M 44 43 Q 52 47 58 42" stroke="#ec4899" stroke-width="1.6" fill="none"/>
+                <line x1="40" y1="29" x2="40" y2="40" stroke="#94a3b8" stroke-width="1.0"/>
+            `;
+            break;
+
+        case 'skirt-garter-peplum':
+            content = `
+                <!-- Пояс-баска с пажами для чулок -->
+                <path d="M 27 24 L 53 24 L 53 28 L 27 28 Z" fill="#fde68a" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 27 28 L 22 42 Q 40 46 58 42 L 53 28 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- 4 пажа для чулок -->
+                <line x1="30" y1="41" x2="30" y2="58" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="37" y1="43" x2="37" y2="60" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="43" y1="43" x2="43" y2="60" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="50" y1="41" x2="50" y2="58" stroke="#d97706" stroke-width="1.4"/>
+                <!-- Клипсы -->
+                <rect x="28.5" y="58" width="3" height="4" rx="0.5" fill="#f59e0b" stroke="${stroke}" stroke-width="0.8"/>
+                <rect x="35.5" y="60" width="3" height="4" rx="0.5" fill="#f59e0b" stroke="${stroke}" stroke-width="0.8"/>
+                <rect x="41.5" y="60" width="3" height="4" rx="0.5" fill="#f59e0b" stroke="${stroke}" stroke-width="0.8"/>
+                <rect x="48.5" y="58" width="3" height="4" rx="0.5" fill="#f59e0b" stroke="${stroke}" stroke-width="0.8"/>
+            `;
+            break;
+
+        case 'panties-tie-side-thong':
+            content = `
+                <!-- Стринги на тонких завязках -->
+                <path d="M 26 28 Q 40 33 54 28 L 52 33 Q 44 42 42 61 L 38 61 Q 36 42 28 33 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Боковые завязки-бантики -->
+                <path d="M 26 28 Q 18 24 13 29 M 26 28 Q 17 32 14 36" stroke="#f43f5e" stroke-width="1.4" fill="none"/>
+                <path d="M 54 28 Q 62 24 67 29 M 54 28 Q 63 32 66 36" stroke="#f43f5e" stroke-width="1.4" fill="none"/>
+                <circle cx="26" cy="28" r="1.3" fill="#f43f5e"/>
+                <circle cx="54" cy="28" r="1.3" fill="#f43f5e"/>
+            `;
+            break;
+
+        case 'panties-cage-lingerie':
+            content = `
+                <!-- Портупейные трусики Cage -->
+                <path d="M 26 30 Q 40 35 54 30 L 52 35 Q 44 44 42 61 L 38 61 Q 36 44 28 35 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Стреп-ленты на бедрах и талии -->
+                <line x1="20" y1="22" x2="60" y2="22" stroke="#db2777" stroke-width="1.4"/>
+                <line x1="20" y1="22" x2="26" y2="30" stroke="#db2777" stroke-width="1.2"/>
+                <line x1="60" y1="22" x2="54" y2="30" stroke="#db2777" stroke-width="1.2"/>
+                <line x1="16" y1="28" x2="27" y2="34" stroke="#db2777" stroke-width="1.2"/>
+                <line x1="64" y1="28" x2="53" y2="34" stroke="#db2777" stroke-width="1.2"/>
+                <circle cx="40" cy="22" r="1.5" fill="#fbcfe8" stroke="#db2777" stroke-width="1"/>
+            `;
+            break;
+
+        case 'panties-high-leg-bodysuit':
+            content = `
+                <!-- Слитное боди с высоким бедром -->
+                <path d="M 30 14 L 35 14 L 37 28 Q 40 30 43 28 L 45 14 L 50 14 L 52 28 Q 50 40 50 48 Q 44 48 42 66 L 38 66 Q 36 48 30 48 Q 30 40 28 28 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Высокая арка бедра до талии -->
+                <path d="M 30 48 Q 36 48 38 66" stroke="#4f46e5" stroke-width="1.6" fill="none"/>
+                <path d="M 50 48 Q 44 48 42 66" stroke="#4f46e5" stroke-width="1.6" fill="none"/>
+                <path d="M 35 14 Q 40 24 45 14" stroke="${stroke}" stroke-width="1.3" fill="none"/>
+            `;
+            break;
+
+        case 'top-extreme-crop':
+            content = `
+                <!-- Ультра-короткий кроп-топ (Underbust) -->
+                <path d="M 29 18 L 34 18 Q 36 26 40 26 Q 44 26 46 18 L 51 18 L 52 27 Q 48 34 49 39 L 31 39 Q 32 34 28 27 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <line x1="31" y1="39" x2="49" y2="39" stroke="#e11d48" stroke-width="2.0"/>
+                <!-- Подгрудные дуги чашек -->
+                <path d="M 32 36 Q 36 33 40 37 Q 44 33 48 36" stroke="#e11d48" stroke-width="1.2" fill="none"/>
+            `;
+            break;
+
+        case 'top-front-laceup':
+            content = `
+                <!-- Топ на передней шнуровке -->
+                <path d="M 28 18 L 34 18 L 36 26 L 36 50 L 30 50 Q 31 38 28 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 52 18 L 46 18 L 44 26 L 44 50 L 50 50 Q 49 38 52 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Шнуровка крест-накрест между 36 и 44 -->
+                <line x1="36" y1="28" x2="44" y2="34" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="44" y1="28" x2="36" y2="34" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="36" y1="36" x2="44" y2="42" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="44" y1="36" x2="36" y2="42" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="36" y1="44" x2="44" y2="50" stroke="#d97706" stroke-width="1.4"/>
+                <line x1="44" y1="44" x2="36" y2="50" stroke="#d97706" stroke-width="1.4"/>
+                <!-- Бантик снизу -->
+                <circle cx="40" cy="51" r="1.3" fill="#d97706"/>
+            `;
+            break;
+
+        case 'top-keyhole-halter':
+            content = `
+                <!-- Холтер-топ с капелькой и ошейником -->
+                <!-- Воротник-чокер -->
+                <path d="M 33 14 L 47 14 L 47 19 L 33 19 Z" fill="#312e81" stroke="${stroke}" stroke-width="1.4"/>
+                <path d="M 33 19 L 28 29 Q 32 38 31 46 L 49 46 Q 48 38 52 29 L 47 19 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Овальный вырез-капелька -->
+                <ellipse cx="40" cy="28" rx="4" ry="5.5" fill="#fdf2f8" stroke="#9333ea" stroke-width="1.5"/>
+                <circle cx="40" cy="16.5" r="1.2" fill="#fde68a"/>
+            `;
+            break;
+
+        case 'top-curtain-top':
+            content = `
+                <!-- Топ со сборками-шторками -->
+                <path d="M 28 22 L 52 22 L 50 44 L 30 44 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Верхняя и нижняя кулиски со сборками -->
+                <line x1="26" y1="22" x2="54" y2="22" stroke="#ec4899" stroke-width="2.0"/>
+                <line x1="26" y1="44" x2="54" y2="44" stroke="#ec4899" stroke-width="2.0"/>
+                <line x1="35" y1="24" x2="34" y2="42" stroke="#f472b6" stroke-width="1.0" stroke-dasharray="2,2"/>
+                <line x1="45" y1="24" x2="46" y2="42" stroke="#f472b6" stroke-width="1.0" stroke-dasharray="2,2"/>
+                <path d="M 26 22 Q 22 20 20 23 M 54 22 Q 58 20 60 23" stroke="#ec4899" stroke-width="1.2" fill="none"/>
+                <path d="M 26 44 Q 22 46 20 49 M 54 44 Q 58 46 60 49" stroke="#ec4899" stroke-width="1.2" fill="none"/>
             `;
             break;
 

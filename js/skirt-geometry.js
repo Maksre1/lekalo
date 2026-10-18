@@ -75,8 +75,54 @@ function calculateSkirtGeometry() {
     let laceupHeight = 0;
     let hasRuched = false;
     let isMicro = false;
+    let hasDoubleSlit = false;
+    let isWrapMicroPleated = false;
+    let isBootyShorts = false;
+    let isGarterPeplum = false;
 
-    if (style === 'a-line') {
+    if (style === 'wrap-micro-pleated') {
+        // Микро-плиссе на запахе (18-28 см) со складками и широким запахом
+        flareOffset = 2.5;
+        hemCurveLift = 0.5;
+        isPleated = true;
+        isWrap = true;
+        isWrapMicroPleated = true;
+        wrapOverlap = 16.0;
+        yokeHeight = 5.0;
+        pleatStep = 2.8;
+        backDartLen = 4.5;
+        frontDartLen = 4.0;
+    } else if (style === 'double-high-slit') {
+        // Юбка с двумя высокими разрезами до талии
+        flareOffset = 1.0;
+        hemCurveLift = 0;
+        hasDoubleSlit = true;
+        hasSlit = true;
+        slitHeight = Math.max(10, effectiveLength - 3.5);
+        backDartLen = Math.min(10.0, effectiveLength * 0.28);
+        frontDartLen = Math.min(7.0, effectiveLength * 0.20);
+    } else if (style === 'ruched-drawstring') {
+        // Асимметричная юбка на кулиске 1.6x
+        flareOffset = -0.5;
+        hemCurveLift = 0;
+        hasRuched = true;
+        backDartLen = Math.min(9.0, effectiveLength * 0.25);
+        frontDartLen = Math.min(6.5, effectiveLength * 0.18);
+    } else if (style === 'booty-shorts') {
+        // Микро-шорты / Чикис
+        flareOffset = -2.0;
+        hemCurveLift = 1.5;
+        isBootyShorts = true;
+        backDartLen = Math.min(6.0, effectiveLength * 0.25);
+        frontDartLen = Math.min(4.5, effectiveLength * 0.20);
+    } else if (style === 'garter-peplum') {
+        // Корсетная юбка-баска с креплениями для чулок (12-16 см)
+        flareOffset = 3.5;
+        hemCurveLift = 0.5;
+        isGarterPeplum = true;
+        backDartLen = Math.min(8.0, effectiveLength * 0.45);
+        frontDartLen = Math.min(6.0, effectiveLength * 0.35);
+    } else if (style === 'a-line') {
         // Трапеция / А-силуэт миди: расклешение бокового шва
         flareOffset = 6.5; // +6.5 см по низу с каждой стороны
         hemCurveLift = 1.2; // подъем бока для ровного подола
@@ -144,23 +190,28 @@ function calculateSkirtGeometry() {
     // Позиция передней вытачки
     const X_frontDart = X_side + (W_grid - X_side) * 0.55;
 
+    // Инженерные фичи: V-Cut талия и Scrunch сборка
+    const isVCut = Boolean(state.vCutWaist);
+    const vCutDepth = Number(state.vCutDepth) || 5.0;
+    const isScrunch = Boolean(state.scrunchEffect);
+
     // Точки заднего полотнища (Back panel)
-    const B_waist_center = { x: 0, y: balance * 0.5 };
-    const B_dart_left = { x: X_backDart - backDart / 2, y: balance * 0.25 };
+    const B_waist_center = { x: 0, y: (balance * 0.5) - (isVCut ? 1.5 : 0) };
+    const B_dart_left = { x: X_backDart - backDart / 2, y: (balance * 0.25) - (isVCut ? 0.8 : 0) };
     const B_dart_apex = { x: X_backDart, y: backDartLen };
-    const B_dart_right = { x: X_backDart + backDart / 2, y: balance * 0.25 };
-    const B_waist_side = { x: X_side - sideDart / 2, y: -1.2 };
+    const B_dart_right = { x: X_backDart + backDart / 2, y: (balance * 0.25) - (isVCut ? 0.8 : 0) };
+    const B_waist_side = { x: X_side - sideDart / 2, y: -1.2 - (isVCut ? 1.0 : 0) };
     const B_hip_side = { x: X_side, y: vb };
     const B_hem_side = { x: X_side + flareOffset, y: effectiveLength - hemCurveLift };
-    const B_hem_center = { x: 0, y: effectiveLength };
+    const B_hem_center = { x: 0, y: effectiveLength + (isScrunch ? 2.5 : 0) };
     const B_hip_center = { x: 0, y: vb };
 
     // Точки переднего полотнища (Front panel)
-    const F_waist_side = { x: X_side + sideDart / 2, y: -1.2 };
-    const F_dart_left = { x: X_frontDart - frontDart / 2, y: -balance * 0.25 };
-    const F_dart_apex = { x: X_frontDart, y: frontDartLen };
-    const F_dart_right = { x: X_frontDart + frontDart / 2, y: -balance * 0.25 };
-    const F_waist_center = { x: W_grid, y: 0.5 - balance };
+    const F_waist_side = { x: X_side + sideDart / 2, y: -1.2 - (isVCut ? 1.0 : 0) };
+    const F_dart_left = { x: X_frontDart - frontDart / 2, y: -balance * 0.25 + (isVCut ? (vCutDepth * 0.35) : 0) };
+    const F_dart_apex = { x: X_frontDart, y: frontDartLen + (isVCut ? 1.5 : 0) };
+    const F_dart_right = { x: X_frontDart + frontDart / 2, y: -balance * 0.25 + (isVCut ? (vCutDepth * 0.35) : 0) };
+    const F_waist_center = { x: W_grid, y: (0.5 - balance) + (isVCut ? vCutDepth : 0) };
     const F_hip_side = { x: X_side, y: vb };
     const F_hem_side = { x: X_side - flareOffset, y: effectiveLength - hemCurveLift };
     const F_hem_center = { x: W_grid, y: effectiveLength };
@@ -298,7 +349,12 @@ function generateSkirtPiecesMarkup(g, options = {}) {
     const beltY = (g.heightCm + 3) * CM;
 
     let styleTitleRu = 'ПРЯМАЯ КЛАССИЧЕСКАЯ';
-    if (g.style === 'a-line') styleTitleRu = 'ТРАПЕЦИЯ МИДИ (А-СИЛУЭТ)';
+    if (g.style === 'wrap-micro-pleated') styleTitleRu = 'МИКРО-ПЛИССЕ НА ЗАПАХЕ (18–28 СМ)';
+    else if (g.style === 'double-high-slit') styleTitleRu = 'С ДВУМЯ ВЫСОКИМИ РАЗРЕЗАМИ ДО ТАЛИИ';
+    else if (g.style === 'ruched-drawstring') styleTitleRu = 'АСИММЕТРИЧНАЯ НА КУЛИСКЕ (1.6X)';
+    else if (g.style === 'booty-shorts') styleTitleRu = 'МИКРО-ШОРТЫ / ЧИКИС (BOOTY SHORTS)';
+    else if (g.style === 'garter-peplum') styleTitleRu = 'КОРСЕТНАЯ БАСКА С ПАЖАМИ ДЛЯ ЧУЛОК';
+    else if (g.style === 'a-line') styleTitleRu = 'ТРАПЕЦИЯ МИДИ (А-СИЛУЭТ)';
     else if (g.style === 'mini-trapeze') styleTitleRu = 'МИНИ-ТРАПЕЦИЯ (А-СИЛУЭТ)';
     else if (g.style === 'mini-laceup') styleTitleRu = 'МИНИ СО ШНУРОВКОЙ ПО БЕДРУ';
     else if (g.style === 'mini-ruched') styleTitleRu = 'МИНИ С БОКОВОЙ КУЛИСКОЙ';
@@ -313,7 +369,20 @@ function generateSkirtPiecesMarkup(g, options = {}) {
         <!-- Вертикальный разрез по ноге -->
         <line x1="${g.F_dart_apex.x * CM}" y1="${g.F_hem_side.y * CM}" x2="${g.F_dart_apex.x * CM}" y2="${(g.skirtLength - g.slitHeight) * CM}" stroke="#e11d48" stroke-width="2.0" stroke-dasharray="4,2"/>
         <circle cx="${g.F_dart_apex.x * CM}" cy="${(g.skirtLength - g.slitHeight) * CM}" r="3" fill="#e11d48"/>
-        <text x="${g.F_dart_apex.x * CM + 6}" y="${(g.skirtLength - g.slitHeight * 0.45) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">✂ РАЗРЕЗ ${g.slitHeight.toFixed(0)} см</text>
+        <text x="${g.F_dart_apex.x * CM + 6}" y="${(g.skirtLength - g.slitHeight * 0.45) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">✂ ${g.hasDoubleSlit ? 'РАЗРЕЗ ДО ТАЛИИ' : `РАЗРЕЗ ${g.slitHeight.toFixed(0)} см`}</text>
+    ` : '';
+
+    const doubleSlitMarkupBack = g.hasDoubleSlit ? `
+        <!-- Разрез до талии на спинке -->
+        <line x1="${g.B_hem_side.x * CM}" y1="${g.B_hem_side.y * CM}" x2="${g.B_waist_side.x * CM}" y2="${g.B_waist_side.y * CM + 30}" stroke="#e11d48" stroke-width="2.0" stroke-dasharray="5,3"/>
+        <text x="${g.B_hem_side.x * CM - 8}" y="${(g.skirtLength * 0.5) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48" text-anchor="end">✂ ОТКРЫТОЕ БЕДРО (РАЗРЕЗ)</text>
+    ` : '';
+
+    const garterMarkup = g.isGarterPeplum ? `
+        <!-- Пажи и крепления для чулок -->
+        <circle cx="${(g.W_grid * 0.70) * CM}" cy="${g.skirtLength * CM - 4}" r="3" fill="#e11d48"/>
+        <circle cx="${(g.W_grid * 0.90) * CM}" cy="${g.skirtLength * CM - 4}" r="3" fill="#e11d48"/>
+        <text x="${(g.W_grid * 0.80) * CM}" y="${g.skirtLength * CM + 12}" text-anchor="middle" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#e11d48">⚡ ПАЖИ ДЛЯ ЧУЛОК (длина 24 см)</text>
     ` : '';
 
     const laceupMarkupBack = g.hasLaceup ? `
@@ -334,7 +403,7 @@ function generateSkirtPiecesMarkup(g, options = {}) {
 
     const ruchedMarkup = g.hasRuched ? `
         <!-- Кулиска под шнурок со сборкой по боку -->
-        <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.skirtLength - 4) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#7c3aed">✨ КУЛИСКА 2.5 см (сборка длины шнуром)</text>
+        <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.skirtLength - 4) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#7c3aed">✨ КУЛИСКА 1.6x (сборка драпировки шнуром)</text>
     ` : '';
 
     const microMarkup = g.isMicro ? `
@@ -342,9 +411,19 @@ function generateSkirtPiecesMarkup(g, options = {}) {
     ` : '';
 
     const wrapMarkup = g.isWrap ? `
-        <!-- Нахлест запаха переда (+12 см) -->
+        <!-- Нахлест запаха переда (+${g.wrapOverlap} см) -->
         <path d="M ${g.W_grid * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} 0 L ${(g.W_grid + g.wrapOverlap) * CM} ${(g.skirtLength - 5) * CM} L ${g.W_grid * CM} ${g.skirtLength * CM} Z" fill="rgba(245, 158, 11, 0.08)" stroke="#d97706" stroke-width="1.6" stroke-dasharray="5,3"/>
-        <text x="${(g.W_grid + g.wrapOverlap * 0.5) * CM}" y="${(g.skirtLength * 0.5) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#d97706" transform="rotate(-90 ${(g.W_grid + g.wrapOverlap * 0.5) * CM} ${(g.skirtLength * 0.5) * CM})">[ ЗАПАХ +${g.wrapOverlap} см ]</text>
+        <text x="${(g.W_grid + g.wrapOverlap * 0.5) * CM}" y="${(g.skirtLength * 0.5) * CM}" font-family="Inter, sans-serif" font-size="8.5" font-weight="bold" fill="#d97706" transform="rotate(-90 ${(g.W_grid + g.wrapOverlap * 0.5) * CM} ${(g.skirtLength * 0.5) * CM})">[ ЗАПАХ +${g.wrapOverlap} см / БЫСТРАЯ ЗАСТЕЖКА ]</text>
+    ` : '';
+
+    const vCutMarkup = Boolean(state.vCutWaist) ? `
+        <!-- Метка V-Cut пояса -->
+        <text x="${(g.F_waist_center.x - 4) * CM}" y="${g.F_waist_center.y * CM - 6}" text-anchor="end" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#e11d48">⚡ V-CUT −${state.vCutDepth} см (комфорт для сидячих поз)</text>
+    ` : '';
+
+    const scrunchMarkup = Boolean(state.scrunchEffect) ? `
+        <!-- Метка сборки Scrunch -->
+        <text x="14" y="${(g.skirtLength * 0.25) * CM}" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#7c3aed" transform="rotate(-90 14 ${(g.skirtLength * 0.25) * CM})">✨ СБОРКА НА РЕЗИНКУ (SCRUNCH 1.5x)</text>
     ` : '';
 
     const pleatedMarkupBack = g.isPleated ? `
@@ -381,6 +460,8 @@ function generateSkirtPiecesMarkup(g, options = {}) {
                 <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb + 0) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">${styleTitleRu} | 1 деталь со сгибом</text>
                 ${pleatedMarkupBack}
                 ${laceupMarkupBack}
+                ${doubleSlitMarkupBack}
+                ${scrunchMarkup}
             </g>
 
             <!-- Переднее полотнище юбки -->
@@ -401,6 +482,8 @@ function generateSkirtPiecesMarkup(g, options = {}) {
                 ${microMarkup}
                 ${wrapMarkup}
                 ${pleatedMarkupFront}
+                ${garterMarkup}
+                ${vCutMarkup}
             </g>
 
             <!-- Пояс юбки -->

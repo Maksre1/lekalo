@@ -66,6 +66,14 @@ const state = {
     pantiesLegCut: 'classic', // 'classic' (классический) | 'high' (высокий французский)
     pantiesStretch: 0.90,     // Коэффициент растяжимости ткани (0.90 - трикотаж 10%, 0.85 - кружево 15%, 0.95 - хлопок 5%)
 
+    // Инженерный конструктор деталей и трансформация (Киллер-фичи)
+    vCutWaist: false,         // Посадка пояса «V-Cut» (галочка спереди для комфорта в сидячих позах на стримах)
+    vCutDepth: 5.0,           // Глубина выреза галочки V-Cut (см: 4..7)
+    scrunchEffect: false,     // Эффект «Scrunch» (сборка среднего шва ягодиц на эластичную резинку 1.5x)
+    quickRelease: false,      // Опция «Быстрое снятие» (разъем по центру переда/спинки с припуском 1.8 см)
+    gussetType: 'classic',    // Конструкция ластовицы: 'classic' (цельная) | 'buttons' (на кнопках) | 'frame' (открытая рамка)
+    bodysuitStretchVertical: 0.90, // Коэффициент продольной растяжимости торса для боди
+
     // Параметры ткани и раскладки
     fabricWidth: 140,         // ширина полотна ткани (см: 110, 140, 150)
     fabricFold: true,         // раскрой в сгиб ткани (вдвое)
@@ -410,6 +418,12 @@ const StorageManager = {
                     necklineDepth: state.necklineDepth,
                     sleeveLengthType: state.sleeveLengthType,
                     silhouette: state.silhouette,
+                    vCutWaist: state.vCutWaist,
+                    vCutDepth: state.vCutDepth,
+                    scrunchEffect: state.scrunchEffect,
+                    quickRelease: state.quickRelease,
+                    gussetType: state.gussetType,
+                    bodysuitStretchVertical: state.bodysuitStretchVertical,
                     timestamp: Date.now()
                 };
                 localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));

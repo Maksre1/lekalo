@@ -28,10 +28,22 @@ function calculateTopGeometry(options = {}) {
     let effectiveLength = gBase.Y_H;
     let isCrop = false;
     let isBodysuit = false;
+    let isFrontLaceUp = false;
+    let isKeyholeHalter = false;
+    let isCurtainTop = false;
+    let isExtremeCrop = false;
 
-    if (style === 'bustier-crop' || style === 'open-cup' || style === 'strappy-cage' || style === 'o-ring-top') {
+    if (style === 'extreme-crop') {
+        isCrop = true;
+        isExtremeCrop = true;
+        effectiveLength = Y_underbust; // ровно до нижнего основания груди
+    } else if (style === 'bustier-crop' || style === 'open-cup' || style === 'strappy-cage' || style === 'o-ring-top') {
         isCrop = true;
         effectiveLength = (lengthType === 'waist') ? gBase.Y_T : (Y_underbust + 3.5);
+    } else if (style === 'curtain-top') {
+        isCrop = true;
+        isCurtainTop = true;
+        effectiveLength = (lengthType === 'waist') ? gBase.Y_T : (Y_underbust + 5.0);
     } else if (style === 'plunging-mesh') {
         isBodysuit = true;
         effectiveLength = gBase.Y_H + 10.0; // боди
@@ -77,6 +89,32 @@ function calculateTopGeometry(options = {}) {
         frontNeckDrop = 9.5;
         armholeDrop = 1.5;
         shoulderCutIn = 2.5;
+    } else if (style === 'extreme-crop') {
+        strapWidth = 3.5;
+        backNeckDrop = 6.0;
+        frontNeckDrop = 10.0;
+        armholeDrop = 0.5;
+        shoulderCutIn = 2.5;
+    } else if (style === 'front-laceup') {
+        strapWidth = 3.5;
+        backNeckDrop = 5.0;
+        frontNeckDrop = 11.0;
+        armholeDrop = 1.0;
+        shoulderCutIn = 3.0;
+        isFrontLaceUp = true;
+    } else if (style === 'keyhole-halter') {
+        strapWidth = 3.0;
+        backNeckDrop = 16.0;
+        frontNeckDrop = 3.0; // стойка-чокер
+        armholeDrop = 1.5;
+        isHalter = true;
+        isKeyholeHalter = true;
+    } else if (style === 'curtain-top') {
+        strapWidth = 1.0;
+        backNeckDrop = 16.0;
+        frontNeckDrop = 12.0;
+        armholeDrop = 2.0;
+        shoulderCutIn = 4.0;
     } else if (style === 'smart-tee') {
         strapWidth = shp;
         backNeckDrop = 2.2;
@@ -204,11 +242,15 @@ function calculateTopGeometry(options = {}) {
         hasSleeve,
         sleeve: gBase.sleeve,
         isCrop,
+        isExtremeCrop,
         isBodysuit,
         isRacerback,
         isHalter,
         isLowBack,
         isPlunging,
+        isFrontLaceUp,
+        isKeyholeHalter,
+        isCurtainTop,
         stabilizationDart,
         elasticSpec,
         // Точки спинки
@@ -347,8 +389,10 @@ function generateTopPiecesMarkup(g, options = {}) {
         `;
     }
 
-    // Декоративные перемычки и портупеи для эротических и вечерних фасонов
+    // Декоративные перемычки и конструктивные узлы (шнуровка, капля, кулиски, O-Ring)
     let harnessMarkup = '';
+    const isQuickRelease = Boolean(state.quickRelease);
+
     if (g.style === 'o-ring-top') {
         const ringX = (g.W_grid + fx) * CM;
         const ringY = (g.G7.y + 1.5) * CM;
@@ -360,6 +404,52 @@ function generateTopPiecesMarkup(g, options = {}) {
             <!-- Расходящиеся эластичные ленты -->
             <line x1="${ringX - 10}" y1="${ringY - 10}" x2="${(g.F_strap_outer.x + fx) * CM}" y2="${g.F_strap_outer.y * CM}" stroke="#e11d48" stroke-width="2.2" stroke-dasharray="6,3"/>
             <line x1="${ringX - 12}" y1="${ringY + 5}" x2="${(g.F_armhole_bot.x + fx) * CM}" y2="${(g.Y_underbust) * CM}" stroke="#e11d48" stroke-width="2.2" stroke-dasharray="6,3"/>
+        `;
+    } else if (g.isFrontLaceUp) {
+        // Передняя шнуровка с люверсами и припуском
+        const cX = (g.W_grid + fx) * CM;
+        const topY = (g.F_neck_center.y + 1.5) * CM;
+        const botY = (g.F_hem_center.y - 1.0) * CM;
+        let eyeletsSvg = '';
+        const count = 5;
+        const step = (botY - topY) / (count - 1);
+        for (let i = 0; i < count; i++) {
+            const ey = topY + i * step;
+            eyeletsSvg += `
+                <circle cx="${cX - 8}" cy="${ey}" r="2.5" fill="#e11d48"/>
+                <circle cx="${cX - 18}" cy="${ey}" r="2.5" fill="#e11d48"/>
+                ${i < count - 1 ? `<line x1="${cX - 8}" y1="${ey}" x2="${cX - 18}" y2="${ey + step}" stroke="#e11d48" stroke-width="1.2" stroke-dasharray="2,2"/>` : ''}
+            `;
+        }
+        harnessMarkup = `
+            <!-- Планка передней шнуровки -->
+            <line x1="${cX - 14}" y1="${topY - 10}" x2="${cX - 14}" y2="${botY + 10}" stroke="#e11d48" stroke-width="1.5" stroke-dasharray="5,3"/>
+            ${eyeletsSvg}
+            <text x="${cX - 24}" y="${(topY + botY) / 2}" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#e11d48" text-anchor="end" transform="rotate(-90 ${cX - 24} ${(topY + botY) / 2})">⚡ ПЕРЕДНЯЯ ШНУРОВКА (быстрое снятие)</text>
+        `;
+    } else if (g.isKeyholeHalter) {
+        // Чокер-стойка + вырез-капля
+        const cX = (g.W_grid + fx) * CM;
+        const khCenterY = (g.G7.y - 1.0) * CM;
+        harnessMarkup = `
+            <!-- Воротник-чокер вокруг шеи -->
+            <rect x="${cX - 38}" y="${g.F_neck_center.y * CM - 35}" width="38" height="30" rx="4" fill="rgba(225, 29, 72, 0.08)" stroke="#e11d48" stroke-width="1.8"/>
+            <text x="${cX - 19}" y="${g.F_neck_center.y * CM - 16}" text-anchor="middle" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#e11d48">ЧОКЕР 3.5 см</text>
+            <!-- Вырез-капля на груди -->
+            <ellipse cx="${cX}" cy="${khCenterY}" rx="22" ry="34" fill="#ffffff" stroke="#e11d48" stroke-width="2.0"/>
+            <text x="${cX - 28}" y="${khCenterY}" text-anchor="end" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#e11d48">ВЫРЕЗ-КАПЛЯ</text>
+        `;
+    } else if (g.isCurtainTop) {
+        // Кулиски сверху и снизу
+        const topY = g.F_neck_center.y * CM;
+        const botY = g.F_hem_center.y * CM;
+        harnessMarkup = `
+            <!-- Верхняя кулиска -->
+            <line x1="${(g.F_strap_outer.x + fx) * CM}" y1="${topY + 18}" x2="${(g.W_grid + fx) * CM}" y2="${topY + 18}" stroke="#e11d48" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="${(g.W_grid + fx - 4) * CM}" y="${topY + 14}" text-anchor="end" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#e11d48">КУЛИСКА ВЕРХНЯЯ 2.5 см</text>
+            <!-- Нижняя кулиска -->
+            <line x1="${(g.F_hem_side.x + fx) * CM}" y1="${botY - 18}" x2="${(g.W_grid + fx) * CM}" y2="${botY - 18}" stroke="#e11d48" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="${(g.W_grid + fx - 4) * CM}" y="${botY - 22}" text-anchor="end" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#e11d48">КУЛИСКА НИЖНЯЯ 2.5 см</text>
         `;
     } else if (g.style === 'plunging-mesh') {
         const p1Y = (g.F_neck_center.y - 7) * CM;
@@ -376,6 +466,16 @@ function generateTopPiecesMarkup(g, options = {}) {
             <!-- Портупейная лента под грудью -->
             <line x1="${(g.F_armhole_bot.x + fx) * CM}" y1="${uY}" x2="${(g.W_grid + fx) * CM}" y2="${uY}" stroke="#e11d48" stroke-width="2.5"/>
             <text x="${(g.F_armhole_bot.x + fx + 3) * CM}" y="${uY - 4}" font-size="9" font-family="JetBrains Mono" font-weight="bold" fill="#e11d48">Лента под грудью (${g.elasticSpec.underbustBandLength} см)</text>
+        `;
+    }
+
+    // Маркировка опции «Быстрое снятие»
+    if (isQuickRelease) {
+        const qrX = (g.W_grid + fx) * CM;
+        harnessMarkup += `
+            <!-- Инженерная опция «Быстрое снятие» -->
+            <line x1="${qrX + 18}" y1="${(g.F_neck_center.y) * CM}" x2="${qrX + 18}" y2="${(g.F_hem_center.y) * CM}" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4,3"/>
+            <text x="${qrX + 22}" y="${((g.F_neck_center.y + g.F_hem_center.y) / 2) * CM}" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#d97706" transform="rotate(-90 ${qrX + 22} ${((g.F_neck_center.y + g.F_hem_center.y) / 2) * CM})">⚡ ПРИПУСК 1.8 СМ (БЫСТРОЕ СНЯТИЕ: МОЛНИЯ/КНОПКИ)</text>
         `;
     }
 
