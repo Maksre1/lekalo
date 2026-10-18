@@ -88,16 +88,21 @@
                 </div>
             </div>
 
-            <!-- Стандартные размеры ГОСТ -->
+            <!-- Стандартные размеры ГОСТ и Персональный пресет -->
             <div class="hidden lg:flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-xl border border-[#F0ECE1]">
-                <span class="text-[11px] font-medium text-[#78716C] px-1.5 whitespace-nowrap">ГОСТ:</span>
-                <button onclick="applyPreset('42')" data-size="42" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">42</button>
-                <button onclick="applyPreset('44')" data-size="44" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">44</button>
-                <button onclick="applyPreset('46')" data-size="46" class="preset-btn px-2 py-1 text-xs mono font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center">46</button>
-                <button onclick="applyPreset('48')" data-size="48" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">48</button>
-                <button onclick="applyPreset('50')" data-size="50" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">50</button>
-                <button onclick="applyPreset('52')" data-size="52" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">52</button>
-                <button onclick="applyPreset('54')" data-size="54" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">54</button>
+                <button onclick="applyPreset('my')" data-size="my" class="preset-btn px-2.5 py-1 text-xs mono font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center flex items-center justify-center gap-1 cursor-pointer" title="Применить мои мерки">
+                    <i data-lucide="star" class="w-3 h-3 text-amber-300 fill-amber-300"></i>
+                    <span>Мой</span>
+                </button>
+                <div class="w-px h-4 bg-[#F0ECE1] mx-0.5"></div>
+                <span class="text-[11px] font-medium text-[#78716C] px-1 whitespace-nowrap">ГОСТ:</span>
+                <button onclick="applyPreset('42')" data-size="42" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center cursor-pointer">42</button>
+                <button onclick="applyPreset('44')" data-size="44" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center cursor-pointer">44</button>
+                <button onclick="applyPreset('46')" data-size="46" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center cursor-pointer">46</button>
+                <button onclick="applyPreset('48')" data-size="48" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center cursor-pointer">48</button>
+                <button onclick="applyPreset('50')" data-size="50" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center cursor-pointer">50</button>
+                <button onclick="applyPreset('52')" data-size="52" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center cursor-pointer">52</button>
+                <button onclick="applyPreset('54')" data-size="54" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center cursor-pointer">54</button>
             </div>
 
             <!-- Главная кнопка экспорта и печати -->

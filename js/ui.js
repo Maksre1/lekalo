@@ -125,14 +125,19 @@ function applyPreset(sizeKey) {
     });
 
     document.querySelectorAll('.preset-btn').forEach(btn => {
-        if (btn.dataset.size === sizeKey) {
-            btn.className = "preset-btn px-2 py-1 text-xs mono font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center";
+        const isCurrent = btn.dataset.size === sizeKey;
+        if (isCurrent) {
+            btn.className = "preset-btn px-2.5 py-1 text-xs mono font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center flex items-center justify-center gap-1 cursor-pointer";
         } else {
-            btn.className = "preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center";
+            btn.className = "preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center flex items-center justify-center gap-1 cursor-pointer";
         }
     });
 
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (sizeKey === 'my') {
+        showNotification('Применён ваш персональный пресет мерок (92/75/96)');
+    }
 }
 
 function applyEasePreset(pg, pt, pb, pspr, pop) {
@@ -866,9 +871,13 @@ function applyMyProfile() {
             if (numEl) numEl.value = profile.data[k];
         });
 
-        // Снимаем выделение со стандартных размеров ГОСТ
+        // Выделяем кнопку Мой размер
         document.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.className = "preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center";
+            if (btn.dataset.size === 'my') {
+                btn.className = "preset-btn px-2.5 py-1 text-xs mono font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center flex items-center justify-center gap-1 cursor-pointer";
+            } else {
+                btn.className = "preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center flex items-center justify-center gap-1 cursor-pointer";
+            }
         });
 
         if (state.garmentType) setGarmentType(state.garmentType);
