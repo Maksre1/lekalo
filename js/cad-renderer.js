@@ -382,6 +382,78 @@ function renderPantiesPattern() {
     if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
 }
 
+function renderTopPattern() {
+    const g = calculateTopGeometry();
+    const svg = document.getElementById('pattern-svg');
+    if (!svg) return;
+
+    if (typeof updateCalculationTable === 'function') updateCalculationTable(g);
+    if (typeof updateExportDimensions === 'function') updateExportDimensions(g);
+
+    const isSeparate = state.separate;
+    const showSleeve = state.showSleeve && g.hasSleeve;
+
+    const sepBtn = document.getElementById('btn-separate-mode');
+    if (sepBtn) {
+        sepBtn.innerHTML = isSeparate
+            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельный вид</span>'
+            : '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенный вид</span>';
+        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    const p = generateTopPiecesMarkup(g);
+    const totalWidthCm = p.totalWidthCm;
+    const totalHeightCm = p.totalHeightCm;
+
+    let html = `<g id="viewport" transform="translate(${viewState.panX}, ${viewState.panY}) scale(${viewState.scale})">`;
+    html += `
+        <defs>
+            <marker id="arrow-start" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#27272a"/>
+            </marker>
+            <marker id="arrow-end" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#27272a"/>
+            </marker>
+        </defs>
+    `;
+
+    // Сетка листов А4
+    if (state.showA4Grid) {
+        const a4W = 18.0 * CM;
+        const a4H = 26.7 * CM;
+        const startX = 0;
+        const startY = 0;
+        const cols = Math.ceil(((totalWidthCm * CM) - startX) / a4W);
+        const rows = Math.ceil(((totalHeightCm * CM) - startY) / a4H);
+        html += `<g id="a4-tiling-layer">`;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const x = startX + c * a4W;
+                const y = startY + r * a4H;
+                const label = String.fromCharCode(65 + r) + (c + 1);
+                html += `
+                    <rect x="${x}" y="${y}" width="${a4W}" height="${a4H}" fill="none" stroke="#16a34a" stroke-width="1" stroke-dasharray="6,4" opacity="0.85"/>
+                    <rect x="${x + 4}" y="${y + 4}" width="46" height="17" rx="2" fill="#16a34a" opacity="0.9"/>
+                    <text x="${x + 27}" y="${y + 15.5}" text-anchor="middle" fill="#ffffff" font-size="10" font-family="JetBrains Mono" font-weight="bold">А4 ${label}</text>
+                `;
+            }
+        }
+        html += `</g>`;
+    }
+
+    // Разметка деталей топа
+    html += p.markup;
+
+    // Контрольный проверочный квадрат 50×50 мм
+    html += renderScaleSquareMarkup((g.W_grid * 0.45) * CM, (g.effectiveLength + 4) * CM);
+
+    html += `</g>`;
+    svg.innerHTML = html;
+
+    if (typeof updateFabricLayoutUI === 'function') updateFabricLayoutUI(g);
+    if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
+}
+
 function renderPattern() {
     const garment = state.garmentType || 'dress';
     if (garment === 'skirt') {
@@ -390,6 +462,10 @@ function renderPattern() {
     }
     if (garment === 'panties') {
         renderPantiesPattern();
+        return;
+    }
+    if (garment === 'top') {
+        renderTopPattern();
         return;
     }
 

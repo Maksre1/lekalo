@@ -217,6 +217,165 @@ function calculatePantiesFabricLayout(g, state) {
     };
 }
 
+function calculateTopFabricLayout(g, state) {
+    const fabricW = Number(state.fabricWidth) || 140;
+    const isFolded = state.fabricFold !== false;
+    const shrinkagePct = Number(state.fabricShrinkage) || 5;
+    const margin = 2.5;
+    const edgeMargin = 1.5;
+    const usableW = isFolded ? (fabricW / 2) : fabricW;
+
+    const backW = Math.max(g.X_side, g.B_hem_side.x, g.B_strap_outer.x, g.B_armhole_bot.x) + 2.0;
+    const backH = g.effectiveLength + 2.0;
+    const frontW = (g.W_grid - Math.min(g.X_side, g.F_armhole_bot.x)) + 2.0;
+    const frontH = g.effectiveLength + g.antiRideupDrop + 2.0;
+
+    let pieces = [];
+    let totalLengthCm = 0;
+    const hasSleeve = (state.topStyle === 'smart-tee');
+
+    if (backW + margin + frontW + edgeMargin <= usableW) {
+        pieces.push({
+            id: 'top-back',
+            name: 'Спинка топа (со сгибом)',
+            abbr: 'Спинка',
+            w: backW,
+            h: backH,
+            x: 0,
+            y: edgeMargin,
+            color: '#1d4ed8',
+            bg: 'rgba(29, 78, 216, 0.12)',
+            isFold: true
+        });
+        pieces.push({
+            id: 'top-front',
+            name: 'Полочка топа',
+            abbr: 'Полочка',
+            w: frontW,
+            h: frontH,
+            x: backW + margin,
+            y: edgeMargin,
+            color: '#be123c',
+            bg: 'rgba(190, 18, 60, 0.12)',
+            isFold: false
+        });
+        let curY = Math.max(backH, frontH) + edgeMargin + margin;
+        if (hasSleeve) {
+            const slW = g.W_sleeve + 2.0;
+            const slH = 21.0;
+            pieces.push({
+                id: 'top-sleeve-1',
+                name: 'Рукав футболки левый',
+                abbr: 'Рукав Л',
+                w: slW,
+                h: slH,
+                x: edgeMargin,
+                y: curY,
+                color: '#047857',
+                bg: 'rgba(4, 120, 87, 0.12)'
+            });
+            if (edgeMargin + slW + margin + slW <= usableW) {
+                pieces.push({
+                    id: 'top-sleeve-2',
+                    name: 'Рукав футболки правый',
+                    abbr: 'Рукав П',
+                    w: slW,
+                    h: slH,
+                    x: edgeMargin + slW + margin,
+                    y: curY,
+                    color: '#047857',
+                    bg: 'rgba(4, 120, 87, 0.12)'
+                });
+                curY += slH + margin;
+            } else {
+                curY += slH + margin;
+                pieces.push({
+                    id: 'top-sleeve-2',
+                    name: 'Рукав футболки правый',
+                    abbr: 'Рукав П',
+                    w: slW,
+                    h: slH,
+                    x: edgeMargin,
+                    y: curY,
+                    color: '#047857',
+                    bg: 'rgba(4, 120, 87, 0.12)'
+                });
+                curY += slH + margin;
+            }
+        }
+        totalLengthCm = curY + 5;
+    } else {
+        pieces.push({
+            id: 'top-back',
+            name: 'Спинка топа (со сгибом)',
+            abbr: 'Спинка',
+            w: backW,
+            h: backH,
+            x: 0,
+            y: edgeMargin,
+            color: '#1d4ed8',
+            bg: 'rgba(29, 78, 216, 0.12)',
+            isFold: true
+        });
+        let curY = backH + edgeMargin + margin;
+        pieces.push({
+            id: 'top-front',
+            name: 'Полочка топа',
+            abbr: 'Полочка',
+            w: frontW,
+            h: frontH,
+            x: 0,
+            y: curY,
+            color: '#be123c',
+            bg: 'rgba(190, 18, 60, 0.12)',
+            isFold: false
+        });
+        curY += frontH + margin;
+        if (hasSleeve) {
+            const slW = g.W_sleeve + 2.0;
+            const slH = 21.0;
+            pieces.push({
+                id: 'top-sleeve-1',
+                name: 'Рукав футболки левый',
+                abbr: 'Рукав Л',
+                w: slW,
+                h: slH,
+                x: edgeMargin,
+                y: curY,
+                color: '#047857',
+                bg: 'rgba(4, 120, 87, 0.12)'
+            });
+            pieces.push({
+                id: 'top-sleeve-2',
+                name: 'Рукав футболки правый',
+                abbr: 'Рукав П',
+                w: slW,
+                h: slH,
+                x: slW + margin,
+                y: curY,
+                color: '#047857',
+                bg: 'rgba(4, 120, 87, 0.12)'
+            });
+            curY += slH + margin;
+        }
+        totalLengthCm = curY + 5;
+    }
+
+    totalLengthCm = Math.max(40, Math.ceil(totalLengthCm / 5.0) * 5.0);
+    const totalLengthWithShrinkageCm = Math.ceil((totalLengthCm * (1 + shrinkagePct / 100)) / 5.0) * 5.0;
+    const efficiency = 78;
+
+    return {
+        fabricW, usableW, isFolded, shrinkagePct,
+        totalLengthCm,
+        totalLengthM: (totalLengthCm / 100).toFixed(2),
+        totalLengthWithShrinkageCm,
+        totalLengthWithShrinkageM: (totalLengthWithShrinkageCm / 100).toFixed(2),
+        efficiency,
+        pieces
+    };
+}
+
 function calculateFabricLayout(g, state) {
     if (state.garmentType === 'skirt') {
         const skirtG = (g && g.type === 'skirt') ? g : calculateSkirtGeometry();
@@ -225,6 +384,10 @@ function calculateFabricLayout(g, state) {
     if (state.garmentType === 'panties') {
         const pantiesG = (g && g.type === 'panties') ? g : calculatePantiesGeometry();
         return calculatePantiesFabricLayout(pantiesG, state);
+    }
+    if (state.garmentType === 'top') {
+        const topG = (g && g.type === 'top') ? g : calculateTopGeometry();
+        return calculateTopFabricLayout(topG, state);
     }
 
     const fabricW = Number(state.fabricWidth) || 140; // см (110, 140, 150)

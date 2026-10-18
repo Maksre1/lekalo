@@ -747,6 +747,51 @@ function updateExportDimensions(g) {
         return;
     }
 
+    if (garment === 'top') {
+        const topG = (g && g.type === 'top') ? g : calculateTopGeometry();
+        setText('export-title-back', '1. Спинка топа (со сгибом)');
+        setText('export-title-front', '2. Полочка (перед)');
+        setText('export-title-sleeve', topG.hasSleeve ? '3. Рукав футболки' : '3. Бретели и портупеи');
+        setText('export-title-all', '4. Полный комплект топа');
+        setText('modal-title-back', '1. Спинка топа (со сгибом)');
+        setText('modal-title-front', '2. Полочка (перед)');
+        setText('modal-title-sleeve', topG.hasSleeve ? '3. Рукав футболки (2 дет.)' : '3. Бретели и пояс под грудью');
+        setText('modal-title-all', '4. Полный комплект топа');
+        setText('modal-desc-back', 'Вырез горловины, пройма и боковой срез со сгибом по центру спинки.');
+        setText('modal-desc-front', topG.antiRideupDrop > 0
+            ? `Полочка с защитой от задирания «Анти-задир» (+${topG.antiRideupDrop} см по дуге низа).`
+            : 'Контур переда со сгибом ткани по центру.');
+        setText('modal-desc-sleeve', topG.hasSleeve
+            ? 'Анатомический короткий рукав 19 см с надсечками.'
+            : `Спецификация бретелей: ${topG.elasticSpec.strapFinishedLength} см, подгрудный пояс: ${topG.elasticSpec.underbustBandLength} см.`);
+        setText('modal-desc-all', 'Все лекала топа с контрольными метками и масштабом 1:1.');
+
+        const backW = (topG.W_grid * 0.48).toFixed(1);
+        const backH = topG.effectiveLength.toFixed(1);
+        const frontW = (topG.W_grid * 0.52).toFixed(1);
+        const frontH = (topG.effectiveLength + topG.antiRideupDrop).toFixed(1);
+
+        if (elBack) elBack.textContent = `${backW} × ${backH} см`;
+        if (elFront) elFront.textContent = `${frontW} × ${frontH} см`;
+        if (elSleeve) elSleeve.textContent = topG.hasSleeve ? `${topG.W_sleeve.toFixed(1)} × 19 см` : `${topG.elasticSpec.strapFinishedLength} × 2 см`;
+        if (elAll) elAll.textContent = `${topG.widthCm} × ${topG.heightCm} см`;
+
+        const tBack = calcTiles(backW, backH);
+        const tFront = calcTiles(frontW, frontH);
+        const tSleeve = topG.hasSleeve ? calcTiles(topG.W_sleeve, 19) : { c: 1, r: 1, total: 1 };
+        const tAll = calcTiles(topG.widthCm, topG.heightCm);
+
+        setBadge('pages-back', tBack);
+        setBadge('pages-front', tFront);
+        setBadge('pages-sleeve', tSleeve);
+        setBadge('pages-all', tAll);
+        setBadge('modal-pages-back', tBack);
+        setBadge('modal-pages-front', tFront);
+        setBadge('modal-pages-sleeve', tSleeve);
+        setBadge('modal-pages-all', tAll);
+        return;
+    }
+
     // Платье (по умолчанию)
     setText('export-title-back', '1. Спинка (со сгибом)');
     setText('export-title-front', '2. Полочка (перед)');
@@ -799,7 +844,7 @@ function updateContextualTabs(garmentType) {
     if (!tabsBar || !tabMeasures || !tabStyle || !tabExport) return;
 
     // Сброс тепловой карты для поясных и бельевых изделий
-    if (garmentType !== 'dress' && state.showFitHeatmap) {
+    if (garmentType !== 'dress' && garmentType !== 'top' && state.showFitHeatmap) {
         state.showFitHeatmap = false;
         const btnHeatmap = document.getElementById('btn-toggle-heatmap');
         if (btnHeatmap) {
@@ -825,12 +870,12 @@ function updateContextualTabs(garmentType) {
     }
 }
 
-// Управление типами изделий (Платье, Юбка, Трусики)
+// Управление типами изделий (Платье, Майки и топы, Юбка, Трусики)
 function setGarmentType(type) {
     state.garmentType = type;
     updateContextualTabs(type);
 
-    ['dress', 'skirt', 'panties'].forEach(t => {
+    ['dress', 'top', 'skirt', 'panties'].forEach(t => {
         const headerBtn = document.getElementById(`header-garment-${t}`);
         const isActive = (t === type);
         if (headerBtn) {
@@ -842,20 +887,33 @@ function setGarmentType(type) {
 
     const badge = document.getElementById('garment-type-badge');
     if (badge) {
-        badge.textContent = type === 'skirt' ? 'Поясное (Юбка)' : (type === 'panties' ? 'Белье (Трусики)' : 'Плечевое (Платье)');
+        badge.textContent = type === 'skirt' ? 'Поясное (Юбка)' : (type === 'panties' ? 'Белье (Трусики)' : (type === 'top' ? 'Плечевое (Майка / Топ)' : 'Плечевое (Платье)'));
     }
 
     const dressMeasures = document.getElementById('measures-dress-container');
     const skirtMeasures = document.getElementById('measures-skirt-container');
     const pantiesMeasures = document.getElementById('measures-panties-container');
-    if (dressMeasures) dressMeasures.classList.toggle('hidden', type !== 'dress');
+    // Общие мерки корпуса для платья и топа:
+    if (dressMeasures) dressMeasures.classList.toggle('hidden', type !== 'dress' && type !== 'top');
     if (skirtMeasures) skirtMeasures.classList.toggle('hidden', type !== 'skirt');
     if (pantiesMeasures) pantiesMeasures.classList.toggle('hidden', type !== 'panties');
 
+    // Скрытие или показ рукава для топов
+    const sleeveInputs = document.getElementById('measures-sleeve');
+    if (sleeveInputs && sleeveInputs.parentElement) {
+        if (type === 'top') {
+            sleeveInputs.parentElement.classList.toggle('hidden', state.topStyle !== 'smart-tee');
+        } else if (type === 'dress') {
+            sleeveInputs.parentElement.classList.remove('hidden');
+        }
+    }
+
     const dressStyle = document.getElementById('style-dress-container');
+    const topStyle = document.getElementById('style-top-container');
     const skirtStyle = document.getElementById('style-skirt-container');
     const pantiesStyle = document.getElementById('style-panties-container');
     if (dressStyle) dressStyle.classList.toggle('hidden', type !== 'dress');
+    if (topStyle) topStyle.classList.toggle('hidden', type !== 'top');
     if (skirtStyle) skirtStyle.classList.toggle('hidden', type !== 'skirt');
     if (pantiesStyle) pantiesStyle.classList.toggle('hidden', type !== 'panties');
 
@@ -863,6 +921,9 @@ function setGarmentType(type) {
         renderSkirtStyleCatalog();
     } else if (type === 'dress' && typeof renderDressStyleCatalog === 'function') {
         renderDressStyleCatalog();
+    } else if (type === 'top') {
+        if (typeof renderTopStyleCatalog === 'function') renderTopStyleCatalog();
+        else if (typeof renderTopActiveDetails === 'function') renderTopActiveDetails();
     } else if (type === 'panties') {
         if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
         else if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
@@ -872,7 +933,7 @@ function setGarmentType(type) {
     renderPattern();
     if (typeof StorageManager !== 'undefined') StorageManager.save();
 
-    const titleRu = type === 'skirt' ? 'Выбрана выкройка юбки' : (type === 'panties' ? 'Выбрана выкройка белья' : 'Выбрана выкройка платья');
+    const titleRu = type === 'skirt' ? 'Выбрана выкройка юбки' : (type === 'panties' ? 'Выбрана выкройка белья' : (type === 'top' ? 'Выбрана выкройка майки / топа' : 'Выбрана выкройка платья'));
     showNotification(titleRu);
 
     if (window.lucide && typeof lucide.createIcons === 'function') {
@@ -961,6 +1022,33 @@ function setPantiesStretch(stretch) {
             ? "panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
             : "panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
     });
+function setTopLengthType(lenType) {
+    state.topLengthType = lenType;
+    const labelMap = {
+        'crop': 'Кроп (выше талии)',
+        'waist': 'До талии',
+        'hip': 'До бедер',
+        'long': 'Удлиненный'
+    };
+    const lbl = document.getElementById('label-topLengthType');
+    if (lbl) lbl.textContent = labelMap[lenType] || lenType;
+
+    document.querySelectorAll('.top-len-btn').forEach(btn => {
+        const isActive = btn.dataset.topLen === lenType;
+        btn.className = isActive
+            ? "top-len-btn py-1 px-1 rounded-lg text-center transition font-bold bg-[#E05A47] text-white shadow-xs cursor-pointer"
+            : "top-len-btn py-1 px-1 rounded-lg text-center transition font-medium text-[#78716C] hover:text-[#2C2825] cursor-pointer";
+    });
+
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+}
+
+function toggleTopAntiRideup(enabled) {
+    state.topAntiRideup = Boolean(enabled);
+    const chk = document.getElementById('chk-top-antirideup');
+    if (chk && chk.checked !== state.topAntiRideup) chk.checked = state.topAntiRideup;
+    if (typeof renderTopActiveDetails === 'function') renderTopActiveDetails();
     renderPattern();
     if (typeof StorageManager !== 'undefined') StorageManager.save();
 }
@@ -1003,6 +1091,7 @@ function saveMyProfile() {
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
         'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
         'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb', 'skirtVb', 'skirtBalance',
+        'topStyle', 'topLengthType', 'topAntiRideup', 'topElasticStretch', 'topUnderbustFit',
         'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch'
     ];
     const profileData = {
@@ -1059,6 +1148,7 @@ function applyMyProfile() {
         if (state.silhouette) setSilhouette(state.silhouette);
         if (state.skirtStyle) setSkirtStyle(state.skirtStyle);
         if (state.skirtRise) setSkirtRise(state.skirtRise);
+        if (state.topStyle && typeof selectTopStyle === 'function') selectTopStyle(state.topStyle);
         if (state.pantiesModel) setPantiesModel(state.pantiesModel);
         if (state.pantiesRise) setPantiesRise(state.pantiesRise);
         if (state.pantiesLegCut) setPantiesLegCut(state.pantiesLegCut);
@@ -1096,6 +1186,7 @@ function exportProfileJson() {
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
         'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
         'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb', 'skirtVb', 'skirtBalance',
+        'topStyle', 'topLengthType', 'topAntiRideup', 'topElasticStretch', 'topUnderbustFit',
         'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch'
     ];
     const exportData = {

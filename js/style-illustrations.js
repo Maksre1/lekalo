@@ -425,6 +425,168 @@ const STYLE_CATALOG = {
             vectorType: 'dress-flare-midi',
             preset: { dartPosition: 'waist', necklineType: 'v-neck', necklineDepth: 2, sleeveLengthType: 'three-quarter', silhouette: 'flare' }
         }
+    ],
+
+    top: [
+        // --- 1. ПОВСЕДНЕВНАЯ БАЗА (С ЗАЩИТОЙ ОТ ЗАДИРАНИЯ) ---
+        {
+            id: 'tank-top',
+            name: 'Базовая майка в рубчик',
+            category: 'daily',
+            badge: 'Анти-задир',
+            badgeColor: 'bg-rose-50 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Анатомическая майка с широкими комфортными бретелями и округлым вырезом. Система «Анти-задир» плавно удлиняет подол переда по дуге, компенсируя подъем от груди при движении.',
+            fabrics: 'Хлопковый рубчик кашкорсе 95/5, рибана с лайкрой, трикотаж лапша',
+            difficulty: 'Очень легко',
+            time: '40 минут',
+            cutTip: 'Переднее полотнище со скругленным удлиненным низом (+2.5 см), срезы окантованы бейкой',
+            vectorType: 'top-tank-top'
+        },
+        {
+            id: 'smart-tee',
+            name: 'Анатомическая футболка',
+            category: 'daily',
+            badge: 'Анатомический крой',
+            badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            image: null,
+            summary: 'Базовая футболка с коротким анатомическим рукавом и высокой подмышкой, предотвращающей заломы и провисание ткани. Идеальная посадка по плечам.',
+            fabrics: 'Кулирная гладь пенье 95/5, модал с эластаном, мерсеризованный хлопок',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Втачной короткий рукав 19 см, горловина обработана эластичной планкой из рибаны',
+            vectorType: 'top-smart-tee'
+        },
+        {
+            id: 'racerback',
+            name: 'Спортивная майка-борцовка',
+            category: 'daily',
+            badge: 'Спорт & Фитнес',
+            badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
+            image: null,
+            summary: 'Спинка заужена между лопатками до фигурной Т-образной планки. Обеспечивает полную свободу движения лопаток и плечевого пояса на тренировках.',
+            fabrics: 'Бифлекс, эластичный супрем, компрессионный трикотаж, микрофибра',
+            difficulty: 'Легко',
+            time: '50 минут',
+            cutTip: 'Фигурная пройма спинки окантовывается эластичной резинкой или трикотажной бейкой',
+            vectorType: 'top-racerback'
+        },
+        {
+            id: 'halter-top',
+            name: 'Топ с американской проймой',
+            category: 'daily',
+            badge: 'Открытые плечи',
+            badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
+            image: null,
+            summary: 'Изящный диагональный срез проймы от подмышки прямо к основанию шеи. Эффектно открывает плечевые косточки и визуально сужает талию.',
+            fabrics: 'Плотный хлопковый трикотаж, вискозный шелк, умягченный лен, фактурный рубчик',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Плечевой шов исключен, горловина фиксируется воротником-петлей или завязками',
+            vectorType: 'top-halter-top'
+        },
+
+        // --- 2. ЧУВСТВЕННАЯ И ВЕЧЕРНЯЯ ЛИНЕЙКА ---
+        {
+            id: 'camisole',
+            name: 'Шелковый камисоль',
+            category: 'sensual',
+            badge: 'Шелк & Кружево',
+            badgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
+            image: null,
+            summary: 'Струящийся топ на тонких бретелях-спагетти с изящным V-вырезом декольте и спинки. Классика бельевого стиля для вечерних и повседневных образов.',
+            fabrics: 'Натуральный шелк, атлас, шелковый сатин, струящаяся вискоза купро, кружево шантильи',
+            difficulty: 'Средняя (тонкие ткани)',
+            time: '1.5 часа',
+            cutTip: 'Раскрой по косой или прямой нити, бретели из рулика 7 мм с регуляторами длины',
+            vectorType: 'top-camisole'
+        },
+        {
+            id: 'bustier-crop',
+            name: 'Топ-корсаж с подгрудным рельефом',
+            category: 'sensual',
+            badge: 'Корсажный лиф',
+            badgeColor: 'bg-rose-50 text-rose-700 border-rose-200',
+            image: null,
+            summary: 'Скульптурный кроп-топ с акцентным фигурным швом точно под основанием груди и вертикальными рельефами. Создает четкую архитектурную посадку.',
+            fabrics: 'Плотный хлопковый жаккард, костюмный креп с эластаном, экокожа, тафта',
+            difficulty: 'Средняя',
+            time: '2 часа',
+            cutTip: 'Нижний подгрудный срез на 7.5 см ниже вершины груди, отрицательная прибавка -1.5 см',
+            vectorType: 'top-bustier-crop'
+        },
+        {
+            id: 'low-back',
+            name: 'Топ с открытой спиной',
+            category: 'sensual',
+            badge: 'Cross-Strap',
+            badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+            image: null,
+            summary: 'Глубокий соблазнительный вырез сзади до поясницы с тонкими перекрестными бретелями крест-накрест. Завораживающий акцент на спину.',
+            fabrics: 'Эластичный бархат, шелковый крепдешин, вискозный трикотаж, плотный атлас',
+            difficulty: 'Легко',
+            time: '1.5 часа',
+            cutTip: 'Спинка срезана до талии, перекрестные бретели фиксируют боковые швы от сползания',
+            vectorType: 'top-low-back'
+        },
+
+        // --- 3. ОТКРОВЕННЫЕ, БУДУАРНЫЕ И ЭРОТИЧЕСКИЕ ДИЗАЙНЫ ---
+        {
+            id: 'open-cup',
+            name: 'Топ с открытой грудью (Open-Cup)',
+            category: 'boudoir',
+            badge: 'Shelf Bra',
+            badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+            image: null,
+            summary: 'Будуарный дизайн с открытой верхней зоной чашек. Анатомическая полочка-балконет надежно поддерживает грудь снизу, оставляя декольте полностью открытым.',
+            fabrics: 'Эластичный бархат, кордовое кружево, бельевая сетка, эластичный спандекс',
+            difficulty: 'Средняя',
+            time: '1.5 часа',
+            cutTip: 'Чашка срезана по основанию груди, подгрудный каркас усилен бельевой резинкой (k=0.82)',
+            vectorType: 'top-open-cup'
+        },
+        {
+            id: 'plunging-mesh',
+            name: 'Боди-топ из сетки с глубоким декольте',
+            category: 'boudoir',
+            badge: 'Plunging V',
+            badgeColor: 'bg-stone-100 text-stone-800 border-stone-300',
+            image: null,
+            summary: 'Экстремально глубокий V-вырез до самого пояса с конструктивной стабилизирующей вытачкой (1.2 см), исключающей отставание ткани. Фиксируется декоративными портупеями.',
+            fabrics: 'Эластичная сетка power mesh, тюль с эластаном, микрофибра, стрейч-бифлекс',
+            difficulty: 'Средняя',
+            time: '1.5 часа',
+            cutTip: 'Вытачка 1.2 см по кромке выреза, 2-3 поперечные эластичные перемычки для надежной фиксации',
+            vectorType: 'top-plunging-mesh'
+        },
+        {
+            id: 'strappy-cage',
+            name: 'Кружевной микро-топ с портупеями',
+            category: 'boudoir',
+            badge: 'Портупеи',
+            badgeColor: 'bg-pink-100 text-pink-800 border-pink-300',
+            image: null,
+            summary: 'Комбинация открытых кружевных треугольников и геометрии перекрестных эластичных лент-портупей по ребрам и под грудью. Плотное облегание за счет отрицательных прибавок.',
+            fabrics: 'Бельевая эластичная лента 10-15 мм, ажурное кружево, кольца Ø15 мм, регуляторы',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Отрицательная прибавка -3.5 см, расчет длины резинок с коэффициентом растяжимости 0.82',
+            vectorType: 'top-strappy-cage'
+        },
+        {
+            id: 'o-ring-top',
+            name: 'Кроп-топ с кольцом и перемычками',
+            category: 'boudoir',
+            badge: 'O-Ring деталь',
+            badgeColor: 'bg-amber-100 text-amber-900 border-amber-300',
+            image: null,
+            summary: 'Дерзкий графичный дизайн с центральным соединительным металлическим кольцом на груди. От кольца расходятся 4 регулируемые стреп-ленты к шее и поясу.',
+            fabrics: 'Стреп-ленты, эластичная экокожа, бельевой спандекс, металлофурнитура O-Ring Ø30 мм',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Центральное кольцо Ø30 мм в межгрудной впадине, 4 стрепа с запасом под притачивание',
+            vectorType: 'top-o-ring-top'
+        }
     ]
 };
 
@@ -835,6 +997,139 @@ function getStyleVectorSvg(type, size = 64) {
                 <path d="M 32 44 Q 30 62 28 79" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
                 <path d="M 40 44 Q 40 64 40 81" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
                 <path d="M 48 44 Q 50 62 52 79" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
+            `;
+            break;
+
+        // --- ВЕКТОРНЫЕ ЭСКИЗЫ МАЕК И ТОПОВ ---
+        case 'top-tank-top':
+            content = `
+                <!-- Базовая майка в рубчик -->
+                <path d="M 28 18 L 34 18 Q 36 29 40 29 Q 44 29 46 18 L 52 18 L 52 26 Q 48 42 50 56 Q 40 62 30 56 Q 32 42 28 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Рубчик фактура -->
+                <line x1="36" y1="34" x2="36" y2="54" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="2,2"/>
+                <line x1="40" y1="32" x2="40" y2="56" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="2,2"/>
+                <line x1="44" y1="34" x2="44" y2="54" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="2,2"/>
+                <!-- Дуга Анти-задир -->
+                <path d="M 30 56 Q 40 61 50 56" stroke="#e11d48" stroke-width="1.2" fill="none"/>
+            `;
+            break;
+
+        case 'top-smart-tee':
+            content = `
+                <!-- Анатомическая футболка -->
+                <path d="M 25 19 L 16 32 L 22 34 L 27 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 55 19 L 64 32 L 58 34 L 53 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 27 18 L 53 18 L 53 26 L 52 56 L 28 56 L 27 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 34 18 Q 40 23 46 18" stroke="${stroke}" stroke-width="1.6" fill="none"/>
+                <path d="M 28 56 Q 40 59 52 56" stroke="#10b981" stroke-width="1.0" fill="none"/>
+            `;
+            break;
+
+        case 'top-racerback':
+            content = `
+                <!-- Майка-борцовка (Racerback) -->
+                <path d="M 30 18 L 35 18 L 38 30 L 42 30 L 45 18 L 50 18 L 50 26 Q 44 38 48 55 Q 40 58 32 55 Q 36 38 30 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 35 18 Q 40 27 45 18" stroke="${stroke}" stroke-width="1.4" fill="none"/>
+                <!-- Т-образный вырез сзади -->
+                <path d="M 39 30 L 39 42" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="2,2"/>
+                <path d="M 41 30 L 41 42" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'top-halter-top':
+            content = `
+                <!-- Топ с американской проймой -->
+                <path d="M 34 18 L 46 18 L 51 28 Q 47 42 49 54 L 31 54 Q 33 42 29 28 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Диагональный срез -->
+                <line x1="34" y1="18" x2="29" y2="28" stroke="#d97706" stroke-width="1.8"/>
+                <line x1="46" y1="18" x2="51" y2="28" stroke="#d97706" stroke-width="1.8"/>
+                <circle cx="40" cy="19" r="2.5" fill="#d97706"/>
+            `;
+            break;
+
+        case 'top-camisole':
+            content = `
+                <!-- Шелковый камисоль -->
+                <line x1="32" y1="18" x2="34" y2="28" stroke="${stroke}" stroke-width="1.0"/>
+                <line x1="48" y1="18" x2="46" y2="28" stroke="${stroke}" stroke-width="1.0"/>
+                <path d="M 34 28 L 40 37 L 46 28 L 50 31 L 49 55 L 31 55 L 30 31 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Кружевная кромка -->
+                <path d="M 34 28 Q 37 32 40 37 Q 43 32 46 28" stroke="#9333ea" stroke-width="1.2" stroke-dasharray="2,1.5" fill="none"/>
+            `;
+            break;
+
+        case 'top-bustier-crop':
+            content = `
+                <!-- Топ-корсаж с подгрудным рельефом -->
+                <path d="M 30 22 L 50 22 L 50 30 Q 48 37 47 43 L 33 43 Q 32 37 30 30 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Подгрудная анатомическая дуга -->
+                <path d="M 30 31 Q 35 36 40 32 Q 45 36 50 31" stroke="#e11d48" stroke-width="1.5" fill="none"/>
+                <!-- Вертикальные корсетные ребра -->
+                <line x1="36" y1="33" x2="36" y2="43" stroke="#e11d48" stroke-width="1.0"/>
+                <line x1="44" y1="33" x2="44" y2="43" stroke="#e11d48" stroke-width="1.0"/>
+            `;
+            break;
+
+        case 'top-low-back':
+            content = `
+                <!-- Вечерний топ с открытой спиной (Cross-Strap) -->
+                <path d="M 30 20 L 50 20 L 49 32 Q 48 42 48 54 L 32 54 Q 32 42 31 32 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Перекрестные бретели сзади -->
+                <line x1="31" y1="21" x2="48" y2="45" stroke="#4f46e5" stroke-width="1.3"/>
+                <line x1="49" y1="21" x2="32" y2="45" stroke="#4f46e5" stroke-width="1.3"/>
+                <circle cx="40" cy="33" r="1.5" fill="#4f46e5"/>
+            `;
+            break;
+
+        case 'top-open-cup':
+            content = `
+                <!-- Топ с открытой грудью (Shelf Bra) -->
+                <line x1="30" y1="18" x2="30" y2="34" stroke="${stroke}" stroke-width="1.2"/>
+                <line x1="50" y1="18" x2="50" y2="34" stroke="${stroke}" stroke-width="1.2"/>
+                <!-- Балконет под грудью -->
+                <path d="M 30 34 Q 35 39 40 35 Q 45 39 50 34 L 49 44 L 31 44 Z" fill="#fff1f2" stroke="#e11d48" stroke-width="${strokeWidth}"/>
+                <!-- Открытая грудь -->
+                <circle cx="35" cy="29" r="3.5" fill="none" stroke="#f43f5e" stroke-width="1.0" stroke-dasharray="2,2"/>
+                <circle cx="45" cy="29" r="3.5" fill="none" stroke="#f43f5e" stroke-width="1.0" stroke-dasharray="2,2"/>
+                <line x1="31" y1="44" x2="49" y2="44" stroke="#e11d48" stroke-width="1.8"/>
+            `;
+            break;
+
+        case 'top-plunging-mesh':
+            content = `
+                <!-- Боди-топ из сетки с глубоким декольте -->
+                <path d="M 28 18 L 52 18 L 51 28 Q 47 40 48 55 L 32 55 Q 33 40 29 28 Z" fill="#f1f5f9" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- V-вырез до пояса -->
+                <path d="M 35 18 L 40 48 L 45 18" stroke="#e11d48" stroke-width="1.6" fill="none"/>
+                <!-- Перемычки-портупеи -->
+                <line x1="37" y1="28" x2="43" y2="28" stroke="#e11d48" stroke-width="1.2"/>
+                <line x1="38" y1="36" x2="42" y2="36" stroke="#e11d48" stroke-width="1.2"/>
+            `;
+            break;
+
+        case 'top-strappy-cage':
+            content = `
+                <!-- Кружевной микро-топ с портупеями -->
+                <path d="M 31 24 L 36 33 L 26 33 Z" fill="#fdf2f8" stroke="#db2777" stroke-width="1.2"/>
+                <path d="M 49 24 L 54 33 L 44 33 Z" fill="#fdf2f8" stroke="#db2777" stroke-width="1.2"/>
+                <!-- Портупейные ленты -->
+                <line x1="31" y1="18" x2="31" y2="24" stroke="#db2777" stroke-width="1.2"/>
+                <line x1="49" y1="18" x2="49" y2="24" stroke="#db2777" stroke-width="1.2"/>
+                <line x1="24" y1="34" x2="56" y2="34" stroke="#db2777" stroke-width="2.0"/>
+                <line x1="26" y1="40" x2="54" y2="40" stroke="#db2777" stroke-width="1.5"/>
+                <line x1="28" y1="46" x2="52" y2="46" stroke="#db2777" stroke-width="1.5"/>
+            `;
+            break;
+
+        case 'top-o-ring-top':
+            content = `
+                <!-- Кроп-топ с кольцом O-Ring и перемычками -->
+                <circle cx="40" cy="32" r="4.5" fill="#ffffff" stroke="#d97706" stroke-width="1.8"/>
+                <line x1="37" y1="29" x2="28" y2="18" stroke="#d97706" stroke-width="1.5"/>
+                <line x1="43" y1="29" x2="52" y2="18" stroke="#d97706" stroke-width="1.5"/>
+                <line x1="36" y1="34" x2="26" y2="42" stroke="#d97706" stroke-width="1.8"/>
+                <line x1="44" y1="34" x2="54" y2="42" stroke="#d97706" stroke-width="1.8"/>
+                <path d="M 26 42 Q 40 45 54 42" stroke="#d97706" stroke-width="2.0" fill="none"/>
             `;
             break;
 
@@ -1683,6 +1978,188 @@ function closeLightbox() {
     if (modal) {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+    }
+}
+
+// --- КАТАЛОГ И АКТИВНЫЕ ДЕТАЛИ МАЕК И ТОПОВ ---
+
+function renderTopActiveDetails() {
+    const target = document.getElementById('top-active-details');
+    if (!target) return;
+
+    const info = getStyleInfo('top', state.topStyle || 'tank-top');
+    if (!info) return;
+
+    const gTop = (typeof calculateTopGeometry === 'function') ? calculateTopGeometry() : null;
+    const antiRideupHtml = (gTop && gTop.antiRideupDrop > 0)
+        ? `<div class="p-2.5 rounded-xl bg-[#FFF5F3] border border-[#FCDAD5] flex items-center justify-between text-xs">
+               <span class="text-[#2C2825] font-semibold flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-[#E05A47]"></i>Система «Анти-задир»</span>
+               <span class="text-[#E05A47] font-bold mono">+${gTop.antiRideupDrop} см по дуге низа</span>
+           </div>`
+        : '';
+
+    const elasticSpecHtml = (gTop && (info.category === 'boudoir' || info.id === 'camisole'))
+        ? `<div class="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#F0ECE1] space-y-1.5 text-[11px] text-[#78716C]">
+               <div class="font-bold text-[#2C2825] flex items-center gap-1.5"><i data-lucide="scissors" class="w-3.5 h-3.5 text-[#E05A47]"></i>Расчет эластичных лент и резинок:</div>
+               <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+                   <div class="p-1.5 rounded-lg bg-white border border-[#F0ECE1]">
+                       <div class="text-[9px] uppercase tracking-wider text-[#A8A29E]">Пояс под грудью</div>
+                       <div class="font-bold mono text-[#2C2825]">${gTop.elasticSpec.underbustBandLength} см <span class="text-[9px] font-normal text-[#78716C]">(k=${gTop.elasticSpec.stretchCoeff})</span></div>
+                   </div>
+                   <div class="p-1.5 rounded-lg bg-white border border-[#F0ECE1]">
+                       <div class="text-[9px] uppercase tracking-wider text-[#A8A29E]">Бретели (2 шт.)</div>
+                       <div class="font-bold mono text-[#2C2825]">${gTop.elasticSpec.strapFinishedLength} см <span class="text-[9px] font-normal text-[#78716C]">(с регулятором)</span></div>
+                   </div>
+               </div>
+               ${gTop.elasticSpec.ringDiameterMm ? `<div class="text-[10px] text-[#57534E] pt-0.5">• Фурнитура: кольца <b>Ø${gTop.elasticSpec.ringDiameterMm} мм</b>, регуляторы бретелей <b>${gTop.elasticSpec.slidersCount} шт.</b></div>` : ''}
+           </div>`
+        : '';
+
+    const photoBadge = `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
+
+    const visual = `<div onclick="openLookbookModal('top', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs bg-[#FAF8F5] flex items-center justify-center cursor-zoom-in group/img">
+           ${getStyleVectorSvg(info.vectorType, 84)}
+           ${photoBadge}
+           <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+               <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
+           </div>
+       </div>`;
+
+    target.innerHTML = `
+        <div class="bg-gradient-to-br from-[#FFF5F3] to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl p-3.5 shadow-xs space-y-3">
+            <div class="flex items-start gap-3">
+                ${visual}
+                <div class="flex-1 min-w-0 space-y-1.5">
+                    <div class="flex items-center justify-between gap-1 flex-wrap">
+                        <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                            <button onclick="openLookbookModal('top', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-[#78716C] leading-snug">${info.summary}</p>
+                    <div class="text-[10px] text-[#78716C] pt-0.5 space-y-1">
+                        <div><b>Ткани:</b> ${info.fabrics}</div>
+                        <div><b>Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-[#2C2825] font-medium">
+                            <span><b>Сложность:</b> ${info.difficulty}</span>
+                            <span>•</span>
+                            <span><b>Пошив:</b> ${info.time}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ${antiRideupHtml}
+            ${elasticSpecHtml}
+        </div>
+    `;
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+}
+
+function selectTopStyle(styleId) {
+    state.topStyle = styleId;
+    // Рукав показывается исключительно для анатомической футболки (Smart Tee)
+    state.showSleeve = (styleId === 'smart-tee');
+
+    document.querySelectorAll('.top-style-card').forEach(el => {
+        const isMatch = el.dataset.topStyle === styleId;
+        el.className = `top-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isMatch ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}`;
+    });
+
+    renderTopActiveDetails();
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+
+    const info = getStyleInfo('top', styleId);
+    showNotification(`Выбран фасон: «${info ? info.name : styleId}»`);
+}
+
+function renderTopStyleCatalog() {
+    const container = document.getElementById('top-catalog-container');
+    if (!container) return;
+
+    const styles = STYLE_CATALOG.top || [];
+    const dailyStyles = styles.filter(s => s.category === 'daily');
+    const sensualStyles = styles.filter(s => s.category === 'sensual');
+    const boudoirStyles = styles.filter(s => s.category === 'boudoir');
+
+    const renderCard = (item) => {
+        const isActive = (state.topStyle || 'tank-top') === item.id;
+        const photoBadge = `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
+
+        const visualContent = `<div class="relative w-full h-full group/thumb flex items-center justify-center">
+            ${getStyleVectorSvg(item.vectorType, 60)}
+            ${photoBadge}
+            <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
+            </div>
+        </div>`;
+
+        return `
+            <div onclick="selectTopStyle('${item.id}')"
+                 data-top-style="${item.id}"
+                 class="top-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isActive ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}">
+                <div onclick="event.stopPropagation(); openLightbox('', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
+                     title="Нажмите для увеличения эскиза"
+                     class="w-16 h-20 rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 border border-[#F0ECE1] flex items-center justify-center relative cursor-zoom-in">
+                    ${visualContent}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-xs font-bold text-[#2C2825] group-hover:text-[#E05A47] truncate">${item.name}</span>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('top', '${item.id}');" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-semibold hover:underline cursor-pointer">Детали ↗</button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-[#78716C] line-clamp-2 mt-1 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-2 text-[10px] text-[#78716C]">
+                        <span class="inline-flex items-center gap-1 font-medium"><i data-lucide="clock" class="w-3 h-3 text-[#A8A29E]"></i>${item.time}</span>
+                        <span>•</span>
+                        <span class="text-[#78716C] font-medium">${item.difficulty}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    container.innerHTML = `
+        <!-- 1. Повседневная база -->
+        <div class="space-y-2">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center justify-between pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>1. Повседневная база (с защитой от задирания)</span>
+                <span class="text-[10px] font-semibold text-[#E05A47]">${dailyStyles.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">${dailyStyles.map(renderCard).join('')}</div>
+        </div>
+
+        <!-- 2. Чувственная и вечерняя линейка -->
+        <div class="space-y-2 pt-2">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center justify-between pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-500"></i>2. Чувственная и вечерняя линейка</span>
+                <span class="text-[10px] font-semibold text-[#E05A47]">${sensualStyles.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">${sensualStyles.map(renderCard).join('')}</div>
+        </div>
+
+        <!-- 3. Откровенные, будуарные и эротические дизайны -->
+        <div class="space-y-2 pt-2">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center justify-between pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="heart" class="w-3.5 h-3.5 text-rose-500"></i>3. Будуарные и эротические дизайны (Open-Cup & Strappy)</span>
+                <span class="text-[10px] font-semibold text-[#E05A47]">${boudoirStyles.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">${boudoirStyles.map(renderCard).join('')}</div>
+        </div>
+    `;
+
+    renderTopActiveDetails();
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
     }
 }
 

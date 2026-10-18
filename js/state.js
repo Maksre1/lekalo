@@ -41,8 +41,15 @@ const state = {
     sleeveLengthType: 'three-quarter', // 'long' (длинный) | 'three-quarter' (3/4) | 'short' (короткий)
     silhouette: 'straight',   // 'straight' (прямой) | 'flare' (трапеция/клеш)
 
-    // Тип конструируемого изделия: 'dress' (Платье/блуза/топ) | 'skirt' (Юбка) | 'panties' (Трусики)
+    // Тип конструируемого изделия: 'dress' (Платье/блуза) | 'top' (Майки и топы) | 'skirt' (Юбка) | 'panties' (Белье/трусики)
     garmentType: 'dress',
+
+    // Моделирование маек и топов
+    topStyle: 'tank-top',       // 'tank-top' | 'smart-tee' | 'racerback' | 'halter-top' | 'camisole' | 'bustier-crop' | 'low-back' | 'open-cup' | 'plunging-mesh' | 'strappy-cage' | 'o-ring-top'
+    topLengthType: 'hip',       // 'crop' (под грудь/ребра) | 'waist' (до талии) | 'hip' (до бедер) | 'long' (удлиненный)
+    topAntiRideup: true,        // Система «Анти-задир» (дугообразное удлинение низа переда)
+    topElasticStretch: 0.82,    // Коэффициент натяжения эластичных лент / резинок (0.80–0.85)
+    topUnderbustFit: -3.0,      // Отрицательная прибавка под грудью (см)
 
     // Моделирование юбок
     skirtLength: 60,          // Длина юбки (см: 30..105)
@@ -392,6 +399,11 @@ const StorageManager = {
                     pantiesRise: state.pantiesRise,
                     pantiesLegCut: state.pantiesLegCut,
                     pantiesStretch: state.pantiesStretch,
+                    topStyle: state.topStyle,
+                    topLengthType: state.topLengthType,
+                    topAntiRideup: state.topAntiRideup,
+                    topElasticStretch: state.topElasticStretch,
+                    topUnderbustFit: state.topUnderbustFit,
                     dressStyle: state.dressStyle,
                     dartPosition: state.dartPosition,
                     necklineType: state.necklineType,

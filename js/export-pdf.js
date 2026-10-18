@@ -214,12 +214,118 @@ function getPantiesPieceExportData(pieceType) {
     }
 }
 
+function getTopPieceExportData(pieceType) {
+    const g = calculateTopGeometry();
+    const p = generateTopPiecesMarkup(g, { showClassic: true, frontShiftX: 0 });
+    const sInfo = (typeof getStyleInfo === 'function') ? getStyleInfo('top', g.style) : null;
+    const styleName = sInfo ? sInfo.name : g.style;
+
+    let minX = 0, minY = 0, widthMm = 500, heightMm = 800;
+    let contentSvg = '';
+    let fileTitle = '';
+    let pieceLabelRu = '';
+
+    if (pieceType === 'back') {
+        const maxBackX = Math.max(g.X_side, g.B_hem_side.x, g.B_strap_outer.x, g.B_armhole_bot.x);
+        minX = -20;
+        minY = -20;
+        widthMm = Math.ceil(maxBackX * CM) + 40;
+        heightMm = Math.ceil(g.effectiveLength * CM) + 40;
+        fileTitle = `top_spinka_${g.style}_OG${state.og}_OT${state.ot}`;
+        pieceLabelRu = `Спинка топа (${styleName}, Ог ${state.og}, От ${state.ot})`;
+
+        contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.backPath}" fill="#ffffff"/>
+                <line x1="0" y1="${g.Y_T * CM}" x2="${g.B_waist_side.x * CM}" y2="${g.Y_T * CM}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,4"/>
+                <text x="14" y="${(g.effectiveLength * 0.5) * CM}" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#09090b" transform="rotate(-90 14 ${(g.effectiveLength * 0.5) * CM})">[ СГИБ СПИНКИ / ДОЛЕВАЯ ]</text>
+                <text x="${(maxBackX * 0.5) * CM}" y="${(g.effectiveLength * 0.4) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">СПИНКА (${styleName})</text>
+                <text x="${(maxBackX * 0.5) * CM}" y="${(g.effectiveLength * 0.4) * CM + 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">1 деталь со сгибом</text>
+            </g>
+        `;
+    } else if (pieceType === 'front') {
+        const frontW = g.W_grid - Math.min(g.X_side, g.F_armhole_bot.x);
+        minX = Math.floor(Math.min(g.X_side, g.F_armhole_bot.x) * CM) - 20;
+        minY = -20;
+        widthMm = Math.ceil(frontW * CM) + 40;
+        heightMm = Math.ceil((g.effectiveLength + g.antiRideupDrop) * CM) + 40;
+        fileTitle = `top_polochka_${g.style}_OG${state.og}_OT${state.ot}`;
+        pieceLabelRu = `Полочка топа (${styleName}, Ог ${state.og}, От ${state.ot})`;
+
+        contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.frontPath}" fill="#ffffff"/>
+                <line x1="${g.F_armhole_bot.x * CM}" y1="${g.Y_T * CM}" x2="${g.W_grid * CM}" y2="${g.Y_T * CM}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,4"/>
+                <text x="${(g.W_grid * CM) - 14}" y="${(g.effectiveLength * 0.5) * CM}" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#09090b" transform="rotate(-90 ${(g.W_grid * CM) - 14} ${(g.effectiveLength * 0.5) * CM})">[ ЛИНИЯ ПОЛУЗАНОСА / СГИБ ]</text>
+                <text x="${(g.W_grid - frontW * 0.45) * CM}" y="${(g.effectiveLength * 0.4) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">ПОЛОЧКА ПЕРЕДА</text>
+                <text x="${(g.W_grid - frontW * 0.45) * CM}" y="${(g.effectiveLength * 0.4) * CM + 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">1 деталь со сгибом</text>
+                ${g.antiRideupDrop > 0 ? `
+                    <text x="${(g.W_grid - frontW * 0.45) * CM}" y="${(g.effectiveLength + g.antiRideupDrop * 0.5) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">🛡️ АНТИ-ЗАДИР +${g.antiRideupDrop} см</text>
+                ` : ''}
+            </g>
+        `;
+    } else if (pieceType === 'sleeve') {
+        if (g.hasSleeve) {
+            const sW = g.W_sleeve * CM;
+            const sH = 19.0 * CM;
+            minX = -20;
+            minY = -20;
+            widthMm = Math.ceil(g.W_sleeve * CM) + 40;
+            heightMm = Math.ceil(19.0 * CM) + 40;
+            fileTitle = `top_rukav_OG${state.og}`;
+            pieceLabelRu = `Рукав футболки (Ог ${state.og})`;
+            contentSvg = `
+                <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                    <rect x="0" y="0" width="${sW}" height="${sH}" fill="#ffffff" stroke="#09090b" stroke-width="1.8" rx="4"/>
+                    <path d="M 0 ${6 * CM} Q ${sW / 2} 0 ${sW} ${6 * CM} L ${sW} ${sH} L 0 ${sH} Z" fill="none" stroke="#09090b" stroke-width="1.8"/>
+                    <text x="${sW / 2}" y="${sH / 2}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">РУКАВ ФУТБОЛКИ (2 дет.)</text>
+                    <text x="${sW / 2}" y="${sH / 2 + 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">Длина 19 см</text>
+                </g>
+            `;
+        } else {
+            // Бретели и пояс
+            minX = -20;
+            minY = -20;
+            widthMm = 400;
+            heightMm = 200;
+            fileTitle = `top_breteli_${g.style}`;
+            pieceLabelRu = `Спецификация бретелей (${styleName})`;
+            contentSvg = `
+                <g stroke="#09090b" stroke-width="1.5" fill="none" stroke-linejoin="round">
+                    <rect x="0" y="0" width="360" height="150" rx="8" fill="#ffffff" stroke="#09090b"/>
+                    <text x="20" y="30" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#09090b">СПЕЦИФИКАЦИЯ ЭЛАСТИЧНЫХ ДЕТАЛЕЙ И БРЕТЕЛЕЙ</text>
+                    <text x="20" y="55" font-family="Arial, sans-serif" font-size="10" fill="#27272a">• Бретели готовые: 2 детали по ${g.elasticSpec.strapFinishedLength} см (с учетом регулятора)</text>
+                    <text x="20" y="75" font-family="Arial, sans-serif" font-size="10" fill="#27272a">• Пояс под грудью: 1 деталь ${g.elasticSpec.underbustBandLength} см (растяжимость k=${g.elasticSpec.stretchCoeff})</text>
+                    <text x="20" y="95" font-family="Arial, sans-serif" font-size="10" fill="#27272a">• Регуляторы длины бретелей: ${g.elasticSpec.slidersCount} шт.</text>
+                    ${g.elasticSpec.ringDiameterMm ? `<text x="20" y="115" font-family="Arial, sans-serif" font-size="10" fill="#27272a">• Соединительные кольца: Ø${g.elasticSpec.ringDiameterMm} мм (${g.elasticSpec.ringsCount} шт.)</text>` : ''}
+                </g>
+            `;
+        }
+    } else {
+        // Полный комплект
+        const sepShift = 14 * CM;
+        const pAll = generateTopPiecesMarkup(g, { showClassic: true, frontShiftX: sepShift });
+        minX = -25;
+        minY = -25;
+        widthMm = Math.ceil((g.widthCm + sepShift / CM) * CM) + 50;
+        heightMm = Math.ceil(g.heightCm * CM) + 50;
+        fileTitle = `top_polny_komplekt_${g.style}_OG${state.og}`;
+        pieceLabelRu = `Полный комплект топа (${styleName}, Ог ${state.og}, От ${state.ot})`;
+        contentSvg = `<g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">${pAll.markup}</g>`;
+    }
+
+    return { minX, minY, widthMm, heightMm, contentSvg, fileTitle, pieceLabelRu };
+}
+
 function getPieceExportData(pieceType) {
     if (state.garmentType === 'skirt') {
         return getSkirtPieceExportData(pieceType);
     }
     if (state.garmentType === 'panties') {
         return getPantiesPieceExportData(pieceType);
+    }
+    if (state.garmentType === 'top') {
+        return getTopPieceExportData(pieceType);
     }
 
     const g = calculateGeometry();

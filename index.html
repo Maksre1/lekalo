@@ -32,15 +32,19 @@
         <div data-tour="garment-selector" class="flex items-center justify-center p-1 rounded-full bg-[#FAF8F5] border border-[#F0ECE1] shadow-xs">
             <button onclick="setGarmentType('dress')" id="header-garment-dress" class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-[#E05A47] text-white shadow-xs transition flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                <span>Платье / Топ</span>
+                <span>Плечевые</span>
+            </button>
+            <button onclick="setGarmentType('top')" id="header-garment-top" class="px-3.5 py-1.5 text-xs font-medium rounded-full text-[#78716C] hover:text-[#2C2825] transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <i data-lucide="flame" class="w-3.5 h-3.5 text-rose-500"></i>
+                <span>Майки и Топы</span>
             </button>
             <button onclick="setGarmentType('skirt')" id="header-garment-skirt" class="px-3.5 py-1.5 text-xs font-medium rounded-full text-[#78716C] hover:text-[#2C2825] transition flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                <span>Юбка</span>
+                <span>Юбки</span>
             </button>
             <button onclick="setGarmentType('panties')" id="header-garment-panties" class="px-3.5 py-1.5 text-xs font-medium rounded-full text-[#78716C] hover:text-[#2C2825] transition flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i data-lucide="heart" class="w-3.5 h-3.5"></i>
-                <span>Бельё</span>
+                <span>Белье</span>
             </button>
         </div>
 
@@ -530,6 +534,55 @@
                                     <button onclick="setSilhouette('straight')" data-silhouette="straight" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Прямой базовый</button>
                                     <button onclick="setSilhouette('flare')" data-silhouette="flare" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Трапеция (клеш)</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- СТИЛИ ДЛЯ МАЕК И ТОПОВ -->
+                    <div id="style-top-container" class="space-y-4 hidden">
+                        <!-- Детальная карточка активного фасона топа -->
+                        <div id="top-active-details"></div>
+
+                        <!-- Каталог фасонов маек и топов (3 направления) -->
+                        <div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1 flex items-center justify-between">
+                                <span>Каталог фасонов маек и топов</span>
+                                <span class="text-[10px] text-[#E05A47] font-semibold lowercase">11 моделей</span>
+                            </div>
+                            <div id="top-catalog-container" class="space-y-3">
+                                <!-- Рендерится через renderTopStyleCatalog() -->
+                            </div>
+                        </div>
+
+                        <!-- Дополнительные настройки посадки топа -->
+                        <div class="space-y-3 p-3.5 rounded-2xl bg-white border border-[#F0ECE1] shadow-2xs">
+                            <!-- Длина топа -->
+                            <div class="space-y-1.5">
+                                <div class="text-[11px] font-semibold text-[#2C2825] flex items-center justify-between">
+                                    <span>Длина топа:</span>
+                                    <span id="label-topLengthType" class="text-[10px] mono text-[#E05A47] font-bold">До бедер</span>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 bg-[#FAF8F5] p-1 rounded-xl border border-[#F0ECE1] text-[11px]">
+                                    <button onclick="setTopLengthType('crop')" data-top-len="crop" class="top-len-btn py-1 px-1 rounded-lg text-center transition font-medium text-[#78716C] hover:text-[#2C2825] cursor-pointer">Кроп</button>
+                                    <button onclick="setTopLengthType('waist')" data-top-len="waist" class="top-len-btn py-1 px-1 rounded-lg text-center transition font-medium text-[#78716C] hover:text-[#2C2825] cursor-pointer">Талия</button>
+                                    <button onclick="setTopLengthType('hip')" data-top-len="hip" class="top-len-btn py-1 px-1 rounded-lg text-center transition font-bold bg-[#E05A47] text-white shadow-xs cursor-pointer">Бедра</button>
+                                    <button onclick="setTopLengthType('long')" data-top-len="long" class="top-len-btn py-1 px-1 rounded-lg text-center transition font-medium text-[#78716C] hover:text-[#2C2825] cursor-pointer">Удлин.</button>
+                                </div>
+                            </div>
+
+                            <!-- Тумблер системы «Анти-задир» -->
+                            <div class="flex items-center justify-between pt-1 border-t border-[#F0ECE1]">
+                                <div class="pr-2">
+                                    <div class="text-xs font-semibold text-[#2C2825] flex items-center gap-1.5">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                        <span>Система «Анти-задир»</span>
+                                    </div>
+                                    <p class="text-[10px] text-[#78716C] leading-tight">Дугообразное удлинение низа переда для компенсации подъема от груди</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="chk-top-antirideup" checked onchange="toggleTopAntiRideup(this.checked)" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-[#E8E2D5] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#E8E2D5] after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#E05A47]"></div>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -1168,6 +1221,7 @@
     <!-- Модули приложения -->
     <script src="js/state.js"></script>
     <script src="js/cad-geometry.js"></script>
+    <script src="js/top-geometry.js"></script>
     <script src="js/skirt-geometry.js"></script>
     <script src="js/panties-geometry.js"></script>
     <script src="js/fabric-layout.js"></script>
@@ -1192,6 +1246,8 @@
                 // Инициализация каталогов и интерфейса
                 if (typeof renderDressStyleCatalog === 'function') renderDressStyleCatalog();
                 if (typeof renderDressActiveDetails === 'function') renderDressActiveDetails();
+                if (typeof renderTopStyleCatalog === 'function') renderTopStyleCatalog();
+                if (typeof renderTopActiveDetails === 'function') renderTopActiveDetails();
                 if (typeof renderSkirtStyleCatalog === 'function') renderSkirtStyleCatalog();
                 if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
                 if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
@@ -1201,14 +1257,17 @@
                 if (window.innerWidth < 768) {
                     setMobileView('canvas');
                 }
-                // Поддержка прямых ссылок на тип изделия, вкладки и фасоны (?garment=skirt, ?tab=style, etc.)
+                // Поддержка прямых ссылок на тип изделия, вкладки и фасоны (?garment=top, ?tab=style, etc.)
                 const urlParams = new URLSearchParams(window.location.search);
                 const garmentParam = urlParams.get('garment');
-                if (garmentParam && ['dress', 'skirt', 'panties'].includes(garmentParam)) {
+                if (garmentParam && ['dress', 'top', 'skirt', 'panties'].includes(garmentParam)) {
                     setGarmentType(garmentParam);
                 }
                 if (urlParams.get('dressStyle') && typeof selectDressStyle === 'function') {
                     selectDressStyle(urlParams.get('dressStyle'));
+                }
+                if (urlParams.get('topStyle') && typeof selectTopStyle === 'function') {
+                    selectTopStyle(urlParams.get('topStyle'));
                 }
                 const tab = urlParams.get('tab') || window.location.hash.replace('#', '');
                 if (tab && ['measures', 'style', 'fit', 'layout'].includes(tab)) {
