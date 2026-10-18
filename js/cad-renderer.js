@@ -308,7 +308,6 @@ function renderSkirtPattern() {
 
     if (typeof updateFabricLayoutUI === 'function') updateFabricLayoutUI(g);
     if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
-    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function renderPantiesPattern() {
@@ -370,7 +369,6 @@ function renderPantiesPattern() {
 
     if (typeof updateFabricLayoutUI === 'function') updateFabricLayoutUI(g);
     if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
-    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function renderPattern() {
@@ -532,7 +530,6 @@ function renderPattern() {
     if (typeof updateFabricLayoutUI === 'function') updateFabricLayoutUI(g);
     if (typeof updateFitIndicatorUI === 'function') updateFitIndicatorUI(g);
     if (typeof updateStyleUI === 'function') updateStyleUI(g);
-    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function renderFitHeatmapMarkup(g, p) {

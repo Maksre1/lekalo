@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Конструктор выкроек — Базовая основа платья и плечевого изделия 1:1</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="vendor/three.min.js"></script>
-    <script src="vendor/OrbitControls.js"></script>
     <script src="vendor/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -789,25 +787,14 @@
             </div>
         </aside>
 
-        <!-- Интерактивный холст лекал (Canvas) и 3D-манекен -->
+        <!-- Интерактивный холст лекал (Canvas) -->
         <main id="cad-canvas-container" class="flex-1 flex flex-col relative cad-canvas-bg overflow-hidden h-full">
             
-            <!-- Панель управления над холстом: Режим отображения (2D / 3D / Сплит) + Зум -->
+            <!-- Панель управления над холстом: Раздвинуть/Совместить + Зум -->
             <div class="absolute top-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 pointer-events-none z-10">
                 <div class="bg-white/95 backdrop-blur-sm border border-stone-200 p-1 rounded-xl shadow-sm flex items-center gap-1 text-xs pointer-events-auto">
-                    <!-- Переключатель режима 2D / 3D / Сплит -->
-                    <button type="button" onclick="setMainViewMode('2d')" id="btn-view-2d" class="view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-stone-700 hover:bg-stone-100 transition cursor-pointer">
-                        <span>📐 2D Чертёж</span>
-                    </button>
-                    <button type="button" onclick="setMainViewMode('split')" id="btn-view-split" class="view-mode-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-xs transition cursor-pointer">
-                        <span>◫ Сплит</span>
-                    </button>
-                    <button type="button" onclick="setMainViewMode('3d')" id="btn-view-3d" class="view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-stone-700 hover:bg-stone-100 transition cursor-pointer">
-                        <span>👗 3D Манекен</span>
-                    </button>
-                    <div class="w-px h-4 bg-stone-200 mx-0.5"></div>
-                    <button onclick="toggleSeparateMode()" id="btn-separate-mode" class="hover:bg-stone-100 text-stone-700 font-medium px-2 py-1 rounded-lg transition">
-                        <span>⇄ Раздвинуть</span>
+                    <button onclick="toggleSeparateMode()" id="btn-separate-mode" class="hover:bg-stone-100 text-stone-700 font-semibold px-2.5 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+                        <span>⇄ Раздельный вид</span>
                     </button>
                 </div>
 
@@ -821,40 +808,11 @@
                 </div>
             </div>
 
-            <!-- Главная область: Сплит контейнер для 2D выкройки и 3D манекена -->
-            <div id="viewport-split-container" class="w-full h-full flex flex-row overflow-hidden relative">
-                <!-- Левая зона: 2D Чертёж выкройки -->
-                <div id="svg-wrapper" class="flex-1 h-full cursor-grab active:cursor-grabbing relative overflow-hidden transition-all duration-300">
-                    <svg id="pattern-svg" xmlns="http://www.w3.org/2000/svg" class="w-full h-full block pointer-events-none">
-                        <!-- Отрисовывается через cad-renderer.js -->
-                    </svg>
-                </div>
-
-                <!-- Правая зона: 3D Студийный ателье-манекен -->
-                <div id="mannequin-3d-box" class="w-72 sm:w-80 md:w-96 border-l border-stone-200 bg-[#f0ede6] flex flex-col relative shrink-0 transition-all duration-300">
-                    <!-- Панель управления манекеном -->
-                    <div class="p-2 border-b border-stone-200/80 bg-white/80 backdrop-blur-sm flex items-center justify-between text-xs shrink-0 z-10">
-                        <div class="flex items-center gap-1.5 font-bold text-stone-800 text-[11px]">
-                            <span>👗 3D Манекен</span>
-                            <span class="text-[9px] font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-1 rounded">360°</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <button type="button" onclick="setMannequinAngle(0)" title="Вид спереди" class="px-1.5 py-0.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-medium transition cursor-pointer">Фас</button>
-                            <button type="button" onclick="setMannequinAngle(45)" title="Ракурс 3/4" class="px-1.5 py-0.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-medium transition cursor-pointer">3/4</button>
-                            <button type="button" onclick="setMannequinAngle(180)" title="Вид сзади" class="px-1.5 py-0.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-medium transition cursor-pointer">Тыл</button>
-                            <button type="button" onclick="toggleMannequinSpin(this)" title="Авто-вращение 360" class="px-1.5 py-0.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-medium transition cursor-pointer">↻</button>
-                        </div>
-                    </div>
-
-                    <!-- Холст Three.js для 3D-манекена -->
-                    <div id="mannequin-3d-canvas-box" class="w-full flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing"></div>
-
-                    <!-- Нижняя плашка с подсказкой и параметрами -->
-                    <div class="p-2 border-t border-stone-200/80 bg-white/70 backdrop-blur-sm text-[10px] text-stone-500 flex items-center justify-between shrink-0">
-                        <span>Зажмите для вращения 360°</span>
-                        <span id="mannequin-style-tag" class="font-bold text-indigo-900">Интерактивная примерка</span>
-                    </div>
-                </div>
+            <!-- Главная область: Векторный интерактивный чертёж выкройки -->
+            <div id="svg-wrapper" class="w-full h-full cursor-grab active:cursor-grabbing relative overflow-hidden">
+                <svg id="pattern-svg" xmlns="http://www.w3.org/2000/svg" class="w-full h-full block pointer-events-none">
+                    <!-- Отрисовывается через cad-renderer.js -->
+                </svg>
             </div>
 
             <!-- Подсказка по навигации снизу холста -->
@@ -1163,7 +1121,6 @@
     <script src="js/cad-renderer.js"></script>
     <script src="js/export-pdf.js"></script>
     <script src="js/style-illustrations.js"></script>
-    <script src="js/mannequin-3d.js"></script>
     <script src="js/ui.js"></script>
 
     <script>
@@ -1178,16 +1135,12 @@
                 initCanvasNavigation();
                 resetView();
 
-                // Инициализация 3D-манекена и каталогов
-                if (typeof initMannequin === 'function') initMannequin();
+                // Инициализация каталогов и интерфейса
                 if (typeof renderDressActiveDetails === 'function') renderDressActiveDetails();
                 if (typeof renderSkirtStyleCatalog === 'function') renderSkirtStyleCatalog();
                 if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
                 if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
                 if (typeof updateContextualTabs === 'function') updateContextualTabs(state.garmentType);
-                if (typeof setMainViewMode === 'function') {
-                    setMainViewMode(window.innerWidth < 1024 ? '2d' : 'split');
-                }
 
                 // На мобильных экранах по умолчанию открываем холст
                 if (window.innerWidth < 768) {
