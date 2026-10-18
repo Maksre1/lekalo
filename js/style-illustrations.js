@@ -573,6 +573,21 @@ const STYLE_CATALOG = {
             vectorType: 'top-smart-tee'
         },
         {
+            id: 'oversize-tee',
+            name: 'Свободная оверсайз-футболка (Boyfriend Tee)',
+            category: 'daily',
+            badge: 'Оверсайз',
+            badgeColor: 'bg-slate-100 text-slate-800 border-slate-300',
+            image: null,
+            recLength: 68,
+            summary: 'Трендовый объемный крой со спущенной линией плеча (+4.5 см), свободной проймой и удлиненным рукавом до локтя (25 см). Идеальная свобода движений и современный расслабленный силуэт.',
+            fabrics: 'Плотный хлопковый кулир 220–240 г/м² (пенье), футер 2-нитка петля, умягченный лен, вареный хлопок',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Спущенное плечо +4.5 см, прибавка к Ог +6 см, удлиненный свободный рукав 25 см',
+            vectorType: 'top-oversize-tee'
+        },
+        {
             id: 'racerback',
             name: 'Спортивная майка-борцовка',
             category: 'daily',
@@ -643,6 +658,36 @@ const STYLE_CATALOG = {
             time: '1.5 часа',
             cutTip: 'Спинка срезана до талии, перекрестные бретели фиксируют боковые швы от сползания',
             vectorType: 'top-low-back'
+        },
+        {
+            id: 'asymmetric-tee',
+            name: 'Асимметричная футболка на одно плечо',
+            category: 'sensual',
+            badge: 'Одно плечо',
+            badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+            image: null,
+            recLength: 56,
+            summary: 'Изящный ниспадающий вырез с одним полностью открытым плечом, мягкой драпировкой и свободным рукавом (22 см). Стильный асимметричный силуэт, акцентирующий ключицы.',
+            fabrics: 'Тонкая струящаяся вискоза с лайкрой, шелковистый модал, бамбуковый трикотаж, тенсель',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Асимметричный срез горловины: одно плечо спущено на 4 см ниже ключицы, рукав 22 см',
+            vectorType: 'top-asymmetric-tee'
+        },
+        {
+            id: 'ruched-baby-tee',
+            name: 'Трендовая Baby-Tee на кулисках',
+            category: 'sensual',
+            badge: 'Кулиски Y2K',
+            badgeColor: 'bg-pink-100 text-pink-800 border-pink-200',
+            image: null,
+            recLength: 42,
+            summary: 'Культовый укороченный силуэт 2000-х с миниатюрным рукавом (14 см) и боковыми вертикальными кулисками. Длина и драпировка талии легко регулируются шнурками.',
+            fabrics: 'Эластичный хлопковый рубчик 2x2, рибана с лайкрой, масло, вискозный бифлекс',
+            difficulty: 'Легко',
+            time: '1 час 15 мин',
+            cutTip: 'Боковой припуск 2.5 см под кулиску со шнурком, короткий рукав 14 см',
+            vectorType: 'top-ruched-baby-tee'
         },
 
         // --- 3. ОТКРОВЕННЫЕ, БУДУАРНЫЕ И ЭРОТИЧЕСКИЕ ДИЗАЙНЫ ---
@@ -757,6 +802,51 @@ const STYLE_CATALOG = {
             time: '1 час',
             cutTip: 'Две горизонтальные кулиски сверху и снизу с продетыми шнурками',
             vectorType: 'top-curtain-top'
+        },
+        {
+            id: 'underboob-crop-tee',
+            name: 'Ультра-кроп футболка «Underboob»',
+            category: 'boudoir',
+            badge: '🔥 Underboob',
+            badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+            image: null,
+            recLength: 26,
+            summary: 'Экстремально дерзкая укороченная футболка для ярких стримов и съемки. Закрытый воротник-стойка и короткие рукава (13 см) контрастируют с арочным низом, обнажающим нижний контур груди.',
+            fabrics: 'Плотный хлопок с эластаном 95/5, полупрозрачная эластичная сетка power mesh, латексный бифлекс',
+            difficulty: 'Легко',
+            time: '45 минут',
+            cutTip: 'Арочная дуга подола по центру на 2 см выше подгрудной линии, обработка эластичной силиконовой бейкой',
+            vectorType: 'top-underboob-crop-tee'
+        },
+        {
+            id: 'cutout-laceup-tee',
+            name: 'Футболка с декольте-шнуровкой «Peek-a-Boo»',
+            category: 'boudoir',
+            badge: 'Камера & Стрим',
+            badgeColor: 'bg-amber-100 text-amber-900 border-amber-300',
+            image: null,
+            recLength: 40,
+            summary: 'Укороченная футболка с коротким рукавом (16 см), овальным вырезом декольте и перекрестной шнуровкой. Идеальный фокус портретной зоны для стримов и камеры с регулировкой раскрытия.',
+            fabrics: 'Хлопковый трикотаж пенье с эластаном, замшевый стрейч, экокожа на трикотаже, атласный шнур',
+            difficulty: 'Средняя',
+            time: '1.5 часа',
+            cutTip: 'Овальный вырез декольте 14x7 см, 4 пары петель под шнуровку, притачной короткий рукав 16 см',
+            vectorType: 'top-cutout-laceup-tee'
+        },
+        {
+            id: 'backless-mesh-tee',
+            name: 'Футболка с открытой спиной на завязках',
+            category: 'boudoir',
+            badge: 'Открытая спина',
+            badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
+            image: null,
+            recLength: 46,
+            summary: 'Спереди — лаконичная стильная футболка с коротким рукавом (18 см), а сзади — чувственный вырез спинки до самой талии, соединяемый двумя парами тонких шелковых завязок на лопатках и пояснице.',
+            fabrics: 'Эластичная дышащая сетка, микромасло, мокрый шелк с эластаном, тонкая вискоза',
+            difficulty: 'Легко',
+            time: '1 час',
+            cutTip: 'Спинка срезана до талии с запасом 1.5 см на окантовку, 2 пары завязок по 35 см',
+            vectorType: 'top-backless-mesh-tee'
         }
     ],
 
@@ -1294,6 +1384,99 @@ function getStyleVectorSvg(type, size = 64) {
                 <path d="M 27 18 L 53 18 L 53 26 L 52 56 L 28 56 L 27 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
                 <path d="M 34 18 Q 40 23 46 18" stroke="${stroke}" stroke-width="1.6" fill="none"/>
                 <path d="M 28 56 Q 40 59 52 56" stroke="#10b981" stroke-width="1.0" fill="none"/>
+            `;
+            break;
+
+        case 'top-oversize-tee':
+            content = `
+                <!-- Свободная оверсайз-футболка -->
+                <path d="M 23 20 L 10 33 L 16 36 L 24 28 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 57 20 L 70 33 L 64 36 L 56 28 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 23 19 L 57 19 L 57 28 L 56 62 L 24 62 L 23 28 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 33 19 Q 40 24 47 19" stroke="${stroke}" stroke-width="1.6" fill="none"/>
+                <!-- Накладной нагрудный кармашек -->
+                <path d="M 45 32 L 51 32 L 51 38 L 48 40 L 45 38 Z" fill="#ffffff" stroke="#94a3b8" stroke-width="0.8"/>
+                <line x1="24" y1="59" x2="56" y2="59" stroke="#64748b" stroke-width="0.8" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'top-asymmetric-tee':
+            content = `
+                <!-- Асимметричная футболка на одно плечо -->
+                <path d="M 26 19 L 17 32 L 23 34 L 28 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Спущенное правое плечо -->
+                <path d="M 53 26 L 62 36 L 56 38 L 50 30 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 18 Q 42 22 53 26 L 50 30 L 51 57 L 27 54 L 28 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <!-- Диагональный срез декольте -->
+                <path d="M 28 18 Q 40 24 53 26" stroke="#6366f1" stroke-width="1.8" fill="none"/>
+                <!-- Обнаженное плечо -->
+                <circle cx="54" cy="22" r="3.0" fill="none" stroke="#6366f1" stroke-width="1.0" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'top-ruched-baby-tee':
+            content = `
+                <!-- Трендовая Baby-Tee на кулисках Y2K -->
+                <path d="M 27 19 L 20 28 L 24 30 L 29 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 53 19 L 60 28 L 56 30 L 51 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 29 18 L 51 18 L 51 25 L 49 46 L 31 46 L 29 25 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 35 18 Q 40 22 45 18" stroke="${stroke}" stroke-width="1.5" fill="none"/>
+                <!-- Боковые драпировки и кулиски -->
+                <path d="M 31 28 Q 33 30 31 32 Q 33 34 31 36 Q 33 38 31 40 Q 33 42 31 44" stroke="#db2777" stroke-width="1.4" fill="none"/>
+                <path d="M 49 28 Q 47 30 49 32 Q 47 34 49 36 Q 47 38 49 40 Q 47 42 49 44" stroke="#db2777" stroke-width="1.4" fill="none"/>
+                <!-- Завязки шнурков снизу -->
+                <path d="M 31 46 Q 30 52 27 54" stroke="#db2777" stroke-width="1.4" fill="none"/>
+                <path d="M 49 46 Q 50 52 53 54" stroke="#db2777" stroke-width="1.4" fill="none"/>
+            `;
+            break;
+
+        case 'top-underboob-crop-tee':
+            content = `
+                <!-- Ультра-кроп футболка «Underboob» -->
+                <path d="M 26 19 L 19 27 L 23 29 L 28 24 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 54 19 L 61 27 L 57 29 L 52 24 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Высокий закрытый воротник + ультра-кроп с дугой Underboob -->
+                <path d="M 28 18 L 52 18 L 52 24 L 51 36 Q 40 27 29 36 L 28 24 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 35 18 Q 40 21 45 18" stroke="${stroke}" stroke-width="1.8" fill="none"/>
+                <!-- Арочная линия Underboob -->
+                <path d="M 29 36 Q 40 27 51 36" stroke="#e11d48" stroke-width="2.2" fill="none"/>
+                <!-- Контур обнаженной груди -->
+                <circle cx="35" cy="34" r="4.0" fill="none" stroke="#f43f5e" stroke-width="1.0" stroke-dasharray="2,2"/>
+                <circle cx="45" cy="34" r="4.0" fill="none" stroke="#f43f5e" stroke-width="1.0" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'top-cutout-laceup-tee':
+            content = `
+                <!-- Футболка с декольте-шнуровкой «Peek-a-Boo» -->
+                <path d="M 26 19 L 18 30 L 23 32 L 28 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 54 19 L 62 30 L 57 32 L 52 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 18 L 52 18 L 52 25 L 50 48 L 30 48 L 28 25 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 35 18 Q 40 21 45 18" stroke="${stroke}" stroke-width="1.5" fill="none"/>
+                <!-- Овальный вырез декольте Peek-a-Boo -->
+                <ellipse cx="40" cy="31" rx="5.5" ry="8.5" fill="#fff1f2" stroke="#e11d48" stroke-width="1.5"/>
+                <!-- Перекрестная шнуровка -->
+                <line x1="36" y1="26" x2="44" y2="30" stroke="#e11d48" stroke-width="1.2"/>
+                <line x1="44" y1="26" x2="36" y2="30" stroke="#e11d48" stroke-width="1.2"/>
+                <line x1="36" y1="31" x2="44" y2="35" stroke="#e11d48" stroke-width="1.2"/>
+                <line x1="44" y1="31" x2="36" y2="35" stroke="#e11d48" stroke-width="1.2"/>
+            `;
+            break;
+
+        case 'top-backless-mesh-tee':
+            content = `
+                <!-- Футболка с открытой спиной на завязках -->
+                <path d="M 26 19 L 18 30 L 23 32 L 27 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 54 19 L 62 30 L 57 32 L 53 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Контур спинки с глубоким вырезом -->
+                <path d="M 28 18 L 52 18 L 52 25 L 49 52 L 31 52 L 28 25 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Глубокий овальный вырез спины до талии -->
+                <path d="M 34 18 Q 36 38 40 46 Q 44 38 46 18 Z" fill="#f8fafc" stroke="#8b5cf6" stroke-width="1.6"/>
+                <!-- Завязки с бантиками на лопатках и талии -->
+                <line x1="36" y1="28" x2="44" y2="28" stroke="#8b5cf6" stroke-width="1.5"/>
+                <circle cx="40" cy="28" r="1.5" fill="#8b5cf6"/>
+                <line x1="38" y1="42" x2="42" y2="42" stroke="#8b5cf6" stroke-width="1.5"/>
+                <circle cx="40" cy="42" r="1.5" fill="#8b5cf6"/>
             `;
             break;
 
@@ -2290,7 +2473,25 @@ function getStylingTip(garmentType, styleId) {
         'armhole': 'Элегантная плавная линия от проймы, подчеркивающая рельеф груди.',
         'keyhole': 'Вырез-капелька подчеркивает изящество ключиц и линии декольте.',
         'halter': 'Открытые плечи и спина — эффектно и элегантно для вечерних платьев.',
-        'bustier': 'Корсетный силуэт подчеркивает фигуру без жестких неудобных косточек.'
+        'bustier': 'Корсетный силуэт подчеркивает фигуру без жестких неудобных косточек.',
+        // Майки и футболки
+        'smart-tee': 'Анатомический крой с высокой подмышкой предотвращает заломы ткани. Отлично смотрится заправленной в юбку или джинсы.',
+        'oversize-tee': 'Спущенное плечо и удлиненный рукав создают расслабленный трендовый оверсайз. Отлично сочетается с микро-юбками и велосипедками.',
+        'asymmetric-tee': 'Асимметричный срез горловины деликатно обнажает одно плечо. Идеальный баланс чувственности и непринужденности.',
+        'ruched-baby-tee': 'Кулиски со шнурками позволяют регулировать степень сборки и высоту топа от талии до ультра-кропа.',
+        'underboob-crop-tee': 'Ультра-кроп с арочным вырезом Underboob — эффектный акцент для стримов, фотосессий и дерзких образов.',
+        'cutout-laceup-tee': 'Вырез-капля со шнуровкой создает выразительный фокус в кадре. Степень открытости легко регулируется затяжкой шнура.',
+        'backless-mesh-tee': 'Интригующий контраст: лаконичный перед и полностью открытая чувственная спина с тончайшими завязками.',
+        'tank-top': 'Базовая майка в рубчик кашкорсе. Система «Анти-задир» гарантирует идеальную посадку по фигуре при движении.',
+        'racerback': 'Спинка-борцовка дарит свободу лопаткам на тренировках и подчеркивает спортивную осанку.',
+        'halter-top': 'Американская пройма эффектно подчеркивает плечи и ключицы.',
+        'camisole': 'Струящийся шелковый камисоль — элегантный топ для пиджака или самостоятельного вечернего выхода.',
+        'bustier-crop': 'Корсетный подгрудный рельеф создает четкую архитектурную форму лифа.',
+        'low-back': 'Глубокий вечерний вырез на спине с тонкими перекрестными бретелями.',
+        'open-cup': 'Открытая чашка балконет надежно поддерживает грудь снизу, оставляя зону декольте свободной.',
+        'plunging-mesh': 'Сетчатый боди-топ со стабилизированным глубоким декольте и акцентными стрепами.',
+        'strappy-cage': 'Графика эластичных портупей формирует четкий геометрический силуэт.',
+        'o-ring-top': 'Металлическое кольцо O-Ring в центре притягивает взгляд и структурирует силуэт топа.'
     };
     return tips[styleId] || 'Стильный фасон с отличной посадкой по индивидуальным меркам.';
 }
@@ -2304,6 +2505,8 @@ function openLookbookModal(garmentType, styleId) {
     if (!targetId) {
         if (gType === 'skirt') targetId = state.skirtStyle || 'mini-trapeze';
         else if (gType === 'panties') targetId = state.pantiesModel || 'slips';
+        else if (gType === 'top') targetId = state.topStyle || 'smart-tee';
+        else if (gType === 'corset') targetId = state.corsetStyle || 'underbust-corset';
         else targetId = state.dressStyle || 'dress-sheath';
     }
 
@@ -2609,8 +2812,16 @@ function renderTopActiveDetails() {
 
 function selectTopStyle(styleId) {
     state.topStyle = styleId;
-    // Рукав показывается исключительно для анатомической футболки (Smart Tee)
-    state.showSleeve = (styleId === 'smart-tee');
+    // Рукав строится и отображается для всей линейки футболок
+    const TEE_STYLES = ['smart-tee', 'oversize-tee', 'asymmetric-tee', 'ruched-baby-tee', 'underboob-crop-tee', 'cutout-laceup-tee', 'backless-mesh-tee'];
+    state.showSleeve = TEE_STYLES.includes(styleId);
+
+    const sleeveInputs = document.getElementById('measures-sleeve');
+    if (sleeveInputs && sleeveInputs.parentElement) {
+        sleeveInputs.parentElement.classList.toggle('hidden', !state.showSleeve);
+    }
+    const chkSleeve = document.getElementById('chk-sleeve');
+    if (chkSleeve) chkSleeve.checked = Boolean(state.showSleeve);
 
     document.querySelectorAll('.top-style-card').forEach(el => {
         const isMatch = el.dataset.topStyle === styleId;

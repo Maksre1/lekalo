@@ -998,9 +998,10 @@ function setGarmentType(type) {
     const sleeveInputs = document.getElementById('measures-sleeve');
     if (sleeveInputs && sleeveInputs.parentElement) {
         if (type === 'top') {
-            const isSmartTee = (state.topStyle === 'smart-tee');
-            sleeveInputs.parentElement.classList.toggle('hidden', !isSmartTee);
-            state.showSleeve = isSmartTee;
+            const TEE_STYLES = ['smart-tee', 'oversize-tee', 'asymmetric-tee', 'ruched-baby-tee', 'underboob-crop-tee', 'cutout-laceup-tee', 'backless-mesh-tee'];
+            const isTee = TEE_STYLES.includes(state.topStyle);
+            sleeveInputs.parentElement.classList.toggle('hidden', !isTee);
+            state.showSleeve = isTee;
         } else if (type === 'dress') {
             sleeveInputs.parentElement.classList.remove('hidden');
             state.showSleeve = (state.sleeveLengthType !== 'sleeveless');

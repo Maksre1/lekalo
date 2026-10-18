@@ -31,7 +31,7 @@ const PATTERNS_CONFIG = {
             shortName: 'Майки и Топы',
             icon: 'flame',
             defaultStyle: 'tank-top',
-            hasSleeveSupport: true // Только для smart-tee
+            hasSleeveSupport: true // Для всех моделей футболок (smart-tee, oversize, baby-tee, underboob, etc.)
         },
         skirt: {
             id: 'skirt',

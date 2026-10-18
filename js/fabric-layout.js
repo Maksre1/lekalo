@@ -232,7 +232,8 @@ function calculateTopFabricLayout(g, state) {
 
     let pieces = [];
     let totalLengthCm = 0;
-    const hasSleeve = (state.topStyle === 'smart-tee');
+    const TEE_STYLES = ['smart-tee', 'oversize-tee', 'asymmetric-tee', 'ruched-baby-tee', 'underboob-crop-tee', 'cutout-laceup-tee', 'backless-mesh-tee'];
+    const hasSleeve = TEE_STYLES.includes(state.topStyle);
 
     if (backW + margin + frontW + edgeMargin <= usableW) {
         pieces.push({
@@ -261,8 +262,8 @@ function calculateTopFabricLayout(g, state) {
         });
         let curY = Math.max(backH, frontH) + edgeMargin + margin;
         if (hasSleeve) {
-            const slW = g.W_sleeve + 2.0;
-            const slH = 21.0;
+            const slW = (g.W_sleeve_custom || g.W_sleeve || 18.0) + 2.0;
+            const slH = (g.L_sleeve || 19.0) + 2.0;
             pieces.push({
                 id: 'top-sleeve-1',
                 name: 'Рукав футболки левый',
@@ -332,8 +333,8 @@ function calculateTopFabricLayout(g, state) {
         });
         curY += frontH + margin;
         if (hasSleeve) {
-            const slW = g.W_sleeve + 2.0;
-            const slH = 21.0;
+            const slW = (g.W_sleeve_custom || g.W_sleeve || 18.0) + 2.0;
+            const slH = (g.L_sleeve || 19.0) + 2.0;
             pieces.push({
                 id: 'top-sleeve-1',
                 name: 'Рукав футболки левый',

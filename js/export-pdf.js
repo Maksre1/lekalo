@@ -266,20 +266,24 @@ function getTopPieceExportData(pieceType) {
         `;
     } else if (pieceType === 'sleeve') {
         if (g.hasSleeve) {
-            const sW = g.W_sleeve * CM;
-            const sH = 19.0 * CM;
+            const sW = (g.W_sleeve_custom || g.W_sleeve) * CM;
+            const sH = (g.L_sleeve || 19.0) * CM;
+            const capH = Math.min(sH * 0.45, 6.5 * CM);
+            const sTitle = g.sleeveTitle || 'РУКАВ ФУТБОЛКИ (2 дет.)';
             minX = -20;
             minY = -20;
-            widthMm = Math.ceil(g.W_sleeve * CM) + 40;
-            heightMm = Math.ceil(19.0 * CM) + 40;
-            fileTitle = `top_rukav_OG${state.og}`;
-            pieceLabelRu = `Рукав футболки (Ог ${state.og})`;
+            widthMm = Math.ceil(sW) + 40;
+            heightMm = Math.ceil(sH) + 40;
+            fileTitle = `top_rukav_${g.style}_OG${state.og}`;
+            pieceLabelRu = `${sTitle} (${styleName}, Ог ${state.og})`;
             contentSvg = `
                 <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
                     <rect x="0" y="0" width="${sW}" height="${sH}" fill="#ffffff" stroke="#09090b" stroke-width="1.8" rx="4"/>
-                    <path d="M 0 ${6 * CM} Q ${sW / 2} 0 ${sW} ${6 * CM} L ${sW} ${sH} L 0 ${sH} Z" fill="none" stroke="#09090b" stroke-width="1.8"/>
-                    <text x="${sW / 2}" y="${sH / 2}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">РУКАВ ФУТБОЛКИ (2 дет.)</text>
-                    <text x="${sW / 2}" y="${sH / 2 + 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">Длина 19 см</text>
+                    <path d="M 0 ${capH} Q ${sW / 2} 0 ${sW} ${capH} L ${sW} ${sH} L 0 ${sH} Z" fill="none" stroke="#09090b" stroke-width="1.8"/>
+                    <line x1="0" y1="${sH}" x2="${sW}" y2="${sH}" stroke="#09090b" stroke-width="2.2"/>
+                    <line x1="0" y1="${sH - 2.0 * CM}" x2="${sW}" y2="${sH - 2.0 * CM}" stroke="#09090b" stroke-width="1.0" stroke-dasharray="4,3"/>
+                    <text x="${sW / 2}" y="${sH * 0.52}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">${sTitle}</text>
+                    <text x="${sW / 2}" y="${sH * 0.52 + 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">Длина ${g.L_sleeve || 19} см | Ширина ${(sW / CM).toFixed(1)} см | 2 дет.</text>
                 </g>
             `;
         } else {

@@ -24,6 +24,17 @@ function calculateTopGeometry(options = {}) {
     // Обхват под грудью (Опг)
     const underbustGirth = Math.round((og - Math.max(10, (og - ot) * 0.6)) * 10) / 10;
 
+    // Список всех моделей футболок с рукавом
+    const TEE_STYLES = [
+        'smart-tee',
+        'oversize-tee',
+        'asymmetric-tee',
+        'ruched-baby-tee',
+        'underboob-crop-tee',
+        'cutout-laceup-tee',
+        'backless-mesh-tee'
+    ];
+
     // Расчет эффективной длины изделия
     let effectiveLength = gBase.Y_H;
     let isCrop = false;
@@ -32,11 +43,38 @@ function calculateTopGeometry(options = {}) {
     let isKeyholeHalter = false;
     let isCurtainTop = false;
     let isExtremeCrop = false;
+    let isUnderboob = false;
+    let isRuched = false;
+    let isBustCutout = false;
+    let isBackless = false;
+    let isOversize = false;
+    let isAsymmetric = false;
 
     if (style === 'extreme-crop') {
         isCrop = true;
         isExtremeCrop = true;
         effectiveLength = Y_underbust; // ровно до нижнего основания груди
+    } else if (style === 'underboob-crop-tee') {
+        isCrop = true;
+        isUnderboob = true;
+        effectiveLength = Y_underbust - 1.8; // ультра-кроп выше подгрудной складки
+    } else if (style === 'ruched-baby-tee') {
+        isCrop = true;
+        isRuched = true;
+        effectiveLength = (lengthType === 'waist') ? gBase.Y_T : ((lengthType === 'crop') ? (Y_underbust + 4.0) : (gBase.Y_T + 5.0));
+    } else if (style === 'cutout-laceup-tee') {
+        isCrop = true;
+        isBustCutout = true;
+        effectiveLength = (lengthType === 'waist') ? gBase.Y_T : ((lengthType === 'crop') ? (Y_underbust + 4.0) : (gBase.Y_T + 4.0));
+    } else if (style === 'backless-mesh-tee') {
+        isBackless = true;
+        effectiveLength = (lengthType === 'waist') ? gBase.Y_T : ((lengthType === 'crop') ? (Y_underbust + 4.0) : (gBase.Y_T + 8.0));
+    } else if (style === 'oversize-tee') {
+        isOversize = true;
+        effectiveLength = (lengthType === 'crop') ? (Y_underbust + 5.0) : ((lengthType === 'waist') ? gBase.Y_T : (gBase.Y_B + 4.0));
+    } else if (style === 'asymmetric-tee') {
+        isAsymmetric = true;
+        effectiveLength = (lengthType === 'crop') ? (Y_underbust + 5.0) : ((lengthType === 'waist') ? gBase.Y_T : (gBase.Y_T + 12.0));
     } else if (style === 'bustier-crop' || style === 'open-cup' || style === 'strappy-cage' || style === 'o-ring-top') {
         isCrop = true;
         effectiveLength = (lengthType === 'waist') ? gBase.Y_T : (Y_underbust + 3.5);
@@ -68,8 +106,36 @@ function calculateTopGeometry(options = {}) {
         : 0;
 
     // --- НАЛИЧИЕ РУКАВА ---
-    // Рукав есть ТОЛЬКО у анатомической футболки (Smart Tee)
-    const hasSleeve = (style === 'smart-tee');
+    // Рукав строится для всей линейки футболок
+    const hasSleeve = TEE_STYLES.includes(style);
+
+    // Параметры рукава футболки в зависимости от фасона
+    let sleeveLength = 19.0;
+    let sleeveWidthCustom = gBase.W_sleeve;
+    let sleeveTitle = 'РУКАВ ФУТБОЛКИ (2 дет.)';
+
+    if (style === 'oversize-tee') {
+        sleeveLength = 25.0; // свободный рукав до локтя
+        sleeveWidthCustom = gBase.W_sleeve + 4.5;
+        sleeveTitle = 'РУКАВ ОВЕРСАЙЗ (2 дет.)';
+    } else if (style === 'asymmetric-tee') {
+        sleeveLength = 22.0;
+        sleeveTitle = 'СПУЩЕННЫЙ РУКАВ (2 дет.)';
+    } else if (style === 'ruched-baby-tee') {
+        sleeveLength = 14.0; // короткий бэби-рукавчик
+        sleeveWidthCustom = Math.max(13.0, gBase.W_sleeve - 1.5);
+        sleeveTitle = 'РУКАВЧИК BABY-TEE (2 дет.)';
+    } else if (style === 'underboob-crop-tee') {
+        sleeveLength = 13.0; // микро-рукав под грудь
+        sleeveWidthCustom = Math.max(12.5, gBase.W_sleeve - 2.0);
+        sleeveTitle = 'МИКРО-РУКАВ UNDERBOOB (2 дет.)';
+    } else if (style === 'cutout-laceup-tee') {
+        sleeveLength = 16.0;
+        sleeveTitle = 'ОБЛЕГАЮЩИЙ РУКАВ (2 дет.)';
+    } else if (style === 'backless-mesh-tee') {
+        sleeveLength = 18.0;
+        sleeveTitle = 'СЕТЧАТЫЙ РУКАВ (2 дет.)';
+    }
 
     // --- МОДЕЛЬНЫЕ ПАРАМЕТРЫ ВЫРЕЗОВ И БРЕТЕЛЕЙ ---
     let strapWidth = 4.0;      // ширина бретели (см)
@@ -120,6 +186,42 @@ function calculateTopGeometry(options = {}) {
         backNeckDrop = 2.2;
         frontNeckDrop = 7.5;
         armholeDrop = 0.5; // высокая комфортная подмышка
+        shoulderCutIn = 0.5;
+    } else if (style === 'oversize-tee') {
+        strapWidth = shp + 4.5; // спущенное плечо
+        backNeckDrop = 2.4;
+        frontNeckDrop = 8.5;
+        armholeDrop = 3.5; // углубленная пройма для свободного рукава
+        shoulderCutIn = 0.2;
+    } else if (style === 'asymmetric-tee') {
+        strapWidth = shp;
+        backNeckDrop = 3.5;
+        frontNeckDrop = 6.2;
+        armholeDrop = 1.2;
+        shoulderCutIn = 0.5;
+    } else if (style === 'ruched-baby-tee') {
+        strapWidth = shp;
+        backNeckDrop = 2.4;
+        frontNeckDrop = 7.5;
+        armholeDrop = 0.6;
+        shoulderCutIn = 0.5;
+    } else if (style === 'underboob-crop-tee') {
+        strapWidth = shp;
+        backNeckDrop = 2.0;
+        frontNeckDrop = 5.5; // закрытый высокий воротник удерживает посадку
+        armholeDrop = 0.3;
+        shoulderCutIn = 0.3;
+    } else if (style === 'cutout-laceup-tee') {
+        strapWidth = shp;
+        backNeckDrop = 2.4;
+        frontNeckDrop = 6.5;
+        armholeDrop = 0.6;
+        shoulderCutIn = 0.5;
+    } else if (style === 'backless-mesh-tee') {
+        strapWidth = shp;
+        backNeckDrop = gBase.Y_T - 1.5; // глубокий вырез спинки до талии
+        frontNeckDrop = 6.8;
+        armholeDrop = 0.8;
         shoulderCutIn = 0.5;
     } else if (style === 'racerback') {
         strapWidth = 3.2;
@@ -217,9 +319,13 @@ function calculateTopGeometry(options = {}) {
     const F_armhole_bot = { x: gBase.X_G4, y: gBase.Y_G + armholeDrop };
     const F_waist_center = { x: gBase.W_grid, y: gBase.Y_T };
     const F_waist_side = { x: gBase.B4.x, y: gBase.Y_T };
-    // Передний подол с учетом дуги «Анти-задир»
-    const F_hem_center = { x: gBase.W_grid, y: effectiveLength + antiRideupDrop };
-    const F_hem_side = { x: gBase.B4.x, y: effectiveLength };
+    // Передний подол с учетом дуги «Анти-задир» или арочного среза Underboob
+    const F_hem_center = isUnderboob
+        ? { x: gBase.W_grid, y: Math.max(Y_underbust - 3.8, gBase.G7.y + 1.2) }
+        : { x: gBase.W_grid, y: effectiveLength + antiRideupDrop };
+    const F_hem_side = isUnderboob
+        ? { x: gBase.B4.x, y: Y_underbust - 0.8 }
+        : { x: gBase.B4.x, y: effectiveLength };
 
     // Подгрудные точки для корсажных и открытых топов
     const Underbust_center = { x: gBase.W_grid, y: Y_underbust };
@@ -243,6 +349,12 @@ function calculateTopGeometry(options = {}) {
         sleeve: gBase.sleeve,
         isCrop,
         isExtremeCrop,
+        isUnderboob,
+        isRuched,
+        isBustCutout,
+        isBackless,
+        isOversize,
+        isAsymmetric,
         isBodysuit,
         isRacerback,
         isHalter,
@@ -263,9 +375,11 @@ function calculateTopGeometry(options = {}) {
         // Исходные точки каркаса
         G7: gBase.G7,
         W_sleeve: gBase.W_sleeve,
-        L_sleeve: (hasSleeve ? 19.0 : 0),
-        widthCm: Math.ceil(gBase.W_grid + (hasSleeve ? (gBase.W_sleeve + 12) : 10)),
-        heightCm: Math.ceil(effectiveLength + antiRideupDrop + 10)
+        W_sleeve_custom: sleeveWidthCustom,
+        L_sleeve: (hasSleeve ? sleeveLength : 0),
+        sleeveTitle,
+        widthCm: Math.ceil(gBase.W_grid + (hasSleeve ? (sleeveWidthCustom + 16) : 10)),
+        heightCm: Math.max(Math.ceil(effectiveLength + antiRideupDrop + 12), hasSleeve ? Math.ceil(sleeveLength + 12) : 0)
     };
 }
 
@@ -308,11 +422,13 @@ function generateTopPiecesMarkup(g, options = {}) {
             L ${p(g.B_hem_center)}
             Z
         `;
-    } else if (g.isLowBack) {
+    } else if (g.isLowBack || g.isBackless) {
         // Открытая спинка
         backPath = `
             M ${p(g.B_neck_center)}
-            L ${p(g.B_armhole_bot)}
+            Q ${p({ x: g.B_strap_outer.x * 0.4, y: (g.B_neck_center.y + g.B_neck_shoulder.y) * 0.6 })} ${p(g.B_neck_shoulder)}
+            L ${p(g.B_strap_outer)}
+            Q ${p({ x: g.B_strap_outer.x + 1.0, y: (g.B_strap_outer.y + g.B_armhole_bot.y) * 0.6 })} ${p(g.B_armhole_bot)}
             L ${p(g.B_waist_side)}
             L ${p(g.B_hem_side)}
             L ${p(g.B_hem_center)}
@@ -368,6 +484,17 @@ function generateTopPiecesMarkup(g, options = {}) {
             L ${p(g.F_waist_side, fx)}
             L ${p(g.F_hem_side, fx)}
             L ${p(g.F_hem_center, fx)}
+            Z
+        `;
+    } else if (g.isUnderboob) {
+        // Ультра-кроп футболка с арочным вырезом Underboob
+        frontPath = `
+            M ${p(g.F_neck_center, fx)}
+            Q ${p({ x: g.W_grid - (g.W_grid - g.F_neck_shoulder.x) * 0.4, y: g.F_neck_center.y }, fx)} ${p(g.F_neck_shoulder, fx)}
+            L ${p(g.F_strap_outer, fx)}
+            Q ${p({ x: g.F_strap_outer.x - 1.5, y: (g.F_strap_outer.y + g.F_armhole_bot.y) * 0.6 }, fx)} ${p(g.F_armhole_bot, fx)}
+            L ${p(g.F_hem_side, fx)}
+            Q ${p({ x: (g.F_hem_side.x + g.F_hem_center.x) / 2, y: g.Y_underbust - 4.6 }, fx)} ${p(g.F_hem_center, fx)}
             Z
         `;
     } else {
@@ -467,6 +594,86 @@ function generateTopPiecesMarkup(g, options = {}) {
             <line x1="${(g.F_armhole_bot.x + fx) * CM}" y1="${uY}" x2="${(g.W_grid + fx) * CM}" y2="${uY}" stroke="#e11d48" stroke-width="2.5"/>
             <text x="${(g.F_armhole_bot.x + fx + 3) * CM}" y="${uY - 4}" font-size="9" font-family="JetBrains Mono" font-weight="bold" fill="#e11d48">Лента под грудью (${g.elasticSpec.underbustBandLength} см)</text>
         `;
+    } else if (g.isUnderboob) {
+        // Декоративная линия Underboob и силиконовая бейка
+        const cX = (g.W_grid + fx) * CM;
+        const archMidY = (g.Y_underbust - 4.6) * CM;
+        harnessMarkup = `
+            <!-- Нижний срез Underboob с силиконовой бейкой -->
+            <path d="M ${(g.F_hem_side.x + fx) * CM} ${(g.F_hem_side.y) * CM} Q ${((g.F_hem_side.x + g.F_hem_center.x) / 2 + fx) * CM} ${archMidY} ${cX} ${(g.F_hem_center.y) * CM}" fill="none" stroke="#e11d48" stroke-width="2.5" stroke-dasharray="5,3"/>
+            <!-- Контур анатомической чашки Underboob -->
+            <ellipse cx="${(g.G7.x + fx) * CM}" cy="${(g.G7.y + 2.5) * CM}" rx="26" ry="18" fill="none" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+            <text x="${cX - 15}" y="${(g.F_hem_center.y) * CM - 10}" text-anchor="end" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#e11d48">🔥 UNDERBOOB СРЕЗ (СИЛИКОНОВАЯ БЕЙКА)</text>
+        `;
+    } else if (g.isRuched) {
+        // Боковые кулиски со шнурками для сборки Y2K Baby-Tee
+        const topY = (g.F_armhole_bot.y + 1.5) * CM;
+        const botY = (g.F_hem_side.y) * CM;
+        const bSideX = (g.B_hem_side.x - 1.8) * CM;
+        const fSideX = (g.F_hem_side.x + fx + 1.8) * CM;
+        harnessMarkup = `
+            <!-- Кулиска спинки -->
+            <line x1="${bSideX}" y1="${topY}" x2="${bSideX}" y2="${botY}" stroke="#db2777" stroke-width="1.8" stroke-dasharray="4,2"/>
+            <!-- Кулиска переда -->
+            <line x1="${fSideX}" y1="${topY}" x2="${fSideX}" y2="${botY}" stroke="#db2777" stroke-width="1.8" stroke-dasharray="4,2"/>
+            <text x="${fSideX + 4}" y="${(topY + botY) / 2}" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#db2777" transform="rotate(-90 ${fSideX + 4} ${(topY + botY) / 2})">КУЛИСКА БОКОВАЯ 2 см (ШНУРКИ ДЛЯ СБОРКИ)</text>
+            <!-- Свисающие завязки шнурков -->
+            <path d="M ${fSideX} ${botY} Q ${fSideX + 8} ${botY + 20} ${fSideX + 4} ${botY + 32}" fill="none" stroke="#db2777" stroke-width="2.0"/>
+            <path d="M ${fSideX + 3} ${botY} Q ${fSideX + 14} ${botY + 18} ${fSideX + 10} ${botY + 30}" fill="none" stroke="#db2777" stroke-width="2.0"/>
+        `;
+    } else if (g.isBustCutout) {
+        // Овальный вырез декольте с перекрестной шнуровкой Peek-a-Boo
+        const cX = (g.W_grid + fx) * CM;
+        const cY = (g.G7.y + 1.5) * CM;
+        const topCutY = cY - 26;
+        const botCutY = cY + 26;
+        let tiesSvg = '';
+        const eyeletCount = 4;
+        const step = (botCutY - topCutY) / (eyeletCount - 1);
+        for (let i = 0; i < eyeletCount; i++) {
+            const ey = topCutY + i * step;
+            tiesSvg += `
+                <circle cx="${cX - 20}" cy="${ey}" r="2.5" fill="#e11d48"/>
+                <circle cx="${cX - 4}" cy="${ey}" r="2.5" fill="#e11d48"/>
+                ${i < eyeletCount - 1 ? `
+                    <line x1="${cX - 20}" y1="${ey}" x2="${cX - 4}" y2="${ey + step}" stroke="#e11d48" stroke-width="1.4"/>
+                    <line x1="${cX - 4}" y1="${ey}" x2="${cX - 20}" y2="${ey + step}" stroke="#e11d48" stroke-width="1.4"/>
+                ` : ''}
+            `;
+        }
+        harnessMarkup = `
+            <!-- Овальный вырез декольте Peek-a-Boo -->
+            <ellipse cx="${cX}" cy="${cY}" rx="22" ry="30" fill="#fff1f2" stroke="#e11d48" stroke-width="2.0"/>
+            ${tiesSvg}
+            <text x="${cX - 26}" y="${cY}" text-anchor="end" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#e11d48">⚡ ВЫРЕЗ-ДЕКОЛЬТЕ СО ШНУРОВКОЙ</text>
+        `;
+    } else if (g.isBackless) {
+        // Открытая спинка с завязками
+        const b1Y = (g.Y_G + 1.0) * CM;
+        const b2Y = (g.Y_T - 1.5) * CM;
+        harnessMarkup = `
+            <!-- Завязки спинки -->
+            <line x1="0" y1="${b1Y}" x2="${(g.B_strap_outer.x + 4.0) * CM}" y2="${b1Y}" stroke="#8b5cf6" stroke-width="2.0" stroke-dasharray="5,3"/>
+            <text x="${(g.B_strap_outer.x + 5.0) * CM}" y="${b1Y + 3}" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#8b5cf6">ЗАВЯЗКА НА ЛОПАТКАХ (35 см)</text>
+            <line x1="0" y1="${b2Y}" x2="${(g.B_waist_side.x) * CM}" y2="${b2Y}" stroke="#8b5cf6" stroke-width="2.0" stroke-dasharray="5,3"/>
+            <text x="${(g.B_waist_side.x - 2.0) * CM}" y="${b2Y - 5}" text-anchor="end" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#8b5cf6">ЗАВЯЗКА НА ТАЛИИ (35 см)</text>
+        `;
+    }
+
+    if (g.isOversize) {
+        const shMidX = ((g.B_strap_outer.x + g.B_neck_shoulder.x) / 2) * CM;
+        const shMidY = (g.B_neck_shoulder.y - 1.2) * CM;
+        harnessMarkup += `
+            <text x="${shMidX}" y="${shMidY}" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#0284c7">СПУЩЕННОЕ ПЛЕЧО (+4.5 см)</text>
+        `;
+    }
+
+    if (g.isAsymmetric) {
+        const asymX = (g.F_strap_outer.x + fx) * CM;
+        const asymY = (g.F_strap_outer.y - 1.2) * CM;
+        harnessMarkup += `
+            <text x="${asymX}" y="${asymY}" text-anchor="end" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#6366f1">ОТКРЫТОЕ ПЛЕЧО SLOUCH</text>
+        `;
     }
 
     // Маркировка опции «Быстрое снятие»
@@ -483,14 +690,19 @@ function generateTopPiecesMarkup(g, options = {}) {
     let sleeveMarkup = '';
     const sleeveOriginX = (g.W_grid + fx + 16) * CM;
     if (g.hasSleeve) {
-        const sW = g.W_sleeve * CM;
-        const sH = 19.0 * CM; // короткий рукав
+        const sW = (g.W_sleeve_custom || g.W_sleeve) * CM;
+        const sH = (g.L_sleeve || 19.0) * CM;
+        const capH = Math.min(sH * 0.45, 6.5 * CM);
+        const sTitle = g.sleeveTitle || 'РУКАВ ФУТБОЛКИ (2 дет.)';
         sleeveMarkup = `
             <g id="top-sleeve-piece" transform="translate(${sleeveOriginX}, ${6 * CM})">
                 <rect x="0" y="0" width="${sW}" height="${sH}" fill="rgba(16, 185, 129, 0.04)" stroke="#10b981" stroke-width="1.8" rx="4"/>
-                <path d="M 0 ${6 * CM} Q ${sW / 2} 0 ${sW} ${6 * CM} L ${sW} ${sH} L 0 ${sH} Z" fill="none" stroke="#059669" stroke-width="2.0"/>
-                <text x="${sW / 2}" y="${sH / 2}" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#065f46">РУКАВ ФУТБОЛКИ (2 дет.)</text>
-                <text x="${sW / 2}" y="${sH / 2 + 16}" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#047857">Длина 19 см | Оп=${g.og / 3} см</text>
+                <path d="M 0 ${capH} Q ${sW / 2} 0 ${sW} ${capH} L ${sW} ${sH} L 0 ${sH} Z" fill="none" stroke="#059669" stroke-width="2.0"/>
+                <line x1="0" y1="${sH}" x2="${sW}" y2="${sH}" stroke="#059669" stroke-width="2.5"/>
+                <!-- Подгибка низа рукава 2.0 см -->
+                <line x1="0" y1="${sH - 2.0 * CM}" x2="${sW}" y2="${sH - 2.0 * CM}" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4,3"/>
+                <text x="${sW / 2}" y="${sH * 0.52}" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#065f46">${sTitle}</text>
+                <text x="${sW / 2}" y="${sH * 0.52 + 16}" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#047857">Длина ${g.L_sleeve || 19} см | Ширина ${(sW / CM).toFixed(1)} см | 2 дет.</text>
             </g>
         `;
     }
