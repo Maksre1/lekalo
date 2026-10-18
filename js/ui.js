@@ -927,15 +927,19 @@ function setGarmentType(type) {
     if (skirtMeasures) skirtMeasures.classList.toggle('hidden', type !== 'skirt');
     if (pantiesMeasures) pantiesMeasures.classList.toggle('hidden', type !== 'panties');
 
-    // Скрытие или показ рукава для топов
+    // Скрытие или показ рукава для топов и платьев
     const sleeveInputs = document.getElementById('measures-sleeve');
     if (sleeveInputs && sleeveInputs.parentElement) {
         if (type === 'top') {
             sleeveInputs.parentElement.classList.toggle('hidden', state.topStyle !== 'smart-tee');
+            state.showSleeve = (state.topStyle === 'smart-tee');
         } else if (type === 'dress') {
             sleeveInputs.parentElement.classList.remove('hidden');
+            state.showSleeve = true;
         }
     }
+    const chkSleeve = document.getElementById('chk-sleeve');
+    if (chkSleeve) chkSleeve.checked = state.showSleeve;
 
     const dressStyle = document.getElementById('style-dress-container');
     const topStyle = document.getElementById('style-top-container');

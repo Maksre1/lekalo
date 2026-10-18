@@ -84,7 +84,7 @@ const state = {
     showA4Grid: false,        // Сетка листов А4
     showNotches: true,        // Контрольные надсечки
     showGrainline: true,      // Долевая нить и сгибы
-    separate: false,          // Раздельный вид деталей
+    separate: true,          // Раздельный вид деталей (по умолчанию спинка и полочка раздвинуты)
     showSleeve: true,         // Показать рукав
     classicStyle: false,      // Современный цветной / Черно-белый стиль
     showGrid: true,           // Буквенные точки и линии основы

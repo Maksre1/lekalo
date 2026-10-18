@@ -11,6 +11,7 @@ let viewState = {
 
 function generatePatternPiecesMarkup(g, options = {}) {
     const showClassic = options.showClassic ?? state.classicStyle;
+    const showSleeve = options.showSleeve ?? state.showSleeve;
     const frontShiftX = options.frontShiftX ?? (state.separate ? 16 * CM : 0);
     const sleeveOriginX = options.sleeveOriginX ?? (g.W_grid + (frontShiftX > 0 ? 28 : 14) + g.W_sleeve / 2);
 
@@ -204,6 +205,7 @@ function generatePatternPiecesMarkup(g, options = {}) {
             <line x1="${(notchFrontPoint.x - notchLen/10) * CM}" y1="${notchFrontPoint.y * CM}" x2="${(notchFrontPoint.x + notchLen/10) * CM}" y2="${notchFrontPoint.y * CM}" stroke="#dc2626" stroke-width="1.6"/>
         </g>
         <!-- Надсечки рукава: вершина, перед (1 засечка), спинка (2 засечки), локоть -->
+        ${showSleeve ? `
         <g id="sleeve-notches">
             <line x1="${slCenter}" y1="${slTopY - notchLen}" x2="${slCenter}" y2="${slTopY + notchLen}" stroke="#dc2626" stroke-width="1.6"/>
             <line x1="${slCenter + halfW * 0.58 - notchLen}" y1="${slCapY * 0.55}" x2="${slCenter + halfW * 0.58 + notchLen}" y2="${slCapY * 0.55}" stroke="#dc2626" stroke-width="1.6"/>
@@ -214,6 +216,7 @@ function generatePatternPiecesMarkup(g, options = {}) {
                 <text x="${slCenter + halfElbow + 6}" y="${slElbowY + 3}" font-family="JetBrains Mono, monospace" font-size="8" fill="#78716C">ЛОКОТЬ (${(g.L_elbow || (g.L_sleeve * 0.56)).toFixed(1)} см)</text>
             ` : ''}
         </g>
+        ` : ''}
     `;
 
     // 5. Маркировка «СГИБ ТКАНИ» и линии долевой нити
@@ -231,12 +234,14 @@ function generatePatternPiecesMarkup(g, options = {}) {
             <text x="${(g.X_G6 + 0.3) * CM}" y="${(g.Y_T + 4) * CM}" font-size="8">ДОЛЕВАЯ НИТЬ</text>
         </g>
         <!-- Рукав: долевая и подписи сторон -->
+        ${showSleeve ? `
         <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#52525b">
             <line x1="${slCenter}" y1="${slTopY + 15}" x2="${slCenter}" y2="${slBotY - 15}" stroke="#27272a" stroke-width="0.8"/>
             <text x="${slCenter + 4}" y="${(slCapY + slBotY) * 0.5 + 24}" font-size="8">ДОЛЕВАЯ НИТЬ</text>
             <text x="${slCenter + halfW * 0.4}" y="${slCapY * 0.7}" fill="#5A826D">ПЕРЕД ➔</text>
             <text x="${slCenter - halfW * 0.6}" y="${slCapY * 0.7}" fill="#5B6B8C">⬅ СПИНКА</text>
         </g>
+        ` : ''}
     `;
 
     return {
@@ -262,8 +267,8 @@ function renderSkirtPattern() {
     const sepBtn = document.getElementById('btn-separate-mode');
     if (sepBtn) {
         sepBtn.innerHTML = isSeparate
-            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельный вид</span>'
-            : '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенный вид</span>';
+            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельные лекала</span>'
+            : '<i data-lucide="grid" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенная сетка</span>';
         if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
 
@@ -396,8 +401,8 @@ function renderTopPattern() {
     const sepBtn = document.getElementById('btn-separate-mode');
     if (sepBtn) {
         sepBtn.innerHTML = isSeparate
-            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельный вид</span>'
-            : '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенный вид</span>';
+            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельные лекала</span>'
+            : '<i data-lucide="grid" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенная сетка</span>';
         if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
 
@@ -484,8 +489,8 @@ function renderPattern() {
     const sepBtn = document.getElementById('btn-separate-mode');
     if (sepBtn) {
         sepBtn.innerHTML = isSeparate
-            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельный вид</span>'
-            : '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенный вид</span>';
+            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельные лекала</span>'
+            : '<i data-lucide="grid" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенная сетка ЦНИИШП</span>';
         if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
 
