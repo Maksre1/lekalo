@@ -54,11 +54,35 @@ function calculateGeometry() {
     const Sb = state.ob / 2;
     const Ssh = state.osh / 2;
 
-    // 2. Базисная сетка (ЕМКО)
+    // 2. Базисная сетка (ЕМКО / ЦНИИШП с адаптацией под индивидуальные мерки Шс и Шг)
     const W_grid = Sg + state.pg;
-    const W_back = (Sg / 3) + 2.1 + (0.25 * state.pg);
-    const W_armhole = 0.22 * Sg + 1.2 + (0.55 * state.pg);
-    const W_front = W_grid - W_back - W_armhole;
+    
+    let W_back, W_armhole, W_front;
+    const shsVal = parseFloat(state.shs);
+    const shgVal = parseFloat(state.shg);
+    
+    if (shsVal > 20 && shgVal > 20) {
+        // Индивидуальные анатомические ширины спины и груди
+        W_back = (shsVal / 2) + (0.22 * state.pg);
+        W_armhole = 0.21 * Sg + 1.0 + (0.35 * state.pg);
+        W_front = W_grid - W_back - W_armhole;
+        
+        // Гарантируем, что полочка не уже костного основания груди между подмышками
+        const min_front_bone = (shgVal / 2) + (0.20 * state.pg);
+        if (W_front < min_front_bone) {
+            W_front = min_front_bone;
+            W_armhole = Math.max(9.5, W_grid - W_back - W_front);
+        }
+    } else if (shsVal > 20) {
+        W_back = (shsVal / 2) + (0.22 * state.pg);
+        W_armhole = Math.max(9.5, 0.22 * Sg + 1.2 + (0.55 * state.pg));
+        W_front = W_grid - W_back - W_armhole;
+    } else {
+        // Стандартный пропорциональный расчет ЦНИИШП/ЕМКО
+        W_back = (Sg / 3) + 2.1 + (0.25 * state.pg);
+        W_armhole = 0.22 * Sg + 1.2 + (0.55 * state.pg);
+        W_front = W_grid - W_back - W_armhole;
+    }
 
     // Вертикали по X
     const X_A = 0;
@@ -133,8 +157,14 @@ function calculateGeometry() {
     const V7 = { x: V3.x + f_ux * 4.0, y: V3.y + f_uy * 4.0 };
     const L_dart_leg = Math.hypot(V7.x - G7.x, V7.y - G7.y);
 
-    // Раствор нагрудной вытачки и угол поворота
-    const bust_dart_width = Math.max(2.5, (Sg - 38) * 0.40 + 4.0 + postureBustK);
+    // Раствор нагрудной вытачки и угол поворота (адаптируется под объем чашки груди Ог - 2*Шг)
+    let bust_dart_width;
+    if (shgVal > 20) {
+        const bust_cup_diff = (Sg * 2) - (shgVal * 2);
+        bust_dart_width = Math.max(2.5, 7.2 + (bust_cup_diff - 26) * 0.25 + postureBustK);
+    } else {
+        bust_dart_width = Math.max(2.5, (Sg - 38) * 0.40 + 4.0 + postureBustK);
+    }
     const alpha = 2 * Math.asin(Math.min(0.85, bust_dart_width / (2 * L_dart_leg)));
 
     // Вторая сторона вытачки В9

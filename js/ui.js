@@ -823,7 +823,7 @@ function initUserProfile() {
 function saveMyProfile() {
     const keys = [
         'garmentType',
-        'og', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
+        'og', 'shs', 'shg', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
         'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
         'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb',
@@ -911,7 +911,7 @@ function updateProfileBadge() {
 function exportProfileJson() {
     const keys = [
         'garmentType',
-        'og', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
+        'og', 'shs', 'shg', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
         'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
         'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb',
