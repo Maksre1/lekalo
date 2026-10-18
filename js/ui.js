@@ -380,19 +380,60 @@ function updateCalculationTable(g) {
     const tbody = document.getElementById('calc-table-body');
     if (!tbody) return;
 
-    const rows = [
-        { name: 'Ширина сетки', abbr: 'Г1-Г3', formula: 'Полуобхват груди + прибавка', val: `${g.W_grid.toFixed(1)} см` },
-        { name: 'Ширина спинки', abbr: 'Шсп', formula: 'Спинка изделия', val: `${g.W_back.toFixed(1)} см` },
-        { name: 'Ширина проймы', abbr: 'Шпр', formula: 'Подмышечная область', val: `${g.W_armhole.toFixed(1)} см` },
-        { name: 'Ширина переда', abbr: 'Шпол', formula: 'Полочка с вытачкой', val: `${g.W_front.toFixed(1)} см` },
-        { name: 'Длина проймы спинки', abbr: 'Дпр_спин', formula: 'Линия проймы сзади', val: `${g.len_back_armhole.toFixed(1)} см` },
-        { name: 'Длина проймы переда', abbr: 'Дпр_перед', formula: 'Линия проймы спереди', val: `${g.len_front_armhole.toFixed(1)} см` },
-        { name: 'Вся длина проймы', abbr: 'Дпр', formula: 'Сумма полочки и спинки', val: `${g.total_armhole_len.toFixed(1)} см` },
-        { name: 'Длина оката рукава', abbr: 'Док', formula: 'Линия втачивания рукава', val: `${g.total_sleeve_cap_len.toFixed(1)} см` },
-        { name: 'Посадка по окату', abbr: 'Ппос', formula: 'Док - Дпр (норма +2..+3.5 см)', val: `+${g.sleeve_ease.toFixed(1)} см` },
-        { name: 'Раствор вытачки груди', abbr: 'В7-В9', formula: 'Раскрытие для груди', val: `${g.bust_dart_width.toFixed(1)} см` },
-        { name: 'Талиевые вытачки', abbr: 'Сумма', formula: 'Приталивание изделия', val: `${g.total_waist_intake.toFixed(1)} см` }
-    ];
+    let rows = [];
+    const garment = state.garmentType || 'dress';
+
+    if (garment === 'skirt') {
+        const skirtG = (g && g.type === 'skirt') ? g : calculateSkirtGeometry();
+        if (skirtG.isCircular) {
+            rows = [
+                { name: 'Модель юбки', abbr: 'Фасон', formula: skirtG.isSun ? 'Солнце (360°)' : 'Полусолнце (180°)', val: skirtG.style },
+                { name: 'Обхват талии', abbr: 'От', formula: 'Талия фигуры', val: `${skirtG.ot} см` },
+                { name: 'Прибавка по талии', abbr: 'Пт', formula: 'Свобода пояса', val: `+${skirtG.pt} см` },
+                { name: 'Радиус выемки талии', abbr: 'R талии', formula: '(От + 2*Пт) / k*π', val: `${skirtG.rWaist.toFixed(1)} см` },
+                { name: 'Длина юбки', abbr: 'Дю', formula: 'От талии до низа', val: `${skirtG.skirtLength} см` },
+                { name: 'Внешний радиус подола', abbr: 'R низа', formula: 'R талии + Дю', val: `${skirtG.rHem.toFixed(1)} см` },
+                { name: 'Длина пояса', abbr: 'Пояс', formula: 'От + 2*Пт + припуск 3 см', val: `${skirtG.beltLength.toFixed(1)} см` }
+            ];
+        } else {
+            rows = [
+                { name: 'Ширина сетки юбки', abbr: 'Сб+Пб', formula: 'Полуобхват бедер + прибавка', val: `${skirtG.W_grid.toFixed(1)} см` },
+                { name: 'Линия талии', abbr: 'Ст+Пт', formula: 'Полуобхват талии + прибавка', val: `${skirtG.St.toFixed(1)} см` },
+                { name: 'Сумма вытачек', abbr: 'ΣВ', formula: 'Разница бедра - талия', val: `${skirtG.totalDart.toFixed(1)} см` },
+                { name: 'Боковая вытачка', abbr: 'Вбок (50%)', formula: 'Вытачка в боковой шов', val: `${skirtG.sideDart.toFixed(1)} см` },
+                { name: 'Задняя вытачка', abbr: 'Взад (32%)', formula: 'Вытачка заднего полотнища', val: `${skirtG.backDart.toFixed(1)} см` },
+                { name: 'Передняя вытачка', abbr: 'Впер (18%)', formula: 'Вытачка переднего полотнища', val: `${skirtG.frontDart.toFixed(1)} см` },
+                { name: 'Длина юбки', abbr: 'Дю', formula: 'От талии до подола', val: `${skirtG.skirtLength} см` },
+                { name: 'Клеш подола', abbr: 'Расклешение', formula: skirtG.style === 'a-line' ? 'Трапеция (+6.5 см)' : (skirtG.style === 'pencil' ? 'Заужение (-3.2 см)' : 'Прямой'), val: `${skirtG.flareOffset > 0 ? '+' : ''}${skirtG.flareOffset} см` }
+            ];
+        }
+    } else if (garment === 'panties') {
+        const pantG = (g && g.type === 'panties') ? g : calculatePantiesGeometry();
+        rows = [
+            { name: 'Модель трусиков', abbr: 'Фасон', formula: pantG.model.toUpperCase(), val: pantG.model },
+            { name: 'Обхват бедер фигуры', abbr: 'Об', formula: 'Реальный замер по ягодицам', val: `${pantG.ob} см` },
+            { name: 'Расчетный обхват (ткань)', abbr: 'Об_расч', formula: 'С учетом растяжения ткани', val: `${pantG.obCalc.toFixed(1)} см` },
+            { name: 'Растяжимость ткани', abbr: 'К_растяж', formula: 'Уменьшение выкройки', val: `-${(100 - pantG.stretch * 100).toFixed(0)}%` },
+            { name: 'Ширина верха переда', abbr: 'Шпер', formula: 'Половина со сгибом', val: `${pantG.frontTopHalfW.toFixed(1)} см` },
+            { name: 'Ширина верха спинки', abbr: 'Шспин', formula: 'Половина со сгибом', val: `${pantG.backTopHalfW.toFixed(1)} см` },
+            { name: 'Длина бокового шва', abbr: 'Бок', formula: 'Высота соединения боков', val: `${pantG.sideSeam.toFixed(1)} см` },
+            { name: 'Длина ластовицы', abbr: 'Ластовица', formula: 'Хлопковая вставка', val: `${pantG.gussetLen} см` }
+        ];
+    } else {
+        rows = [
+            { name: 'Ширина сетки', abbr: 'Г1-Г3', formula: 'Полуобхват груди + прибавка', val: `${g.W_grid.toFixed(1)} см` },
+            { name: 'Ширина спинки', abbr: 'Шсп', formula: 'Спинка изделия', val: `${g.W_back.toFixed(1)} см` },
+            { name: 'Ширина проймы', abbr: 'Шпр', formula: 'Подмышечная область', val: `${g.W_armhole.toFixed(1)} см` },
+            { name: 'Ширина переда', abbr: 'Шпол', formula: 'Полочка с вытачкой', val: `${g.W_front.toFixed(1)} см` },
+            { name: 'Длина проймы спинки', abbr: 'Дпр_спин', formula: 'Линия проймы сзади', val: `${g.len_back_armhole.toFixed(1)} см` },
+            { name: 'Длина проймы переда', abbr: 'Дпр_перед', formula: 'Линия проймы спереди', val: `${g.len_front_armhole.toFixed(1)} см` },
+            { name: 'Вся длина проймы', abbr: 'Дпр', formula: 'Сумма полочки и спинки', val: `${g.total_armhole_len.toFixed(1)} см` },
+            { name: 'Длина оката рукава', abbr: 'Док', formula: 'Линия втачивания рукава', val: `${g.total_sleeve_cap_len.toFixed(1)} см` },
+            { name: 'Посадка по окату', abbr: 'Ппос', formula: 'Док - Дпр (норма +2..+3.5 см)', val: `+${g.sleeve_ease.toFixed(1)} см` },
+            { name: 'Раствор вытачки груди', abbr: 'В7-В9', formula: 'Раскрытие для груди', val: `${g.bust_dart_width.toFixed(1)} см` },
+            { name: 'Талиевые вытачки', abbr: 'Сумма', formula: 'Приталивание изделия', val: `${g.total_waist_intake.toFixed(1)} см` }
+        ];
+    }
 
     tbody.innerHTML = rows.map(r => `
         <tr class="hover:bg-stone-50 border-b border-stone-100">
@@ -407,23 +448,7 @@ function updateCalculationTable(g) {
 }
 
 function updateExportDimensions(g) {
-    const maxBackX = Math.max(g.X_G4, g.B3.x, g.P1.x, g.H_back_side ? g.H_back_side.x : g.B3.x);
-    const backW = maxBackX.toFixed(1);
-    const backH = (g.Y_H + g.H_back_neck).toFixed(1);
-    const minFrontX = Math.min(g.P5_open.x, g.P5_closed.x, g.X_G4, g.B4.x, g.H_front_side ? g.H_front_side.x : g.B4.x);
-    const frontW = (g.X_G3 - minFrontX).toFixed(1);
-    const frontH = (g.Y_H + 1.2 - g.Y_V1).toFixed(1);
-
-    const elBack = document.getElementById('dim-back');
-    const elFront = document.getElementById('dim-front');
-    const elSleeve = document.getElementById('dim-sleeve');
-    const elAll = document.getElementById('dim-all');
-
-    if (elBack) elBack.textContent = `${backW} × ${backH} см`;
-    if (elFront) elFront.textContent = `${frontW} × ${frontH} см`;
-    if (elSleeve) elSleeve.textContent = `${g.W_sleeve.toFixed(1)} × ${g.L_sleeve.toFixed(1)} см`;
-    if (elAll) elAll.textContent = `${Math.round(g.W_grid + g.W_sleeve + 24)} × ${Math.round(Math.max(g.Y_H, g.L_sleeve) + 15)} см`;
-
+    const garment = state.garmentType || 'dress';
     const tileW = 18.0;
     const tileH = 26.7;
     const calcTiles = (wCm, hCm) => {
@@ -432,15 +457,126 @@ function updateExportDimensions(g) {
         return { c, r, total: c * r };
     };
 
-    const tBack = calcTiles(backW, backH);
-    const tFront = calcTiles(frontW, frontH);
-    const tSleeve = calcTiles(g.W_sleeve, g.L_sleeve);
-    const tAll = calcTiles(g.W_grid + g.W_sleeve + 24, Math.max(g.Y_H, g.L_sleeve) + 12);
-
     const setBadge = (id, t) => {
         const el = document.getElementById(id);
         if (el) el.textContent = `${t.total} л. (${t.c}×${t.r})`;
     };
+
+    const elBack = document.getElementById('dim-back');
+    const elFront = document.getElementById('dim-front');
+    const elSleeve = document.getElementById('dim-sleeve');
+    const elAll = document.getElementById('dim-all');
+    const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    };
+
+    if (garment === 'skirt') {
+        const skirtG = (g && g.type === 'skirt') ? g : calculateSkirtGeometry();
+        setText('export-title-back', '1. Заднее полотнище юбки');
+        setText('export-title-front', '2. Переднее полотнище юбки');
+        setText('export-title-sleeve', '3. Пояс юбки (со сгибом)');
+        setText('export-title-all', '4. Полный комплект юбки');
+        setText('modal-title-back', '1. Заднее полотнище юбки');
+        setText('modal-title-front', '2. Переднее полотнище юбки');
+        setText('modal-title-sleeve', '3. Пояс юбки (со сгибом)');
+        setText('modal-title-all', '4. Полный комплект юбки');
+        setText('modal-desc-back', 'Вытачки на талии, средний шов (молния/шлица) и боковой срез.');
+        setText('modal-desc-front', 'Сгиб ткани по линии середины переда, передняя вытачка.');
+        setText('modal-desc-sleeve', 'Прямоугольный притачной пояс с припуском под застёжку.');
+        setText('modal-desc-all', 'Все детали юбки с припусками на швы и контрольными метками.');
+
+        const backW = (skirtG.X_side + Math.max(0, skirtG.flareOffset)).toFixed(1);
+        const frontW = (skirtG.W_grid - skirtG.X_side + Math.max(0, -skirtG.flareOffset)).toFixed(1);
+        const skirtH = skirtG.skirtLength.toFixed(1);
+
+        if (elBack) elBack.textContent = `${backW} × ${skirtH} см`;
+        if (elFront) elFront.textContent = `${frontW} × ${skirtH} см`;
+        if (elSleeve) elSleeve.textContent = `${skirtG.beltLength.toFixed(1)} × ${skirtG.beltWidth} см`;
+        if (elAll) elAll.textContent = `${skirtG.widthCm} × ${skirtG.heightCm} см`;
+
+        const tBack = calcTiles(backW, skirtH);
+        const tFront = calcTiles(frontW, skirtH);
+        const tBelt = calcTiles(skirtG.beltLength, skirtG.beltWidth);
+        const tAll = calcTiles(skirtG.widthCm, skirtG.heightCm);
+
+        setBadge('pages-back', tBack);
+        setBadge('pages-front', tFront);
+        setBadge('pages-sleeve', tBelt);
+        setBadge('pages-all', tAll);
+        setBadge('modal-pages-back', tBack);
+        setBadge('modal-pages-front', tFront);
+        setBadge('modal-pages-sleeve', tBelt);
+        setBadge('modal-pages-all', tAll);
+        return;
+    }
+
+    if (garment === 'panties') {
+        const pantG = (g && g.type === 'panties') ? g : calculatePantiesGeometry();
+        setText('export-title-back', `1. Спинка трусиков (${pantG.model})`);
+        setText('export-title-front', '2. Передняя деталь');
+        setText('export-title-sleeve', '3. Ластовица (хлопок)');
+        setText('export-title-all', '4. Весь комплект (1-2 листа А4)');
+        setText('modal-title-back', `1. Спинка трусиков (${pantG.model})`);
+        setText('modal-title-front', '2. Передняя деталь');
+        setText('modal-title-sleeve', '3. Ластовица (хлопок)');
+        setText('modal-title-all', '4. Весь комплект (1-2 листа А4)');
+        setText('modal-desc-back', 'Анатомический вырез спинки с учетом растяжимости ткани.');
+        setText('modal-desc-front', 'Передняя деталь со сгибом и вырезами для ног.');
+        setText('modal-desc-sleeve', 'Двойная хлопковая гигиеническая деталь со сгибом.');
+        setText('modal-desc-all', 'Перед, спинка и ластовица — быстро помещаются на 1-2 листах А4!');
+
+        if (elBack) elBack.textContent = `${pantG.backTopHalfW.toFixed(1)} × ${pantG.backHeight} см`;
+        if (elFront) elFront.textContent = `${pantG.frontTopHalfW.toFixed(1)} × ${pantG.frontHeight} см`;
+        if (elSleeve) elSleeve.textContent = `${pantG.gussetBackHalfW.toFixed(1)} × ${pantG.gussetLen} см`;
+        if (elAll) elAll.textContent = `${pantG.widthCm} × ${pantG.heightCm} см`;
+
+        const tBack = calcTiles(pantG.backTopHalfW, pantG.backHeight);
+        const tFront = calcTiles(pantG.frontTopHalfW, pantG.frontHeight);
+        const tGusset = calcTiles(pantG.gussetBackHalfW, pantG.gussetLen);
+        const tAll = calcTiles(pantG.widthCm, pantG.heightCm);
+
+        setBadge('pages-back', tBack);
+        setBadge('pages-front', tFront);
+        setBadge('pages-sleeve', tGusset);
+        setBadge('pages-all', tAll);
+        setBadge('modal-pages-back', tBack);
+        setBadge('modal-pages-front', tFront);
+        setBadge('modal-pages-sleeve', tGusset);
+        setBadge('modal-pages-all', tAll);
+        return;
+    }
+
+    // Платье (по умолчанию)
+    setText('export-title-back', '1. Спинка (со сгибом)');
+    setText('export-title-front', '2. Полочка (перед)');
+    setText('export-title-sleeve', '3. Рукав втачной');
+    setText('export-title-all', '4. Весь комплект (все детали)');
+    setText('modal-title-back', '1. Деталь «Спинка»');
+    setText('modal-title-front', '2. Деталь «Полочка»');
+    setText('modal-title-sleeve', '3. Деталь «Рукав»');
+    setText('modal-title-all', '4. Полный комплект выкройки');
+    setText('modal-desc-back', 'Контур со сгибом, плечевая и талиевая вытачки.');
+    setText('modal-desc-front', 'Контур переда, нагрудная вытачка и приталивание.');
+    setText('modal-desc-sleeve', 'Анатомический окат, точно согласованный с проймой.');
+    setText('modal-desc-all', 'Все детали единым файлом для сквозной печати.');
+
+    const maxBackX = Math.max(g.X_G4, g.B3.x, g.P1.x, g.H_back_side ? g.H_back_side.x : g.B3.x);
+    const backW = maxBackX.toFixed(1);
+    const backH = (g.Y_H + g.H_back_neck).toFixed(1);
+    const minFrontX = Math.min(g.P5_open.x, g.P5_closed.x, g.X_G4, g.B4.x, g.H_front_side ? g.H_front_side.x : g.B4.x);
+    const frontW = (g.X_G3 - minFrontX).toFixed(1);
+    const frontH = (g.Y_H + 1.2 - g.Y_V1).toFixed(1);
+
+    if (elBack) elBack.textContent = `${backW} × ${backH} см`;
+    if (elFront) elFront.textContent = `${frontW} × ${frontH} см`;
+    if (elSleeve) elSleeve.textContent = `${g.W_sleeve.toFixed(1)} × ${g.L_sleeve.toFixed(1)} см`;
+    if (elAll) elAll.textContent = `${Math.round(g.W_grid + g.W_sleeve + 24)} × ${Math.round(Math.max(g.Y_H, g.L_sleeve) + 15)} см`;
+
+    const tBack = calcTiles(backW, backH);
+    const tFront = calcTiles(frontW, frontH);
+    const tSleeve = calcTiles(g.W_sleeve, g.L_sleeve);
+    const tAll = calcTiles(g.W_grid + g.W_sleeve + 24, Math.max(g.Y_H, g.L_sleeve) + 12);
 
     setBadge('pages-back', tBack);
     setBadge('pages-front', tFront);
@@ -450,6 +586,126 @@ function updateExportDimensions(g) {
     setBadge('modal-pages-front', tFront);
     setBadge('modal-pages-sleeve', tSleeve);
     setBadge('modal-pages-all', tAll);
+}
+
+// Управление типами изделий (Платье, Юбка, Трусики)
+function setGarmentType(type) {
+    state.garmentType = type;
+
+    ['dress', 'skirt', 'panties'].forEach(t => {
+        const btn = document.getElementById(`btn-garment-${t}`);
+        const headerBtn = document.getElementById(`header-garment-${t}`);
+        const isActive = (t === type);
+        const activeClass = "garment-tab-btn py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 bg-white text-indigo-700 shadow-sm cursor-pointer";
+        const inactiveClass = "garment-tab-btn py-1.5 px-2 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 transition flex items-center justify-center gap-1 cursor-pointer";
+
+        if (btn) btn.className = isActive ? activeClass : inactiveClass;
+        if (headerBtn) {
+            headerBtn.className = isActive
+                ? "px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer"
+                : "px-2.5 py-1 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200 transition flex items-center gap-1 shrink-0 cursor-pointer";
+        }
+    });
+
+    const badge = document.getElementById('garment-type-badge');
+    if (badge) {
+        badge.textContent = type === 'skirt' ? 'Поясное (Юбка)' : (type === 'panties' ? 'Белье (Трусики)' : 'Плечевое (Платье)');
+    }
+
+    const dressMeasures = document.getElementById('measures-dress-container');
+    const skirtMeasures = document.getElementById('measures-skirt-container');
+    const pantiesMeasures = document.getElementById('measures-panties-container');
+    if (dressMeasures) dressMeasures.classList.toggle('hidden', type !== 'dress');
+    if (skirtMeasures) skirtMeasures.classList.toggle('hidden', type !== 'skirt');
+    if (pantiesMeasures) pantiesMeasures.classList.toggle('hidden', type !== 'panties');
+
+    const dressStyle = document.getElementById('style-dress-container');
+    const skirtStyle = document.getElementById('style-skirt-container');
+    const pantiesStyle = document.getElementById('style-panties-container');
+    if (dressStyle) dressStyle.classList.toggle('hidden', type !== 'dress');
+    if (skirtStyle) skirtStyle.classList.toggle('hidden', type !== 'skirt');
+    if (pantiesStyle) pantiesStyle.classList.toggle('hidden', type !== 'panties');
+
+    resetView();
+    renderPattern();
+
+    const titleRu = type === 'skirt' ? '🩱 Выбрана Юбка (А-силуэт, клеш, прямая)' : (type === 'panties' ? '🩲 Выбраны Женские трусики' : '👗 Выбрано Платье / Блуза');
+    showNotification(titleRu);
+}
+
+function setSkirtStyle(style) {
+    state.skirtStyle = style;
+    document.querySelectorAll('.skirt-style-btn').forEach(btn => {
+        const isActive = btn.dataset.style === style;
+        btn.className = isActive
+            ? "skirt-style-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
+            : "skirt-style-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+    });
+    renderPattern();
+}
+
+function setSkirtLength(val) {
+    state.skirtLength = Number(val);
+    const numEl = document.getElementById('num-skirtLength');
+    const rngEl = document.getElementById('rng-skirtLength');
+    if (numEl && document.activeElement !== numEl) numEl.value = val;
+    if (rngEl && document.activeElement !== rngEl) rngEl.value = val;
+    renderPattern();
+}
+
+function setSkirtRise(rise) {
+    state.skirtRise = rise;
+    document.querySelectorAll('.skirt-rise-btn').forEach(btn => {
+        const isActive = btn.dataset.rise === rise;
+        btn.className = isActive
+            ? "skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
+            : "skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+    });
+    renderPattern();
+}
+
+function setPantiesModel(model) {
+    state.pantiesModel = model;
+    document.querySelectorAll('.panties-model-btn').forEach(btn => {
+        const isActive = btn.dataset.model === model;
+        btn.className = isActive
+            ? "panties-model-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
+            : "panties-model-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+    });
+    renderPattern();
+}
+
+function setPantiesRise(rise) {
+    state.pantiesRise = rise;
+    document.querySelectorAll('.panties-rise-btn').forEach(btn => {
+        const isActive = btn.dataset.rise === rise;
+        btn.className = isActive
+            ? "panties-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
+            : "panties-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+    });
+    renderPattern();
+}
+
+function setPantiesLegCut(legCut) {
+    state.pantiesLegCut = legCut;
+    document.querySelectorAll('.panties-leg-btn').forEach(btn => {
+        const isActive = btn.dataset.leg === legCut;
+        btn.className = isActive
+            ? "panties-leg-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
+            : "panties-leg-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+    });
+    renderPattern();
+}
+
+function setPantiesStretch(stretch) {
+    state.pantiesStretch = Number(stretch);
+    document.querySelectorAll('.panties-stretch-btn').forEach(btn => {
+        const isActive = Number(btn.dataset.stretch) === Number(stretch);
+        btn.className = isActive
+            ? "panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
+            : "panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+    });
+    renderPattern();
 }
 
 function openExportModal() {
@@ -484,9 +740,12 @@ function initUserProfile() {
 
 function saveMyProfile() {
     const keys = [
+        'garmentType',
         'og', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
-        'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette'
+        'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
+        'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb',
+        'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch'
     ];
     const profileData = {
         name: 'Мои мерки',
@@ -536,11 +795,18 @@ function applyMyProfile() {
             myBtn.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 text-white ring-2 ring-amber-300 shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer";
         }
 
+        if (state.garmentType) setGarmentType(state.garmentType);
         if (state.posture) setPosture(state.posture);
         if (state.dartPosition) setDartPosition(state.dartPosition);
         if (state.necklineType) setNecklineType(state.necklineType);
         if (state.sleeveLengthType) setSleeveLength(state.sleeveLengthType);
         if (state.silhouette) setSilhouette(state.silhouette);
+        if (state.skirtStyle) setSkirtStyle(state.skirtStyle);
+        if (state.skirtRise) setSkirtRise(state.skirtRise);
+        if (state.pantiesModel) setPantiesModel(state.pantiesModel);
+        if (state.pantiesRise) setPantiesRise(state.pantiesRise);
+        if (state.pantiesLegCut) setPantiesLegCut(state.pantiesLegCut);
+        if (state.pantiesStretch) setPantiesStretch(state.pantiesStretch);
 
         renderPattern();
         updateProfileBadge();
@@ -568,9 +834,12 @@ function updateProfileBadge() {
 
 function exportProfileJson() {
     const keys = [
+        'garmentType',
         'og', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
-        'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette'
+        'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
+        'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb',
+        'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch'
     ];
     const exportData = {
         app: 'Конструктор выкроек САПР 1:1',

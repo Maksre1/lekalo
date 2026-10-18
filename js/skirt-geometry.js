@@ -1,0 +1,281 @@
+// js/skirt-geometry.js - Конструирование юбок (ЕМКО СЭВ / ЦОТШЛ)
+// Поддерживает: А-силуэт (Трапеция), Полусолнце, Солнце, Прямая классическая, Карандаш
+
+function calculateSkirtGeometry() {
+    const ot = Number(state.ot) || 74;
+    const ob = Number(state.ob) || 98;
+    const vb = Number(state.vb) || 19.5;
+    const skirtLength = Number(state.skirtLength) || 60;
+    const style = state.skirtStyle || 'a-line';
+    const pt = Number(state.skirtPt) || 1.0;
+    const pb = Number(state.skirtPb) || 2.0;
+    const rise = state.skirtRise || 'natural';
+
+    // Корректировка длины и талии под посадку
+    let riseDrop = 0;
+    if (rise === 'low') riseDrop = 3.5; // посадка на бедрах
+    if (rise === 'high') riseDrop = -4.0; // высокая корсетная посадка
+
+    const effectiveLength = Math.max(30, skirtLength - Math.max(0, riseDrop));
+
+    // --- ВАРИАНТ 1: ПОЛУСОЛНЦЕ И СОЛНЦЕ (Клеш) ---
+    if (style === 'half-sun' || style === 'sun') {
+        const isSun = (style === 'sun');
+        const circumference = (ot + pt * 2);
+        const rWaist = circumference / (isSun ? (2 * Math.PI) : Math.PI);
+        const rHem = rWaist + effectiveLength;
+
+        return {
+            type: 'skirt',
+            style,
+            isCircular: true,
+            isSun,
+            ot, ob, vb, skirtLength: effectiveLength,
+            pt, pb, rise,
+            rWaist, rHem,
+            widthCm: Math.ceil(rHem + 6),
+            heightCm: Math.ceil(rHem + 6),
+            beltLength: ot + pt * 2 + 3.0,
+            beltWidth: 7.0
+        };
+    }
+
+    // --- ВАРИАНТ 2: КОНСТРУКТИВНЫЕ ЮБКИ (А-силуэт/Трапеция, Прямая, Карандаш) ---
+    const St = (ot / 2) + pt;
+    const Sb = (ob / 2) + pb;
+
+    // Ширина базисной сетки
+    const W_grid = Sb;
+    // Положение бокового шва (ЗП немного шире или равно)
+    const X_side = Sb / 2 - 0.5;
+
+    // Суммарный раствор талиевых вытачек: разница между полуобхватом бедер и талии
+    const totalDart = Math.max(0.5, Sb - St);
+
+    // Распределение вытачек:
+    const sideDart = totalDart * 0.50;
+    const backDart = totalDart * 0.32;
+    const frontDart = totalDart * 0.18;
+
+    // Моделирование подола
+    let flareOffset = 0;
+    let hemCurveLift = 0;
+    if (style === 'a-line') {
+        // Трапеция / А-силуэт: расклешение бокового шва
+        flareOffset = 6.5; // +6.5 см по низу с каждой стороны
+        hemCurveLift = 1.2; // подъем бока для ровного подола
+    } else if (style === 'pencil') {
+        // Зауженная юбка-карандаш
+        flareOffset = -3.2; // -3.2 см к низу
+        hemCurveLift = 0;
+    }
+
+    // Длина вытачек
+    const backDartLen = 13.0; // см
+    const frontDartLen = 9.5;  // см
+
+    // Позиция задней вытачки
+    const X_backDart = X_side * 0.44;
+    // Позиция передней вытачки
+    const X_frontDart = X_side + (W_grid - X_side) * 0.55;
+
+    // Точки заднего полотнища (Back panel)
+    const B_waist_center = { x: 0, y: 0 };
+    const B_dart_left = { x: X_backDart - backDart / 2, y: 0 };
+    const B_dart_apex = { x: X_backDart, y: backDartLen };
+    const B_dart_right = { x: X_backDart + backDart / 2, y: 0 };
+    const B_waist_side = { x: X_side - sideDart / 2, y: -1.2 };
+    const B_hip_side = { x: X_side, y: vb };
+    const B_hem_side = { x: X_side + flareOffset, y: effectiveLength - hemCurveLift };
+    const B_hem_center = { x: 0, y: effectiveLength };
+    const B_hip_center = { x: 0, y: vb };
+
+    // Точки переднего полотнища (Front panel)
+    const F_waist_side = { x: X_side + sideDart / 2, y: -1.2 };
+    const F_dart_left = { x: X_frontDart - frontDart / 2, y: 0 };
+    const F_dart_apex = { x: X_frontDart, y: frontDartLen };
+    const F_dart_right = { x: X_frontDart + frontDart / 2, y: 0 };
+    const F_waist_center = { x: W_grid, y: 0.5 };
+    const F_hip_side = { x: X_side, y: vb };
+    const F_hem_side = { x: X_side - flareOffset, y: effectiveLength - hemCurveLift };
+    const F_hem_center = { x: W_grid, y: effectiveLength };
+    const F_hip_center = { x: W_grid, y: vb };
+
+    return {
+        type: 'skirt',
+        style,
+        isCircular: false,
+        ot, ob, vb, skirtLength: effectiveLength,
+        pt, pb, rise,
+        St, Sb, W_grid, X_side,
+        totalDart, sideDart, backDart, frontDart,
+        flareOffset, hemCurveLift,
+        // Точки ЗП
+        B_waist_center, B_dart_left, B_dart_apex, B_dart_right, B_waist_side,
+        B_hip_side, B_hem_side, B_hem_center, B_hip_center,
+        // Точки ПП
+        F_waist_side, F_dart_left, F_dart_apex, F_dart_right, F_waist_center,
+        F_hip_side, F_hem_side, F_hem_center, F_hip_center,
+        // Габариты
+        widthCm: Math.ceil(W_grid + Math.abs(flareOffset) * 2 + 10),
+        heightCm: Math.ceil(effectiveLength + 10),
+        // Пояс
+        beltLength: ot + pt * 2 + 4.0,
+        beltWidth: 7.0
+    };
+}
+
+// Генерация SVG разметки для юбок
+function generateSkirtPiecesMarkup(g, options = {}) {
+    const isSeparate = options.separate ?? state.separate;
+    const showClassic = options.showClassic ?? state.classicStyle;
+    const frontShiftX = options.frontShiftX ?? (isSeparate ? (18 * CM) : 0);
+
+    const colBack = showClassic ? '#09090b' : '#1d4ed8';
+    const colFront = showClassic ? '#09090b' : '#be123c';
+    const fillBack = showClassic ? '#ffffff' : 'rgba(29, 78, 216, 0.04)';
+    const fillFront = showClassic ? '#ffffff' : 'rgba(190, 18, 60, 0.04)';
+
+    // --- КРУГЛЫЕ ЮБКИ (ПОЛУСОЛНЦЕ / СОЛНЦЕ) ---
+    if (g.isCircular) {
+        const rw = g.rWaist * CM;
+        const rh = g.rHem * CM;
+        const arcWaist = `M 0 ${-rw} A ${rw} ${rw} 0 0 1 ${rw} 0`;
+        const arcHem = `L ${rh} 0 A ${rh} ${rh} 0 0 0 0 ${-rh} Z`;
+        const circleOutline = `M 0 ${-rw} A ${rw} ${rw} 0 0 1 ${rw} 0 L ${rh} 0 A ${rh} ${rh} 0 0 0 0 ${-rh} Z`;
+
+        const titleRu = g.isSun ? 'ЮБКА СОЛНЦЕ (КЛЕШ 360°)' : 'ЮБКА ПОЛУСОЛНЦЕ (КЛЕШ 180°)';
+        const descRu = g.isSun ? '2 детали со сгибом' : '1 деталь со сгибом (или 2 с боковыми швами)';
+
+        const beltW = g.beltLength * CM;
+        const beltH = g.beltWidth * CM;
+        const beltY = 25 * CM;
+
+        return {
+            isCircular: true,
+            totalWidthCm: g.widthCm + 15,
+            totalHeightCm: g.heightCm + 15,
+            frontShiftX: 0,
+            markup: `
+                <!-- Сектор юбки полусолнце / солнце -->
+                <g id="skirt-circular" transform="translate(${25 * CM}, ${g.heightCm * CM})">
+                    <!-- Заливка и контур -->
+                    <path d="${circleOutline}" fill="rgba(99, 102, 241, 0.05)" stroke="#4f46e5" stroke-width="2.0" stroke-linejoin="round"/>
+
+                    <!-- Осевые линии -->
+                    <line x1="0" y1="0" x2="${rh + 40}" y2="0" stroke="#71717a" stroke-width="0.8" stroke-dasharray="6,4"/>
+                    <line x1="0" y1="0" x2="0" y2="${-rh - 40}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="6,4"/>
+                    <circle cx="0" cy="0" r="4" fill="#4f46e5"/>
+
+                    <!-- Подписи срезов -->
+                    <text x="${(rw + rh) / 2}" y="18" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#3f3f46">[ СГИБ ТКАНИ / СЕРЕДИНА ]</text>
+                    <text x="-16" y="${-(rw + rh) / 2}" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#3f3f46" transform="rotate(-90 -16 ${-(rw + rh) / 2})">[ БОКОВОЙ ШОВ / КРОМКА ]</text>
+
+                    <!-- Размерные радиусы -->
+                    <text x="${rw * 0.7}" y="${-rw * 0.7 - 8}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="bold" fill="#4f46e5">R талии = ${g.rWaist.toFixed(1)} см</text>
+                    <text x="${rh * 0.7}" y="${-rh * 0.7 - 12}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="bold" fill="#4f46e5">Длина юбки = ${g.skirtLength} см (R низа = ${g.rHem.toFixed(1)} см)</text>
+
+                    <!-- Лейбл по центру -->
+                    <text x="${(rw + rh) * 0.45}" y="${-(rw + rh) * 0.45}" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#1e1b4b">${titleRu}</text>
+                    <text x="${(rw + rh) * 0.45}" y="${-(rw + rh) * 0.45 + 18}" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#475569">${descRu} | От=${g.ot} см</text>
+                </g>
+
+                <!-- Пояс юбки -->
+                <g id="skirt-belt" transform="translate(${25 * CM}, ${(g.heightCm + 4) * CM})">
+                    <rect x="0" y="0" width="${beltW}" height="${beltH}" fill="rgba(79, 70, 229, 0.04)" stroke="#4f46e5" stroke-width="1.8" rx="2"/>
+                    <line x1="0" y1="${beltH / 2}" x2="${beltW}" y2="${beltH / 2}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,3"/>
+                    <text x="${beltW / 2}" y="${beltH / 2 - 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#18181b">ПОЯС ЮБКИ (${g.beltLength.toFixed(1)} × ${g.beltWidth} см)</text>
+                    <text x="${beltW / 2}" y="${beltH / 2 + 15}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">1 деталь со сгибом вдоль пунктира</text>
+                </g>
+            `,
+            totalWidthCm: g.widthCm,
+            totalHeightCm: g.heightCm
+        };
+    }
+
+    // --- КОНСТРУКТИВНЫЕ ЮБКИ (А-силуэт / Трапеция, Прямая, Карандаш) ---
+    // Заднее полотнище
+    const backOutlinePath = `
+        M 0 ${g.B_hem_center.y * CM}
+        L 0 0
+        L ${g.B_dart_left.x * CM} ${g.B_dart_left.y * CM}
+        L ${g.B_dart_apex.x * CM} ${g.B_dart_apex.y * CM}
+        L ${g.B_dart_right.x * CM} ${g.B_dart_right.y * CM}
+        Q ${(g.B_dart_right.x + g.B_waist_side.x) * 0.5 * CM} ${(g.B_waist_side.y * 0.5) * CM}, ${g.B_waist_side.x * CM} ${g.B_waist_side.y * CM}
+        Q ${(g.B_waist_side.x + 0.6) * CM} ${(g.B_hip_side.y * 0.6) * CM}, ${g.B_hip_side.x * CM} ${g.B_hip_side.y * CM}
+        L ${g.B_hem_side.x * CM} ${g.B_hem_side.y * CM}
+        Q ${(g.B_hem_side.x * 0.5) * CM} ${(g.B_hem_center.y + 0.3) * CM}, 0 ${g.B_hem_center.y * CM}
+        Z
+    `;
+
+    // Переднее полотнище (строится от x = X_side до x = W_grid)
+    const frontOutlinePath = `
+        M ${g.F_waist_side.x * CM} ${g.F_waist_side.y * CM}
+        Q ${(g.F_waist_side.x + 0.6) * CM} ${(g.F_hip_side.y * 0.6) * CM}, ${g.F_hip_side.x * CM} ${g.F_hip_side.y * CM}
+        L ${g.F_hem_side.x * CM} ${g.F_hem_side.y * CM}
+        Q ${(g.F_hem_side.x * 0.5 + g.F_hem_center.x * 0.5) * CM} ${(g.F_hem_center.y + 0.3) * CM}, ${g.F_hem_center.x * CM} ${g.F_hem_center.y * CM}
+        L ${g.F_waist_center.x * CM} ${g.F_waist_center.y * CM}
+        Q ${(g.F_waist_center.x * 0.7 + g.F_dart_right.x * 0.3) * CM} ${(g.F_dart_right.y * 0.5) * CM}, ${g.F_dart_right.x * CM} ${g.F_dart_right.y * CM}
+        L ${g.F_dart_apex.x * CM} ${g.F_dart_apex.y * CM}
+        L ${g.F_dart_left.x * CM} ${g.F_dart_left.y * CM}
+        Q ${(g.F_dart_left.x + g.F_waist_side.x) * 0.5 * CM} ${(g.F_waist_side.y * 0.5) * CM}, ${g.F_waist_side.x * CM} ${g.F_waist_side.y * CM}
+        Z
+    `;
+
+    // Пояс
+    const beltW = g.beltLength * CM;
+    const beltH = g.beltWidth * CM;
+    const beltY = (g.heightCm + 3) * CM;
+
+    const styleTitleRu = g.style === 'a-line' ? 'ТРАПЕЦИЯ (А-СИЛУЭТ)' : (g.style === 'pencil' ? 'КАРАНДАШ (ЗАУЖЕННАЯ)' : 'ПРЯМАЯ КЛАССИЧЕСКАЯ');
+
+    return {
+        isCircular: false,
+        backOutlinePath,
+        frontOutlinePath,
+        frontShiftX,
+        totalWidthCm: g.widthCm + (frontShiftX > 0 ? 25 : 10),
+        totalHeightCm: g.heightCm + 18,
+        markup: `
+            <!-- Заднее полотнище юбки -->
+            <g id="piece-skirt-back">
+                <path d="${backOutlinePath}" fill="${fillBack}" stroke="${colBack}" stroke-width="2.0" stroke-linejoin="round"/>
+                <!-- Линия бедер ЗП -->
+                <line x1="0" y1="${g.B_hip_center.y * CM}" x2="${g.B_hip_side.x * CM}" y2="${g.B_hip_side.y * CM}" stroke="#71717a" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <!-- Долевая нить -->
+                <line x1="${(g.X_side * 0.25) * CM}" y1="${(g.vb + 3) * CM}" x2="${(g.X_side * 0.25) * CM}" y2="${(g.skirtLength - 5) * CM}" stroke="#18181b" stroke-width="1.0" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+                <!-- Сгиб / середина -->
+                <text x="14" y="${(g.skirtLength * 0.5) * CM}" font-family="Inter, sans-serif" font-size="10" font-weight="bold" fill="#52525b" transform="rotate(-90 14 ${(g.skirtLength * 0.5) * CM})">[ СГИБ ТКАНИ / СЕРЕДИНА СПИНКИ ]</text>
+                <!-- Подписи -->
+                <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="${colBack}">ЗАДНЕЕ ПОЛОТНИЩЕ</text>
+                <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb + 0) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">${styleTitleRu} | 1 деталь со сгибом</text>
+            </g>
+
+            <!-- Переднее полотнище юбки -->
+            <g id="piece-skirt-front" transform="translate(${frontShiftX}, 0)">
+                <path d="${frontOutlinePath}" fill="${fillFront}" stroke="${colFront}" stroke-width="2.0" stroke-linejoin="round"/>
+                <!-- Линия бедер ПП -->
+                <line x1="${g.F_hip_side.x * CM}" y1="${g.F_hip_side.y * CM}" x2="${g.F_hip_center.x * CM}" y2="${g.F_hip_center.y * CM}" stroke="#71717a" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <!-- Долевая нить -->
+                <line x1="${((g.X_side + g.W_grid) * 0.5) * CM}" y1="${(g.vb + 3) * CM}" x2="${((g.X_side + g.W_grid) * 0.5) * CM}" y2="${(g.skirtLength - 5) * CM}" stroke="#18181b" stroke-width="1.0" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+                <!-- Сгиб переда -->
+                <text x="${(g.W_grid * CM) - 14}" y="${(g.skirtLength * 0.5) * CM}" font-family="Inter, sans-serif" font-size="10" font-weight="bold" fill="#52525b" transform="rotate(-90 ${(g.W_grid * CM) - 14} ${(g.skirtLength * 0.5) * CM})">[ СГИБ ТКАНИ / СЕРЕДИНА ПЕРЕДА ]</text>
+                <!-- Подписи -->
+                <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="${colFront}">ПЕРЕДНЕЕ ПОЛОТНИЩЕ</text>
+                <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb + 0) * CM}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">1 деталь со сгибом (От ${g.ot}, Об ${g.ob})</text>
+            </g>
+
+            <!-- Пояс юбки -->
+            <g id="piece-skirt-belt" transform="translate(0, ${beltY})">
+                <rect x="0" y="0" width="${beltW}" height="${beltH}" fill="rgba(99, 102, 241, 0.05)" stroke="#4f46e5" stroke-width="1.8" rx="2"/>
+                <line x1="0" y1="${beltH / 2}" x2="${beltW}" y2="${beltH / 2}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,3"/>
+                <text x="${beltW / 2}" y="${beltH / 2 - 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#18181b">ПОЯС ЮБКИ (${g.beltLength.toFixed(1)} × ${g.beltWidth} см)</text>
+                <text x="${beltW / 2}" y="${beltH / 2 + 15}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#52525b">1 дет. со сгибом (включая припуск 3 см на пуговицу)</text>
+            </g>
+        `,
+        backOutlinePath,
+        frontOutlinePath,
+        totalWidthCm: g.widthCm + (frontShiftX / CM),
+        totalHeightCm: g.heightCm
+    };
+}

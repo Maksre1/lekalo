@@ -1,6 +1,232 @@
-// js/fabric-layout.js - Калькулятор расхода ткани и интерактивная раскладка лекал
+function calculateSkirtFabricLayout(g, state) {
+    const fabricW = Number(state.fabricWidth) || 140;
+    const isFolded = state.fabricFold !== false;
+    const shrinkagePct = Number(state.fabricShrinkage) || 5;
+    const margin = 2.5;
+    const edgeMargin = 1.5;
+    const usableW = isFolded ? (fabricW / 2) : fabricW;
+
+    let pieces = [];
+    let totalLengthCm = 0;
+
+    if (g.isCircular) {
+        const r = g.rHem + 2.0;
+        const beltH = g.beltWidth + 2.0;
+        const beltW = g.beltLength + 2.0;
+
+        pieces.push({
+            id: 'skirt-circ',
+            name: g.isSun ? 'Солнце (1 дет.)' : 'Полусолнце (1 дет.)',
+            abbr: g.isSun ? 'Солнце' : 'Полусолнце',
+            w: Math.min(r, usableW - edgeMargin),
+            h: r,
+            x: 0,
+            y: edgeMargin,
+            color: '#4f46e5',
+            bg: 'rgba(79, 70, 229, 0.12)',
+            isFold: true
+        });
+
+        pieces.push({
+            id: 'skirt-belt',
+            name: 'Пояс юбки',
+            abbr: 'Пояс',
+            w: Math.min(beltW, usableW - edgeMargin),
+            h: beltH,
+            x: edgeMargin,
+            y: r + edgeMargin + margin,
+            color: '#18181b',
+            bg: 'rgba(24, 24, 27, 0.08)'
+        });
+
+        totalLengthCm = r + beltH + edgeMargin * 2 + margin + 5;
+    } else {
+        const backW = (g.X_side + Math.max(0, g.flareOffset)) + 2.0;
+        const backH = g.skirtLength + 3.0;
+        const frontW = (g.W_grid - g.X_side + Math.max(0, -g.flareOffset)) + 2.0;
+        const frontH = g.skirtLength + 3.0;
+        const beltH = g.beltWidth + 2.0;
+        const beltW = g.beltLength + 2.0;
+
+        if (backW + margin + frontW + edgeMargin <= usableW) {
+            pieces.push({
+                id: 'skirt-back',
+                name: 'Заднее полотнище (со сгибом)',
+                abbr: 'Заднее пол.',
+                w: backW,
+                h: backH,
+                x: 0,
+                y: edgeMargin,
+                color: '#1d4ed8',
+                bg: 'rgba(29, 78, 216, 0.12)',
+                isFold: true
+            });
+            pieces.push({
+                id: 'skirt-front',
+                name: 'Переднее полотнище',
+                abbr: 'Переднее пол.',
+                w: frontW,
+                h: frontH,
+                x: backW + margin,
+                y: edgeMargin,
+                color: '#be123c',
+                bg: 'rgba(190, 18, 60, 0.12)',
+                isFold: false
+            });
+            let curY = Math.max(backH, frontH) + edgeMargin + margin;
+            pieces.push({
+                id: 'skirt-belt',
+                name: 'Пояс юбки',
+                abbr: 'Пояс',
+                w: Math.min(beltW, usableW - edgeMargin),
+                h: beltH,
+                x: edgeMargin,
+                y: curY,
+                color: '#18181b',
+                bg: 'rgba(24, 24, 27, 0.08)'
+            });
+            totalLengthCm = curY + beltH + edgeMargin + 4;
+        } else {
+            pieces.push({
+                id: 'skirt-back',
+                name: 'Заднее полотнище (со сгибом)',
+                abbr: 'Заднее пол.',
+                w: backW,
+                h: backH,
+                x: 0,
+                y: edgeMargin,
+                color: '#1d4ed8',
+                bg: 'rgba(29, 78, 216, 0.12)',
+                isFold: true
+            });
+            let curY = backH + edgeMargin + margin;
+            pieces.push({
+                id: 'skirt-front',
+                name: 'Переднее полотнище (со сгибом)',
+                abbr: 'Переднее пол.',
+                w: frontW,
+                h: frontH,
+                x: 0,
+                y: curY,
+                color: '#be123c',
+                bg: 'rgba(190, 18, 60, 0.12)',
+                isFold: true
+            });
+            curY += frontH + margin;
+            pieces.push({
+                id: 'skirt-belt',
+                name: 'Пояс юбки',
+                abbr: 'Пояс',
+                w: Math.min(beltW, usableW - edgeMargin),
+                h: beltH,
+                x: edgeMargin,
+                y: curY,
+                color: '#18181b',
+                bg: 'rgba(24, 24, 27, 0.08)'
+            });
+            totalLengthCm = curY + beltH + edgeMargin + 4;
+        }
+    }
+
+    totalLengthCm = Math.ceil(totalLengthCm / 5.0) * 5.0;
+    const totalLengthWithShrinkageCm = Math.ceil((totalLengthCm * (1 + shrinkagePct / 100)) / 5.0) * 5.0;
+    const totalFabricArea = fabricW * totalLengthCm;
+    let piecesArea = 0;
+    pieces.forEach(p => {
+        piecesArea += (p.w * p.h) * (p.isFold ? 2 : 1);
+    });
+    const efficiency = Math.min(92, Math.max(55, Math.round((piecesArea / totalFabricArea) * 100)));
+
+    return {
+        fabricW, usableW, isFolded, shrinkagePct,
+        totalLengthCm,
+        totalLengthM: (totalLengthCm / 100).toFixed(2),
+        totalLengthWithShrinkageCm,
+        totalLengthWithShrinkageM: (totalLengthWithShrinkageCm / 100).toFixed(2),
+        efficiency,
+        pieces
+    };
+}
+
+function calculatePantiesFabricLayout(g, state) {
+    const fabricW = Number(state.fabricWidth) || 140;
+    const isFolded = state.fabricFold !== false;
+    const shrinkagePct = Number(state.fabricShrinkage) || 5;
+    const margin = 2.0;
+    const edgeMargin = 1.5;
+    const usableW = isFolded ? (fabricW / 2) : fabricW;
+
+    const fW = g.frontTopHalfW + 1.5;
+    const fH = g.frontHeight + 1.5;
+    const bW = g.backTopHalfW + 1.5;
+    const bH = g.backHeight + 1.5;
+    const gW = g.gussetBackHalfW + 1.0;
+    const gH = g.gussetLen + 1.0;
+
+    let pieces = [];
+    pieces.push({
+        id: 'panties-front',
+        name: 'Перед трусиков (со сгибом)',
+        abbr: 'Перед',
+        w: fW,
+        h: fH,
+        x: 0,
+        y: edgeMargin,
+        color: '#be123c',
+        bg: 'rgba(190, 18, 60, 0.12)',
+        isFold: true
+    });
+    pieces.push({
+        id: 'panties-back',
+        name: 'Спинка трусиков',
+        abbr: 'Спинка',
+        w: bW,
+        h: bH,
+        x: fW + margin,
+        y: edgeMargin,
+        color: '#4338ca',
+        bg: 'rgba(67, 56, 202, 0.12)',
+        isFold: true
+    });
+    pieces.push({
+        id: 'panties-gusset',
+        name: 'Ластовица (2 дет. из хлопка)',
+        abbr: 'Ластовица',
+        w: gW,
+        h: gH,
+        x: fW + margin + bW + margin,
+        y: edgeMargin,
+        color: '#047857',
+        bg: 'rgba(4, 120, 87, 0.14)',
+        isFold: true
+    });
+
+    let totalLengthCm = Math.max(fH, bH) + edgeMargin * 2 + 3.0;
+    totalLengthCm = Math.max(30, Math.ceil(totalLengthCm / 5.0) * 5.0);
+    const totalLengthWithShrinkageCm = Math.ceil((totalLengthCm * (1 + shrinkagePct / 100)) / 5.0) * 5.0;
+    const efficiency = 75;
+
+    return {
+        fabricW, usableW, isFolded, shrinkagePct,
+        totalLengthCm,
+        totalLengthM: (totalLengthCm / 100).toFixed(2),
+        totalLengthWithShrinkageCm,
+        totalLengthWithShrinkageM: (totalLengthWithShrinkageCm / 100).toFixed(2),
+        efficiency,
+        pieces
+    };
+}
 
 function calculateFabricLayout(g, state) {
+    if (state.garmentType === 'skirt') {
+        const skirtG = (g && g.type === 'skirt') ? g : calculateSkirtGeometry();
+        return calculateSkirtFabricLayout(skirtG, state);
+    }
+    if (state.garmentType === 'panties') {
+        const pantiesG = (g && g.type === 'panties') ? g : calculatePantiesGeometry();
+        return calculatePantiesFabricLayout(pantiesG, state);
+    }
+
     const fabricW = Number(state.fabricWidth) || 140; // см (110, 140, 150)
     const isFolded = state.fabricFold !== false; // по умолчанию в сгиб
     const shrinkagePct = Number(state.fabricShrinkage) || 5; // % на усадку

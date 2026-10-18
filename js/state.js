@@ -35,6 +35,22 @@ const state = {
     sleeveLengthType: 'long', // 'long' (длинный) | 'three-quarter' (3/4) | 'short' (короткий)
     silhouette: 'straight',   // 'straight' (прямой) | 'flare' (трапеция/клеш)
 
+    // Тип конструируемого изделия: 'dress' (Платье/блуза/топ) | 'skirt' (Юбка) | 'panties' (Трусики)
+    garmentType: 'dress',
+
+    // Моделирование юбок
+    skirtLength: 60,          // Длина юбки (см: 35..105)
+    skirtStyle: 'a-line',     // 'a-line' (Трапеция) | 'half-sun' (Полусолнце) | 'sun' (Солнце) | 'straight' (Прямая) | 'pencil' (Карандаш)
+    skirtRise: 'natural',     // 'natural' (на талии) | 'low' (на бедрах) | 'high' (высокая корсетная)
+    skirtPt: 1.0,             // Прибавка по талии для юбки (см)
+    skirtPb: 2.0,             // Прибавка по бедрам для юбки (см)
+
+    // Моделирование женских трусиков
+    pantiesModel: 'slips',    // 'slips' (Слипы) | 'braziliana' (Бразилиана) | 'high-waist' (Ретро) | 'thong' (Стринги)
+    pantiesRise: 'mid',       // 'high' (высокая) | 'mid' (средняя) | 'low' (низкая)
+    pantiesLegCut: 'classic', // 'classic' (классический) | 'high' (высокий французский)
+    pantiesStretch: 0.90,     // Коэффициент растяжимости ткани (0.90 - трикотаж 10%, 0.85 - кружево 15%, 0.95 - хлопок 5%)
+
     // Параметры ткани и раскладки
     fabricWidth: 140,         // ширина полотна ткани (см: 110, 140, 150)
     fabricFold: true,         // раскрой в сгиб ткани (вдвое)

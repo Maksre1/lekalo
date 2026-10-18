@@ -1,6 +1,192 @@
 // js/export-pdf.js - Экспорт лекал в SVG, PNG и нарезка на листы А4 в PDF
 
+function getSkirtPieceExportData(pieceType) {
+    const g = calculateSkirtGeometry();
+    const p = generateSkirtPiecesMarkup(g, { showClassic: true, separate: true });
+
+    if (g.isCircular) {
+        const rw = g.rWaist * CM;
+        const rh = g.rHem * CM;
+        const widthMm = Math.ceil(rh) + 40;
+        const heightMm = Math.ceil(rh) + 40;
+        const minX = -20;
+        const minY = -Math.ceil(rh) - 20;
+
+        const circlePath = `M 0 ${-rw} A ${rw} ${rw} 0 0 1 ${rw} 0 L ${rh} 0 A ${rh} ${rh} 0 0 0 0 ${-rh} Z`;
+
+        const contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${circlePath}" fill="#ffffff"/>
+                <line x1="0" y1="0" x2="${rh}" y2="0" stroke="#71717a" stroke-width="0.8" stroke-dasharray="6,4"/>
+                <line x1="0" y1="0" x2="0" y2="${-rh}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="6,4"/>
+                <text x="${(rw + rh) / 2}" y="18" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">[ СГИБ ТКАНИ ]</text>
+                <text x="-16" y="${-(rw + rh) / 2}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b" transform="rotate(-90 -16 ${-(rw + rh) / 2})">[ БОКОВОЙ ШОВ ]</text>
+                <text x="${(rw + rh) * 0.45}" y="${-(rw + rh) * 0.45}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#09090b">${g.isSun ? 'ЮБКА СОЛНЦЕ' : 'ЮБКА ПОЛУСОЛНЦЕ'}</text>
+                <text x="${(rw + rh) * 0.45}" y="${-(rw + rh) * 0.45 + 18}" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#3f3f46">От=${g.ot} см | Длина=${g.skirtLength} см | R талии=${g.rWaist.toFixed(1)} см</text>
+            </g>
+        `;
+        return {
+            minX, minY, widthMm, heightMm, contentSvg,
+            fileTitle: `yubka_${g.style}_OT${state.ot}`,
+            pieceLabelRu: `${g.isSun ? 'Юбка Солнце' : 'Юбка Полусолнце'} (От ${state.ot})`
+        };
+    }
+
+    if (pieceType === 'back') {
+        const backW = Math.ceil(Math.max(g.X_side + g.flareOffset, g.X_side) * CM) + 40;
+        const backH = Math.ceil(g.skirtLength * CM) + 40;
+        const minX = -20;
+        const minY = -20;
+        const contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.backOutlinePath}" fill="#ffffff"/>
+                <line x1="0" y1="${g.vb * CM}" x2="${g.X_side * CM}" y2="${g.vb * CM}" stroke="#71717a" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <text x="14" y="${(g.skirtLength * 0.5) * CM}" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#09090b" transform="rotate(-90 14 ${(g.skirtLength * 0.5) * CM})">[ СГИБ ТКАНИ ]</text>
+                <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#09090b">ЗАДНЕЕ ПОЛОТНИЩЕ ЮБКИ</text>
+                <text x="${(g.X_side * 0.5) * CM}" y="${(g.vb + 1) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#3f3f46">1 дет. со сгибом | От=${g.ot} | Об=${g.ob} | Дю=${g.skirtLength}</text>
+            </g>
+        `;
+        return {
+            minX, minY, widthMm: backW, heightMm: backH, contentSvg,
+            fileTitle: `yubka_zad_OT${state.ot}_OB${state.ob}`,
+            pieceLabelRu: `Заднее полотнище юбки (От ${state.ot}, Об ${state.ob})`
+        };
+    } else if (pieceType === 'front') {
+        const frontW = Math.ceil((g.W_grid - g.X_side + Math.max(0, -g.flareOffset)) * CM) + 40;
+        const frontH = Math.ceil(g.skirtLength * CM) + 40;
+        const minX = Math.floor(g.F_waist_side.x * CM) - 20;
+        const minY = -20;
+        const contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.frontOutlinePath}" fill="#ffffff"/>
+                <line x1="${g.F_hip_side.x * CM}" y1="${g.F_hip_side.y * CM}" x2="${g.F_hip_center.x * CM}" y2="${g.F_hip_center.y * CM}" stroke="#71717a" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <text x="${(g.W_grid * CM) - 14}" y="${(g.skirtLength * 0.5) * CM}" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#09090b" transform="rotate(-90 ${(g.W_grid * CM) - 14} ${(g.skirtLength * 0.5) * CM})">[ СГИБ ТКАНИ ]</text>
+                <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb - 2) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#09090b">ПЕРЕДНЕЕ ПОЛОТНИЩЕ ЮБКИ</text>
+                <text x="${((g.X_side + g.W_grid) * 0.5) * CM}" y="${(g.vb + 1) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#3f3f46">1 дет. со сгибом | От=${g.ot} | Об=${g.ob} | Дю=${g.skirtLength}</text>
+            </g>
+        `;
+        return {
+            minX, minY, widthMm: frontW, heightMm: frontH, contentSvg,
+            fileTitle: `yubka_pered_OT${state.ot}_OB${state.ob}`,
+            pieceLabelRu: `Переднее полотнище юбки (От ${state.ot}, Об ${state.ob})`
+        };
+    } else if (pieceType === 'sleeve' || pieceType === 'belt') {
+        const beltW = Math.ceil(g.beltLength * CM) + 40;
+        const beltH = Math.ceil(g.beltWidth * CM) + 40;
+        const minX = -20;
+        const minY = -20;
+        const contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <rect x="0" y="0" width="${g.beltLength * CM}" height="${g.beltWidth * CM}" fill="#ffffff"/>
+                <line x1="0" y1="${(g.beltWidth / 2) * CM}" x2="${g.beltLength * CM}" y2="${(g.beltWidth / 2) * CM}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,3"/>
+                <text x="${(g.beltLength / 2) * CM}" y="${(g.beltWidth / 2) * CM - 4}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">ПОЯС ЮБКИ (${g.beltLength.toFixed(1)} × ${g.beltWidth} см)</text>
+                <text x="${(g.beltLength / 2) * CM}" y="${(g.beltWidth / 2) * CM + 15}" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#52525b">1 деталь со сгибом по пунктиру</text>
+            </g>
+        `;
+        return {
+            minX, minY, widthMm: beltW, heightMm: beltH, contentSvg,
+            fileTitle: `yubka_poyas_OT${state.ot}`,
+            pieceLabelRu: `Пояс юбки (${g.beltLength.toFixed(1)} × ${g.beltWidth} см)`
+        };
+    } else {
+        const shiftX = 18 * CM;
+        const pFull = generateSkirtPiecesMarkup(g, { showClassic: true, separate: true, frontShiftX: shiftX });
+        const widthMm = Math.ceil(pFull.totalWidthCm * CM) + 40;
+        const heightMm = Math.ceil(pFull.totalHeightCm * CM) + 40;
+        const minX = -20;
+        const minY = -20;
+        return {
+            minX, minY, widthMm, heightMm,
+            contentSvg: `<g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">${pFull.markup}</g>`,
+            fileTitle: `yubka_polnaya_OT${state.ot}_OB${state.ob}`,
+            pieceLabelRu: `Юбка полный комплект (От ${state.ot}, Об ${state.ob})`
+        };
+    }
+}
+
+function getPantiesPieceExportData(pieceType) {
+    const g = calculatePantiesGeometry();
+    const p = generatePantiesPiecesMarkup(g, { showClassic: true });
+
+    if (pieceType === 'front') {
+        const widthMm = Math.ceil(g.frontTopHalfW * CM) + 40;
+        const heightMm = Math.ceil(g.frontHeight * CM) + 40;
+        const minX = -20;
+        const minY = -20;
+        const contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.frontPath}" fill="#ffffff"/>
+                <line x1="0" y1="0" x2="0" y2="${g.frontHeight * CM}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,3"/>
+                <text x="12" y="${(g.frontHeight * 0.45) * CM}" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#09090b" transform="rotate(-90 12 ${(g.frontHeight * 0.45) * CM})">[ СГИБ ТКАНИ ]</text>
+                <text x="${(g.frontTopHalfW * 0.45) * CM}" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">ПЕРЕД ТРУСИКОВ</text>
+                <text x="${(g.frontTopHalfW * 0.45) * CM}" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">1 деталь со сгибом (Об ${g.ob} см)</text>
+            </g>
+        `;
+        return {
+            minX, minY, widthMm, heightMm, contentSvg,
+            fileTitle: `trusiki_pered_OB${state.ob}`,
+            pieceLabelRu: `Перед трусиков (Об ${state.ob})`
+        };
+    } else if (pieceType === 'back') {
+        const widthMm = Math.ceil(g.backTopHalfW * CM) + 40;
+        const heightMm = Math.ceil(g.backHeight * CM) + 40;
+        const minX = -20;
+        const minY = -20;
+        const contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.backPath}" fill="#ffffff"/>
+                <line x1="0" y1="0" x2="0" y2="${g.backHeight * CM}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,3"/>
+                <text x="12" y="${(g.backHeight * 0.45) * CM}" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#09090b" transform="rotate(-90 12 ${(g.backHeight * 0.45) * CM})">[ СГИБ ТКАНИ ]</text>
+                <text x="${(g.backTopHalfW * 0.45) * CM}" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">СПИНКА ТРУСИКОВ (${g.model.toUpperCase()})</text>
+                <text x="${(g.backTopHalfW * 0.45) * CM}" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">1 деталь со сгибом</text>
+            </g>
+        `;
+        return {
+            minX, minY, widthMm, heightMm, contentSvg,
+            fileTitle: `trusiki_spinka_${g.model}_OB${state.ob}`,
+            pieceLabelRu: `Спинка трусиков (${g.model})`
+        };
+    } else if (pieceType === 'sleeve' || pieceType === 'gusset') {
+        const widthMm = Math.ceil(g.gussetBackHalfW * CM) + 40;
+        const heightMm = Math.ceil(g.gussetLen * CM) + 40;
+        const minX = -20;
+        const minY = -20;
+        const contentSvg = `
+            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="${p.gussetPath}" fill="#ffffff"/>
+                <line x1="0" y1="0" x2="0" y2="${g.gussetLen * CM}" stroke="#71717a" stroke-width="0.8" stroke-dasharray="4,3"/>
+                <text x="10" y="${(g.gussetLen * 0.5) * CM}" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#09090b" transform="rotate(-90 10 ${(g.gussetLen * 0.5) * CM})">[ СГИБ ]</text>
+                <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${(g.gussetLen * 0.4) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#09090b">ЛАСТОВИЦА</text>
+                <text x="${(g.gussetBackHalfW * 0.5) * CM}" y="${(g.gussetLen * 0.4) * CM + 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#52525b">2 дет. (100% хлопок)</text>
+            </g>
+        `;
+        return {
+            minX, minY, widthMm, heightMm, contentSvg,
+            fileTitle: `trusiki_lastovica_OB${state.ob}`,
+            pieceLabelRu: `Ластовица трусиков (2 детали)`
+        };
+    } else {
+        const widthMm = Math.ceil(p.totalWidthCm * CM) + 40;
+        const heightMm = Math.ceil(p.totalHeightCm * CM) + 40;
+        const minX = -20;
+        const minY = -20;
+        return {
+            minX, minY, widthMm, heightMm,
+            contentSvg: `<g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">${p.markup}</g>`,
+            fileTitle: `trusiki_polny_komplekt_OB${state.ob}`,
+            pieceLabelRu: `Трусики полный комплект (${g.model})`
+        };
+    }
+}
+
 function getPieceExportData(pieceType) {
+    if (state.garmentType === 'skirt') {
+        return getSkirtPieceExportData(pieceType);
+    }
+    if (state.garmentType === 'panties') {
+        return getPantiesPieceExportData(pieceType);
+    }
+
     const g = calculateGeometry();
     const p = generatePatternPiecesMarkup(g, { showClassic: true, frontShiftX: 0, sleeveOriginX: g.W_sleeve / 2 });
 
