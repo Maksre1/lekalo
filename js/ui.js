@@ -619,19 +619,31 @@ function updateCalculationTable(g) {
             { name: 'Длина бокового шва', abbr: 'Бок', formula: 'Высота соединения боков', val: `${pantG.sideSeam.toFixed(1)} см` },
             { name: 'Длина ластовицы', abbr: 'Ластовица', formula: 'Хлопковая вставка', val: `${pantG.gussetLen} см` }
         ];
-    } else {
+    } else if (garment === 'top') {
+        const topG = (g && g.type === 'top') ? g : calculateTopGeometry();
         rows = [
-            { name: 'Ширина сетки', abbr: 'Г1-Г3', formula: 'Полуобхват груди + прибавка', val: `${g.W_grid.toFixed(1)} см` },
-            { name: 'Ширина спинки', abbr: 'Шсп', formula: 'Спинка изделия', val: `${g.W_back.toFixed(1)} см` },
-            { name: 'Ширина проймы', abbr: 'Шпр', formula: 'Подмышечная область', val: `${g.W_armhole.toFixed(1)} см` },
-            { name: 'Ширина переда', abbr: 'Шпол', formula: 'Полочка с вытачкой', val: `${g.W_front.toFixed(1)} см` },
-            { name: 'Длина проймы спинки', abbr: 'Дпр_спин', formula: 'Линия проймы сзади', val: `${g.len_back_armhole.toFixed(1)} см` },
-            { name: 'Длина проймы переда', abbr: 'Дпр_перед', formula: 'Линия проймы спереди', val: `${g.len_front_armhole.toFixed(1)} см` },
-            { name: 'Вся длина проймы', abbr: 'Дпр', formula: 'Сумма полочки и спинки', val: `${g.total_armhole_len.toFixed(1)} см` },
-            { name: 'Длина оката рукава', abbr: 'Док', formula: 'Линия втачивания рукава', val: `${g.total_sleeve_cap_len.toFixed(1)} см` },
-            { name: 'Посадка по окату', abbr: 'Ппос', formula: 'Док - Дпр (норма +2..+3.5 см)', val: `+${g.sleeve_ease.toFixed(1)} см` },
-            { name: 'Раствор вытачки груди', abbr: 'В7-В9', formula: 'Раскрытие для груди', val: `${g.bust_dart_width.toFixed(1)} см` },
-            { name: 'Талиевые вытачки', abbr: 'Сумма', formula: 'Приталивание изделия', val: `${g.total_waist_intake.toFixed(1)} см` }
+            { name: 'Модель топа', abbr: 'Фасон', formula: (topG.style || '').toUpperCase(), val: topG.style },
+            { name: 'Ширина сетки топа', abbr: 'Сг+Пг', formula: 'Полуобхват груди с прибавкой', val: `${topG.W_grid.toFixed(1)} см` },
+            { name: 'Длина изделия', abbr: 'Ди', formula: 'От высшей точки плеча', val: `${topG.effectiveLength.toFixed(1)} см` },
+            { name: 'Система «Анти-задир»', abbr: 'Дуга', formula: topG.antiRideupDrop > 0 ? `Удлинение переда +${topG.antiRideupDrop} см` : 'Прямой срез', val: `${topG.antiRideupDrop > 0 ? '+' : ''}${topG.antiRideupDrop} см` },
+            { name: 'Длина бретелей', abbr: 'Бретели', formula: 'С учетом эластичности k=0.90', val: `${topG.elasticSpec ? topG.elasticSpec.strapFinishedLength : 38} см` },
+            { name: 'Подгрудный пояс', abbr: 'Пояс', formula: 'Отрицательная прибавка k=0.82', val: `${topG.elasticSpec ? topG.elasticSpec.underbustBandLength : 72} см` },
+            { name: 'Быстрое снятие', abbr: 'Планка', formula: topG.isQuickRelease ? 'Планка под кнопки +1.8 см' : 'Без планки', val: topG.isQuickRelease ? 'Да (+1.8 см)' : 'Нет' }
+        ];
+    } else {
+        const dressG = (g && g.W_back !== undefined) ? g : calculateGeometry();
+        rows = [
+            { name: 'Ширина сетки', abbr: 'Г1-Г3', formula: 'Полуобхват груди + прибавка', val: `${dressG.W_grid.toFixed(1)} см` },
+            { name: 'Ширина спинки', abbr: 'Шсп', formula: 'Спинка изделия', val: `${dressG.W_back.toFixed(1)} см` },
+            { name: 'Ширина проймы', abbr: 'Шпр', formula: 'Подмышечная область', val: `${dressG.W_armhole.toFixed(1)} см` },
+            { name: 'Ширина переда', abbr: 'Шпол', formula: 'Полочка с вытачкой', val: `${dressG.W_front.toFixed(1)} см` },
+            { name: 'Длина проймы спинки', abbr: 'Дпр_спин', formula: 'Линия проймы сзади', val: `${dressG.len_back_armhole.toFixed(1)} см` },
+            { name: 'Длина проймы переда', abbr: 'Дпр_перед', formula: 'Линия проймы спереди', val: `${dressG.len_front_armhole.toFixed(1)} см` },
+            { name: 'Вся длина проймы', abbr: 'Дпр', formula: 'Сумма полочки и спинки', val: `${dressG.total_armhole_len.toFixed(1)} см` },
+            { name: 'Длина оката рукава', abbr: 'Док', formula: 'Линия втачивания рукава', val: `${dressG.total_sleeve_cap_len.toFixed(1)} см` },
+            { name: 'Посадка по окату', abbr: 'Ппос', formula: 'Док - Дпр (норма +2..+3.5 см)', val: `+${dressG.sleeve_ease.toFixed(1)} см` },
+            { name: 'Раствор вытачки груди', abbr: 'В7-В9', formula: 'Раскрытие для груди', val: `${dressG.bust_dart_width.toFixed(1)} см` },
+            { name: 'Талиевые вытачки', abbr: 'Сумма', formula: 'Приталивание изделия', val: `${dressG.total_waist_intake.toFixed(1)} см` }
         ];
     }
 
