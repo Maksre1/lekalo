@@ -62,6 +62,8 @@ function syncInput(key, value) {
     if (rngEl && document.activeElement !== rngEl) rngEl.value = val;
 
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 // Модальное окно с подсказкой «Как правильно снять мерку»
@@ -719,8 +721,9 @@ function setGarmentType(type) {
         renderSkirtStyleCatalog();
     } else if (type === 'dress' && typeof renderDressActiveDetails === 'function') {
         renderDressActiveDetails();
-    } else if (type === 'panties' && typeof renderPantiesActiveDetails === 'function') {
-        renderPantiesActiveDetails();
+    } else if (type === 'panties') {
+        if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
+        else if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
     }
 
     resetView();
@@ -738,6 +741,8 @@ function setSkirtStyle(style) {
         state.skirtStyle = style;
         renderPattern();
     }
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setSkirtLength(val) {
@@ -752,6 +757,8 @@ function setSkirtLength(val) {
         renderSkirtActiveDetails();
     }
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setSkirtRise(rise) {
@@ -763,20 +770,20 @@ function setSkirtRise(rise) {
             : "skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
     });
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setPantiesModel(model) {
     state.pantiesModel = model;
-    document.querySelectorAll('.panties-model-btn').forEach(btn => {
-        const isActive = btn.dataset.model === model;
-        btn.className = isActive
-            ? "panties-model-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
-            : "panties-model-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
-    });
-    if (typeof renderPantiesActiveDetails === 'function') {
+    if (typeof renderPantiesStyleCatalog === 'function') {
+        renderPantiesStyleCatalog();
+    } else if (typeof renderPantiesActiveDetails === 'function') {
         renderPantiesActiveDetails();
     }
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setPantiesRise(rise) {
@@ -788,6 +795,8 @@ function setPantiesRise(rise) {
             : "panties-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
     });
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setPantiesLegCut(legCut) {
@@ -799,6 +808,8 @@ function setPantiesLegCut(legCut) {
             : "panties-leg-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
     });
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setPantiesStretch(stretch) {
@@ -810,6 +821,8 @@ function setPantiesStretch(stretch) {
             : "panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
     });
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function openExportModal() {
@@ -1010,4 +1023,71 @@ function showNotification(text) {
         el.classList.remove('opacity-100', 'translate-y-0');
         el.classList.add('opacity-0', 'translate-y-3');
     }, 2800);
+}
+
+// --- УПРАВЛЕНИЕ РЕЖИМАМИ ОТОБРАЖЕНИЯ (2D / 3D / СПЛИТ) ---
+
+let currentMainViewMode = 'split'; // '2d' | '3d' | 'split'
+
+function setMainViewMode(mode) {
+    currentMainViewMode = mode;
+    const svgWrapper = document.getElementById('svg-wrapper');
+    const mannequinBox = document.getElementById('mannequin-3d-box');
+    const btn2d = document.getElementById('btn-view-2d');
+    const btnSplit = document.getElementById('btn-view-split');
+    const btn3d = document.getElementById('btn-view-3d');
+
+    const activeBtnCls = "view-mode-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-xs transition cursor-pointer";
+    const inactiveBtnCls = "view-mode-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-stone-700 hover:bg-stone-100 transition cursor-pointer";
+
+    if (btn2d) btn2d.className = (mode === '2d') ? activeBtnCls : inactiveBtnCls;
+    if (btnSplit) btnSplit.className = (mode === 'split') ? activeBtnCls : inactiveBtnCls;
+    if (btn3d) btn3d.className = (mode === '3d') ? activeBtnCls : inactiveBtnCls;
+
+    if (mode === '2d') {
+        if (svgWrapper) {
+            svgWrapper.classList.remove('hidden');
+            svgWrapper.className = 'w-full h-full cursor-grab active:cursor-grabbing relative overflow-hidden transition-all duration-300';
+        }
+        if (mannequinBox) mannequinBox.classList.add('hidden');
+    } else if (mode === '3d') {
+        if (svgWrapper) svgWrapper.classList.add('hidden');
+        if (mannequinBox) {
+            mannequinBox.classList.remove('hidden');
+            mannequinBox.className = 'w-full h-full border-0 bg-[#fbfbfa] flex flex-col relative shrink-0 transition-all duration-300';
+        }
+    } else { // split
+        if (svgWrapper) {
+            svgWrapper.classList.remove('hidden');
+            svgWrapper.className = 'flex-1 h-full cursor-grab active:cursor-grabbing relative overflow-hidden transition-all duration-300';
+        }
+        if (mannequinBox) {
+            mannequinBox.classList.remove('hidden');
+            mannequinBox.className = 'w-72 sm:w-80 md:w-96 border-l border-stone-200 bg-[#fbfbfa] flex flex-col relative shrink-0 transition-all duration-300';
+        }
+    }
+
+    setTimeout(() => {
+        if (window.mannequinInstance && typeof window.mannequinInstance.onResize === 'function') {
+            window.mannequinInstance.onResize();
+        }
+        renderPattern();
+    }, 60);
+}
+
+function setMannequinAngle(deg) {
+    if (window.mannequinInstance && typeof window.mannequinInstance.setViewAngle === 'function') {
+        window.mannequinInstance.setViewAngle(deg);
+    }
+}
+
+function toggleMannequinSpin(btn) {
+    if (window.mannequinInstance && typeof window.mannequinInstance.toggleAutoRotate === 'function') {
+        const isSpin = window.mannequinInstance.toggleAutoRotate();
+        if (btn) {
+            btn.className = isSpin
+                ? "px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-bold transition cursor-pointer"
+                : "px-1.5 py-0.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10px] font-medium transition cursor-pointer";
+        }
+    }
 }

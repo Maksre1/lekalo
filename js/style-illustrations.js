@@ -83,11 +83,11 @@ const STYLE_CATALOG = {
             id: 'mini-laceup',
             name: 'Мини со шнуровкой',
             category: 'mini',
-            badge: 'Стример',
+            badge: 'Акцент',
             badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
             image: null,
             recLength: 36,
-            summary: 'Соблазнительный открытый боковой разрез с люверсами и перекрестной шнуровкой. Эффектный фокус в веб-камеру.',
+            summary: 'Соблазнительный открытый боковой разрез с люверсами и перекрестной шнуровкой. Эффектная дизайнерская деталь.',
             fabrics: 'Плотный хлопковый твил, экокожа, деним, замша, костюмка с эластаном',
             difficulty: 'Легко',
             time: '1.5 часа',
@@ -102,7 +102,7 @@ const STYLE_CATALOG = {
             badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
             image: null,
             recLength: 38,
-            summary: 'Облегающая юбка с боковой кулиской. Шнурками регулируется длина от 38 см до дерзкого микро 28 см со сборкой.',
+            summary: 'Облегающая юбка с боковой кулиской. Шнурками регулируется длина от 38 см до эффектного микро 28 см со сборкой.',
             fabrics: 'Эластичный трикотаж (рибана, лапша, масло, бифлекс), вискоза с эластаном',
             difficulty: 'Очень легко (без молний)',
             time: '1 час',
@@ -113,11 +113,11 @@ const STYLE_CATALOG = {
             id: 'mini-micro',
             name: 'Y2K микро-юбка',
             category: 'mini',
-            badge: 'Экстрим 30 см',
+            badge: 'Микро 30 см',
             badgeColor: 'bg-pink-100 text-pink-700 border-pink-200',
             image: null,
             recLength: 30,
-            summary: 'Ультракороткая прямая мини-юбка в дерзкой эстетике 2000-х с низкой посадкой на косточках бедер.',
+            summary: 'Ультракороткая прямая мини-юбка в эстетике 2000-х с низкой посадкой на косточках бедер.',
             fabrics: 'Деним, твид, вельвет, плотный хлопок, экокожа',
             difficulty: 'Легко',
             time: '1 час',
@@ -259,10 +259,10 @@ const STYLE_CATALOG = {
         {
             id: 'dolphin-shorts',
             name: 'Шортики Dolphin',
-            badge: 'Стрим-хит',
+            badge: 'Ретро-спорт',
             badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
             image: null,
-            summary: 'Культовые домашние микро-шорты с закругленными боковыми разрезами и контрастным кантом. Уютно и супер-мило.',
+            summary: 'Спортивные микро-шорты с закругленными боковыми разрезами и контрастным кантом. Уютный домашний и курортный стиль.',
             fabrics: 'Хлопковый трикотаж (кулирка), махра, велюр, микрофибра',
             difficulty: 'Легко',
             time: '35 минут',
@@ -272,10 +272,10 @@ const STYLE_CATALOG = {
         {
             id: 'strappy',
             name: 'Стрепы / V-waist',
-            badge: 'Секси',
+            badge: 'Модерн',
             badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
             image: null,
-            summary: 'Соблазнительные трусики с дерзким V-образным поясом и декоративными эластичными стрепами на бедрах.',
+            summary: 'Изящные трусики с V-образным поясом и декоративными эластичными стрепами на бедрах.',
             fabrics: 'Эластичная сетка, тонкое кружево, бретелечная резинка-стрепы 10-12 мм',
             difficulty: 'Легко',
             time: '30 минут',
@@ -326,9 +326,9 @@ const STYLE_CATALOG = {
         {
             id: 'keyhole',
             name: 'Капелька (Keyhole)',
-            badge: 'Стример',
+            badge: 'Тренд',
             badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
-            summary: 'Акцентный фигурный вырез-капелька по центру декольте. Идеальный фокус в стрим-камеру.',
+            summary: 'Акцентный фигурный вырез-капелька по центру декольте. Изящный фокус портретной зоны.',
             fabrics: 'Эластичный трикотаж, рибана, бифлекс, шелк-стрейч',
             vectorType: 'dress-keyhole'
         },
@@ -719,8 +719,8 @@ function renderSkirtStyleCatalog() {
             <div onclick="selectSkirtStyle('${item.id}', ${item.recLength})"
                  data-skirt-style="${item.id}"
                  class="skirt-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
-                <div onclick="event.stopPropagation(); openLookbookModal('skirt', '${item.id}');"
-                     title="Нажмите, чтобы открыть фото в полном размере"
+                <div onclick="event.stopPropagation(); openLightbox('${item.image || ''}', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
+                     title="Нажмите для увеличения изображения"
                      class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative cursor-zoom-in">
                     ${visualContent}
                 </div>
@@ -729,7 +729,7 @@ function renderSkirtStyleCatalog() {
                         <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
                         <div class="flex items-center gap-1 shrink-0">
                             <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
-                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('skirt', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">🔍 Лукбук</button>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('skirt', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">Детали ↗</button>
                         </div>
                     </div>
                     <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
@@ -882,7 +882,7 @@ function renderPantiesActiveDetails() {
     target.innerHTML = `
         <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2">
             <div class="flex items-start gap-3">
-                <div onclick="openLookbookModal('panties', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img relative">
+                <div onclick="openLightbox('${info.image || ''}', '${info.name}', '${info.summary.replace(/'/g, "\\'")}', '${info.vectorType}');" title="Нажмите, чтобы увеличить изображение" class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img relative">
                     ${getStyleVectorSvg(info.vectorType, 72)}
                     <span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>
                 </div>
@@ -910,6 +910,72 @@ function renderPantiesActiveDetails() {
             </div>
         </div>
     `;
+}
+
+function renderPantiesStyleCatalog() {
+    const container = document.getElementById('panties-catalog-container');
+    if (!container) return;
+
+    const styles = STYLE_CATALOG.panties || [];
+
+    const renderCard = (item) => {
+        const isActive = (state.pantiesModel || 'slips') === item.id;
+        const photoBadge = item.image
+            ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
+            : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+
+        const visualContent = item.image
+            ? `<div class="relative w-full h-full group/thumb">
+                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                   <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>
+                   ${photoBadge}
+                   <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
+                       <span class="text-white text-xs bg-black/60 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   </div>
+               </div>`
+            : `<div class="relative w-full h-full group/thumb flex items-center justify-center">
+                   ${getStyleVectorSvg(item.vectorType, 60)}
+                   ${photoBadge}
+                   <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
+                       <span class="text-stone-700 text-xs bg-white/80 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   </div>
+               </div>`;
+
+        return `
+            <div onclick="setPantiesModel('${item.id}')"
+                 data-model="${item.id}"
+                 class="panties-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
+                <div onclick="event.stopPropagation(); openLightbox('${item.image || ''}', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
+                     title="Нажмите для увеличения изображения"
+                     class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative cursor-zoom-in">
+                    ${visualContent}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('panties', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">Детали ↗</button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-400">
+                        <span class="text-stone-600 font-medium">⏱ ${item.time}</span>
+                        <span>•</span>
+                        <span class="text-indigo-700 font-medium">${item.difficulty}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    container.innerHTML = `
+        <div class="grid grid-cols-1 gap-2">
+            ${styles.map(renderCard).join('')}
+        </div>
+    `;
+
+    renderPantiesActiveDetails();
 }
 
 function renderDressActiveDetails() {
@@ -951,33 +1017,33 @@ function renderDressActiveDetails() {
 let currentLookbookGarment = 'skirt';
 let currentLookbookStyleId = 'mini-trapeze';
 
-function getStreamerTip(garmentType, styleId) {
+function getStylingTip(garmentType, styleId) {
     const tips = {
-        'mini-trapeze': 'Держит форму при сидении в стримерском кресле. Отлично сочетается с оверсайз-худи, укороченными кардиганами или кроп-топами.',
-        'mini-pleated': 'Культовый фасон для аниме, косплея и школьных образов. Кокетка на бедрах обеспечивает удобную посадку, а складки эффектно играют при движении.',
-        'mini-wrap': 'Диагональная линия запаха визуально удлиняет ноги и создает динамичный акцент в веб-камеру.',
+        'mini-trapeze': 'Держит форму в положении сидя. Отлично сочетается с оверсайз-жакетом, укороченным кардиганом или кроп-топом.',
+        'mini-pleated': 'Классический силуэт preppy. Кокетка на бедрах обеспечивает комфортную посадку, а складки эффектно играют при ходьбе.',
+        'mini-wrap': 'Диагональная линия запаха визуально удлиняет ноги и создает динамичный силуэт.',
         'mini-slit': 'Аккуратный разрез придает образу пикантности, оставаясь в рамках минималистичной элегантности.',
-        'mini-skater': 'Романтичный силуэт с красивыми струящимися фалдами. Отлично кружится во время стрима или танцевальных трансляций.',
-        'mini-laceup': 'Шнуровка на боку — главный стрим-акцент! Можно затягивать потуже или оставлять открытую шнуровку с яркими атласными лентами.',
-        'mini-ruched': 'Шнурками по бокам можно регулировать длину прямо в эфире: от базовой длины 38 см до дерзкого ультра-мини 28 см.',
-        'mini-micro': 'Эстетика Y2K и трендов TikTok. Рекомендуется носить с высокими гольфами, гетрами и массивной обувью.',
+        'mini-skater': 'Романтичный силуэт с красивыми струящимися фалдами при движении.',
+        'mini-laceup': 'Шнуровка на боку — выразительный акцент. Можно затягивать плотно или оставлять свободную шнуровку с лентами.',
+        'mini-ruched': 'Шнурками по бокам можно регулировать длину: от базовой длины 38 см до эффектного микро со сборкой.',
+        'mini-micro': 'Эстетика Y2K. Рекомендуется сочетать с высокими гольфами, плотными колготками или массивной обувью.',
         'a-line': 'Универсальная база для повседневных образов. Скрывает нюансы фигуры и акцентирует талию.',
-        'half-sun': 'Мягкие драпировки ткани смотрятся очень женственно и легко в кадре.',
-        'sun': 'Максимальная пышность и легкость ткани для праздничных и танцевальных эфиров.',
+        'half-sun': 'Мягкие драпировки ткани смотрятся очень женственно и легко.',
+        'sun': 'Максимальная пышность и легкость ткани для праздничных и вечерних образов.',
         'pencil': 'Строгий и соблазнительный силуэт, выгодно подчеркивающий плавный изгиб бедер.',
         'straight': 'Классика делового стиля. Подходит под любые строгие блейзеры и рубашки.',
         'slips': 'Анатомический комфорт на каждый день под любой тип повседневной одежды.',
         'braziliana': 'Кокетливый V-образный вырез сзади визуально приподнимает линию ягодиц.',
         'high-waist': 'Ретро-силуэт с акцентом на тонкую талию и плоский животик в винтажном стиле.',
-        'thong': 'Полная незаметность под облегающими мини-юбками, платьями и лосинами.',
-        'dolphin-shorts': 'Уютный домашний стримерский вайб. Белый кант и закругленные бока создают милый ретро-образ.',
-        'strappy': 'Двойные стрепы на бедрах визуально сужают талию и создают вау-эффект «песочные часы».',
+        'thong': 'Полная незаметность под облегающими юбками, платьями и брюками.',
+        'dolphin-shorts': 'Непринужденный домашний и курортный стиль. Контрастный кант и закругленные бока создают милый ретро-образ.',
+        'strappy': 'Двойные стрепы на бедрах визуально сужают талию и создают гармоничный силуэт «песочные часы».',
         'shoulder': 'Чистая базовая посадка полочки, идеально под пиджак или строгий блейзер.',
         'side': 'Французская вытачка переносит объем в бок, оставляя грудь и плечи идеально гладкими.',
         'waist': 'Идеально для приталенных платьев с ремешком или акцентным поясом.',
         'armhole': 'Элегантная плавная линия от проймы, подчеркивающая рельеф груди.',
-        'keyhole': 'Вырез-капелька притягивает взгляд к портретной зоне веб-камеры.',
-        'halter': 'Открытые плечи и спина — эффектно и соблазнительно при фронтальной съемке.',
+        'keyhole': 'Вырез-капелька подчеркивает изящество ключиц и линии декольте.',
+        'halter': 'Открытые плечи и спина — эффектно и элегантно для вечерних платьев.',
         'bustier': 'Корсетный силуэт подчеркивает фигуру без жестких неудобных косточек.'
     };
     return tips[styleId] || 'Стильный фасон с отличной посадкой по индивидуальным меркам.';
@@ -1084,7 +1150,7 @@ function openLookbookModal(garmentType, styleId) {
     if (cutEl) cutEl.textContent = item.cutTip || 'Классический раскрой по долевой с припусками на швы.';
 
     const tipEl = document.getElementById('lb-modal-tip');
-    if (tipEl) tipEl.textContent = item.streamerTip || getStreamerTip(gType, item.id);
+    if (tipEl) tipEl.textContent = item.stylingTip || getStylingTip(gType, item.id);
 
     const countEl = document.getElementById('lb-modal-count');
     if (countEl) countEl.textContent = `${list.length} моделей`;
@@ -1160,10 +1226,57 @@ function applyLookbookStyle() {
     }
 }
 
-// Закрытие модального окна по клавише Escape
+// --- ЛАЙТБОКС ДЛЯ УВЕЛИЧЕННОГО ПРОСМОТРА ФОТО И ЭСКИЗОВ ---
+
+function openLightbox(src, title, subtitle, svgVectorType) {
+    const modal = document.getElementById('lightbox-modal');
+    if (!modal) return;
+    const titleEl = document.getElementById('lightbox-title');
+    const subEl = document.getElementById('lightbox-subtitle');
+    const imgEl = document.getElementById('lightbox-img');
+    const svgEl = document.getElementById('lightbox-svg');
+
+    if (titleEl) titleEl.textContent = title || 'Фасон';
+    if (subEl) subEl.textContent = subtitle || 'Детальный просмотр модели';
+
+    if (src) {
+        if (imgEl) {
+            imgEl.src = src;
+            imgEl.classList.remove('hidden');
+        }
+        if (svgEl) {
+            svgEl.classList.add('hidden');
+            svgEl.innerHTML = '';
+        }
+    } else if (svgVectorType) {
+        if (imgEl) {
+            imgEl.classList.add('hidden');
+            imgEl.src = '';
+        }
+        if (svgEl) {
+            svgEl.innerHTML = getStyleVectorSvg(svgVectorType, 300);
+            svgEl.classList.remove('hidden');
+        }
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeLightbox() {
+    const modal = document.getElementById('lightbox-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+// Закрытие модальных окон по клавише Escape
 window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+        closeLightbox();
         closeLookbookModal();
     }
 });
+
 

@@ -223,3 +223,87 @@ const presets = {
     '52': { og: 104, ot: 86, ob: 110, osh: 39.0, dts: 42.5, dtp: 47.5, vg: 29.5, cg: 11.0, vb: 20.0, di: 66, shp: 13.8, op: 33.5, dr: 61.5, oz: 25 },
     '54': { og: 108, ot: 92, ob: 114, osh: 40.0, dts: 43.0, dtp: 48.5, vg: 30.5, cg: 11.4, vb: 20.0, di: 68, shp: 14.0, op: 35.0, dr: 62, oz: 26 }
 };
+
+// Модуль надежного автосохранения мерок и настроек в браузере (LocalStorage)
+const StorageManager = {
+    STORAGE_KEY: 'lekalo_saved_measurements_v2',
+    debounceTimer: null,
+
+    save() {
+        if (this.debounceTimer) clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => {
+            try {
+                const data = {
+                    og: state.og,
+                    ot: state.ot,
+                    ob: state.ob,
+                    osh: state.osh,
+                    dts: state.dts,
+                    dtp: state.dtp,
+                    vg: state.vg,
+                    cg: state.cg,
+                    vb: state.vb,
+                    di: state.di,
+                    shp: state.shp,
+                    op: state.op,
+                    dr: state.dr,
+                    oz: state.oz,
+                    pg: state.pg,
+                    pt: state.pt,
+                    pb: state.pb,
+                    pspr: state.pspr,
+                    pop: state.pop,
+                    posture: state.posture,
+                    garmentType: state.garmentType,
+                    skirtLength: state.skirtLength,
+                    skirtStyle: state.skirtStyle,
+                    skirtRise: state.skirtRise,
+                    pantiesModel: state.pantiesModel,
+                    pantiesRise: state.pantiesRise,
+                    pantiesLegCut: state.pantiesLegCut,
+                    pantiesStretch: state.pantiesStretch,
+                    dartPosition: state.dartPosition,
+                    necklineType: state.necklineType,
+                    necklineDepth: state.necklineDepth,
+                    sleeveLengthType: state.sleeveLengthType,
+                    silhouette: state.silhouette,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                this.flashIndicator();
+            } catch (err) {
+                console.warn('Не удалось автосохранить мерки:', err);
+            }
+        }, 200);
+    },
+
+    load() {
+        try {
+            const raw = localStorage.getItem(this.STORAGE_KEY);
+            if (!raw) return false;
+            const data = JSON.parse(raw);
+            if (data && typeof data === 'object') {
+                Object.keys(data).forEach(key => {
+                    if (key in state && key !== 'timestamp') {
+                        state[key] = data[key];
+                    }
+                });
+                return true;
+            }
+        } catch (err) {
+            console.warn('Ошибка загрузки сохраненных мерок:', err);
+        }
+        return false;
+    },
+
+    flashIndicator() {
+        const ind = document.getElementById('autosave-indicator');
+        if (!ind) return;
+        ind.classList.remove('opacity-0');
+        ind.classList.add('opacity-100');
+        setTimeout(() => {
+            ind.classList.remove('opacity-100');
+            ind.classList.add('opacity-0');
+        }, 1600);
+    }
+};
