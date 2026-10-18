@@ -35,9 +35,13 @@
             </button>
         </div>
 
-        <!-- Выбор стандартного размера ГОСТ -->
+        <!-- Выбор стандартного размера ГОСТ или своего профиля -->
         <div class="flex items-center justify-between sm:justify-start gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200 overflow-x-auto w-full sm:w-auto">
-            <span class="text-[11px] font-medium text-stone-500 px-1 whitespace-nowrap">Размер:</span>
+            <button onclick="applyMyProfile()" id="btn-my-profile" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer" title="Загрузить мои сохраненные мерки">
+                <span>⭐ Мои мерки</span>
+            </button>
+            <div class="w-px h-4 bg-stone-300 mx-0.5 shrink-0"></div>
+            <span class="text-[11px] font-medium text-stone-500 px-1 whitespace-nowrap">ГОСТ:</span>
             <button onclick="applyPreset('42')" data-size="42" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">42</button>
             <button onclick="applyPreset('44')" data-size="44" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">44</button>
             <button onclick="applyPreset('46')" data-size="46" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">46</button>
@@ -81,6 +85,34 @@
                 
                 <!-- ВКЛАДКА 1: МЕРКИ И ОСАНКА -->
                 <div id="panel-measures" class="space-y-4">
+                    <!-- Карточка личного профиля (сохранение в браузере) -->
+                    <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                                <span>⭐ Мой личный профиль</span>
+                            </span>
+                            <span id="profile-saved-badge" class="text-[10px] text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-mono font-medium">Не сохранен</span>
+                        </div>
+                        <p class="text-[11px] text-amber-900/80 leading-snug">Сохраните свои мерки в памяти браузера, чтобы открывать выкройку в 1 клик на любом устройстве.</p>
+                        <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+                            <button onclick="saveMyProfile()" class="py-1.5 px-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition shadow-sm flex items-center justify-center gap-1 cursor-pointer">
+                                <span>💾 Сохранить мерки</span>
+                            </button>
+                            <button onclick="applyMyProfile()" class="py-1.5 px-2 bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1 cursor-pointer">
+                                <span>🔄 Загрузить мои</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between pt-1 border-t border-amber-200/60 text-[11px]">
+                            <button onclick="exportProfileJson()" class="text-amber-800 hover:underline font-medium flex items-center gap-1 cursor-pointer">
+                                <span>📥 Скачать (.json)</span>
+                            </button>
+                            <label class="text-amber-800 hover:underline font-medium cursor-pointer flex items-center gap-1">
+                                <span>📤 Загрузить файл</span>
+                                <input type="file" accept=".json" onchange="importProfileJson(this)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Выбор типа осанки -->
                     <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3 space-y-2">
                         <div class="flex justify-between items-center">
@@ -708,6 +740,7 @@
                 if (urlParams.get('heatmap') === '1') {
                     toggleFitHeatmap();
                 }
+                initUserProfile();
             } catch (err) {
                 console.error('Ошибка инициализации САПР:', err);
             }

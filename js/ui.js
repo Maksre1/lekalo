@@ -467,3 +467,174 @@ function closeExportModal() {
         modal.classList.remove('flex');
     }
 }
+
+// --- УПРАВЛЕНИЕ ЛИЧНЫМ ПРОФИЛЕМ МЕРОК (LOCALSTORAGE & JSON) ---
+const PROFILE_STORAGE_KEY = 'lekalo_user_profile';
+
+function initUserProfile() {
+    updateProfileBadge();
+    try {
+        const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+        if (raw) {
+            const btn = document.getElementById('btn-my-profile');
+            if (btn) btn.classList.add('ring-2', 'ring-amber-300');
+        }
+    } catch (_) {}
+}
+
+function saveMyProfile() {
+    const keys = [
+        'og', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
+        'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
+        'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette'
+    ];
+    const profileData = {
+        name: 'Мои мерки',
+        savedAt: new Date().toLocaleDateString('ru-RU') + ' ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+        data: {}
+    };
+    keys.forEach(k => {
+        profileData.data[k] = state[k];
+    });
+
+    try {
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profileData));
+        updateProfileBadge();
+        const btn = document.getElementById('btn-my-profile');
+        if (btn) btn.classList.add('ring-2', 'ring-amber-300');
+        showNotification('⭐ Ваши мерки сохранены в памяти браузера!');
+    } catch (e) {
+        console.error('Ошибка сохранения профиля:', e);
+        alert('Не удалось сохранить в память браузера.');
+    }
+}
+
+function applyMyProfile() {
+    try {
+        const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+        if (!raw) {
+            saveMyProfile();
+            return;
+        }
+        const profile = JSON.parse(raw);
+        if (!profile || !profile.data) return;
+
+        Object.keys(profile.data).forEach(k => {
+            state[k] = profile.data[k];
+            const numEl = document.getElementById(`num-${k}`);
+            const rngEl = document.getElementById(`rng-${k}`);
+            if (numEl) numEl.value = profile.data[k];
+            if (rngEl) rngEl.value = profile.data[k];
+        });
+
+        // Снимаем выделение со стандартных размеров ГОСТ и подсвечиваем "Мои мерки"
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.className = "preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center";
+        });
+        const myBtn = document.getElementById('btn-my-profile');
+        if (myBtn) {
+            myBtn.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 text-white ring-2 ring-amber-300 shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer";
+        }
+
+        if (state.posture) setPosture(state.posture);
+        if (state.dartPosition) setDartPosition(state.dartPosition);
+        if (state.necklineType) setNecklineType(state.necklineType);
+        if (state.sleeveLengthType) setSleeveLength(state.sleeveLengthType);
+        if (state.silhouette) setSilhouette(state.silhouette);
+
+        renderPattern();
+        updateProfileBadge();
+        showNotification(`⭐ Загружен ваш профиль (${profile.savedAt || ''})`);
+    } catch (e) {
+        console.error('Ошибка загрузки профиля:', e);
+    }
+}
+
+function updateProfileBadge() {
+    const badge = document.getElementById('profile-saved-badge');
+    if (!badge) return;
+    try {
+        const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+        if (raw) {
+            const p = JSON.parse(raw);
+            badge.textContent = `Сохранен: ${p.savedAt || 'Да'}`;
+            badge.className = "text-[10px] text-amber-900 bg-amber-200/80 px-1.5 py-0.5 rounded font-mono font-medium";
+        } else {
+            badge.textContent = 'Не сохранен';
+            badge.className = "text-[10px] text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-mono font-medium";
+        }
+    } catch (_) {}
+}
+
+function exportProfileJson() {
+    const keys = [
+        'og', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
+        'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
+        'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette'
+    ];
+    const exportData = {
+        app: 'Конструктор выкроек САПР 1:1',
+        name: 'Мои индивидуальные мерки',
+        exportedAt: new Date().toISOString(),
+        measurements: {}
+    };
+    keys.forEach(k => {
+        exportData.measurements[k] = state[k];
+    });
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `moi_merki_OG${state.og}_OT${state.ot}_OB${state.ob}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showNotification('📥 Файл с вашими мерками скачан на диск!');
+}
+
+function importProfileJson(inputEl) {
+    const file = inputEl.files && inputEl.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const parsed = JSON.parse(e.target.result);
+            const m = parsed.measurements || parsed.data || parsed;
+            Object.keys(m).forEach(k => {
+                if (k in state) {
+                    state[k] = m[k];
+                    const numEl = document.getElementById(`num-${k}`);
+                    const rngEl = document.getElementById(`rng-${k}`);
+                    if (numEl) numEl.value = m[k];
+                    if (rngEl) rngEl.value = m[k];
+                }
+            });
+            saveMyProfile();
+            renderPattern();
+            showNotification('📤 Ваши мерки успешно загружены из файла!');
+        } catch (err) {
+            alert('Ошибка чтения файла мерок. Убедитесь, что это правильный .json файл.');
+        }
+    };
+    reader.readAsText(file);
+    inputEl.value = '';
+}
+
+function showNotification(text) {
+    let el = document.getElementById('cad-toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'cad-toast';
+        el.className = 'fixed bottom-16 md:bottom-6 right-6 z-50 bg-stone-900/95 backdrop-blur text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-2xl border border-stone-700/60 flex items-center gap-2 transform transition-all duration-300 opacity-0 translate-y-3 pointer-events-none';
+        document.body.appendChild(el);
+    }
+    el.textContent = text;
+    el.classList.remove('opacity-0', 'translate-y-3');
+    el.classList.add('opacity-100', 'translate-y-0');
+    clearTimeout(window._toastTimeout);
+    window._toastTimeout = setTimeout(() => {
+        el.classList.remove('opacity-100', 'translate-y-0');
+        el.classList.add('opacity-0', 'translate-y-3');
+    }, 2800);
+}
