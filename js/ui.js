@@ -187,6 +187,8 @@ function setDartPosition(pos) {
         renderDressActiveDetails();
     }
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setNecklineType(type) {
@@ -199,6 +201,8 @@ function setNecklineType(type) {
         }
     });
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setNecklineDepth(val) {
@@ -210,6 +214,8 @@ function setNecklineDepth(val) {
     if (numEl && document.activeElement !== numEl) numEl.value = state.necklineDepth;
     if (rngEl && document.activeElement !== rngEl) rngEl.value = state.necklineDepth;
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setSleeveLength(type) {
@@ -222,6 +228,8 @@ function setSleeveLength(type) {
         }
     });
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 }
 
 function setSilhouette(sil) {
@@ -728,6 +736,8 @@ function setGarmentType(type) {
 
     resetView();
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
 
     const titleRu = type === 'skirt' ? '🩱 Выбрана Юбка (А-силуэт, клеш, прямая, мини)' : (type === 'panties' ? '🩲 Выбраны Женские трусики' : '👗 Выбрано Платье / Блуза');
     showNotification(titleRu);

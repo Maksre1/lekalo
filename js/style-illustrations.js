@@ -867,6 +867,8 @@ function selectSkirtStyle(styleId, recLength) {
 
     renderSkirtActiveDetails();
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof update3DMannequin === 'function') update3DMannequin();
     if (typeof showNotification === 'function') {
         showNotification(`Выбран фасон: ${info ? info.name : styleId}`);
     }

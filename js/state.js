@@ -67,6 +67,7 @@ const state = {
     showGrid: true,           // Буквенные точки и линии основы
     showFitHeatmap: false     // Подсветка степени прилегания (Heatmap)
 };
+window.state = state;
 
 // Конфигурация полей ввода с подробными человеческими подсказками
 const inputConfig = {
