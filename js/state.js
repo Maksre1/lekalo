@@ -29,10 +29,11 @@ const state = {
     posture: 'normal',
 
     // Моделирование фасонов
-    dartPosition: 'shoulder', // 'shoulder' (в плечо) | 'side' (в боковой шов) | 'waist' (в талию) | 'armhole' (в пройму)
+    dressStyle: 'dress-sheath', // 'dress-sheath' | 'dress-business' | 'dress-relief' | 'dress-cocktail-v' | 'dress-keyhole' | 'dress-deep-v' | 'dress-trapeze' | 'dress-tunic' | 'dress-flare-midi'
+    dartPosition: 'side',     // 'shoulder' (в плечо) | 'side' (в боковой шов) | 'waist' (в талию) | 'armhole' (в пройму)
     necklineType: 'round',    // 'round' (круглая) | 'v-neck' (V-образная) | 'boat' (лодочка) | 'square' (каре) | 'keyhole' (капелька) | 'deep-v' (глубокое декольте)
     necklineDepth: 0,         // доп. углубление выреза горловины (см: 0..8)
-    sleeveLengthType: 'long', // 'long' (длинный) | 'three-quarter' (3/4) | 'short' (короткий)
+    sleeveLengthType: 'three-quarter', // 'long' (длинный) | 'three-quarter' (3/4) | 'short' (короткий)
     silhouette: 'straight',   // 'straight' (прямой) | 'flare' (трапеция/клеш)
 
     // Тип конструируемого изделия: 'dress' (Платье/блуза/топ) | 'skirt' (Юбка) | 'panties' (Трусики)
@@ -263,6 +264,7 @@ const StorageManager = {
                     pantiesRise: state.pantiesRise,
                     pantiesLegCut: state.pantiesLegCut,
                     pantiesStretch: state.pantiesStretch,
+                    dressStyle: state.dressStyle,
                     dartPosition: state.dartPosition,
                     necklineType: state.necklineType,
                     necklineDepth: state.necklineDepth,

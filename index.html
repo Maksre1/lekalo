@@ -12,10 +12,11 @@
 <body class="h-screen w-full max-w-full flex flex-col select-none bg-stone-100 text-stone-900 overflow-hidden">
 
     <!-- Верхняя шапка приложения -->
-    <header class="bg-white border-b border-stone-200 px-3 sm:px-4 py-2 sm:py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-2.5 z-20 shrink-0">
+    <!-- Верхняя шапка приложения -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-stone-200/80 px-3 sm:px-4 py-2 sm:py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 z-20 shrink-0">
         <div class="flex items-center justify-between w-full sm:w-auto">
-            <div class="flex items-center gap-2 sm:gap-2.5">
-                <div class="w-8 h-8 sm:w-9 sm:h-9 bg-indigo-600 text-white flex items-center justify-center font-mono font-bold text-xs tracking-tight rounded-xl shadow-sm">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 bg-indigo-600 text-white flex items-center justify-center font-mono font-bold text-xs tracking-tight rounded-xl shadow-xs">
                     1:1
                 </div>
                 <div>
@@ -23,11 +24,11 @@
                         <h1 class="font-bold text-stone-900 text-sm sm:text-base tracking-tight">Конструктор выкроек</h1>
                         <span class="text-[9px] sm:text-[10px] font-semibold bg-indigo-50 border border-indigo-200 text-indigo-700 px-1.5 py-0.5 rounded-full">ЦНИИШП</span>
                     </div>
-                    <p class="text-[11px] text-stone-500 hidden md:block">Точная выкройка спинки, полочки с вытачкой и анатомического рукава</p>
+                    <p class="text-[11px] text-stone-500 hidden md:block">Профессиональное построение базовых основ по индивидуальным меркам</p>
                 </div>
             </div>
             <!-- Мобильная кнопка экспорта -->
-            <button onclick="openExportModal()" class="sm:hidden px-3 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition flex items-center gap-1.5 shadow-sm">
+            <button onclick="openExportModal()" class="sm:hidden px-3 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition flex items-center gap-1.5 shadow-xs">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
@@ -35,29 +36,29 @@
             </button>
         </div>
 
-        <!-- Выбор типа изделия в шапке (для десктопа) -->
-        <div class="hidden lg:flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
-            <button onclick="setGarmentType('dress')" id="header-garment-dress" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer">
-                <span>👗 Платье/Топ</span>
+        <!-- Единый переключатель изделия в шапке -->
+        <div class="flex items-center justify-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200/80 shadow-xs">
+            <button onclick="setGarmentType('dress')" id="header-garment-dress" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-xs transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <span>👗 Платье / Топ</span>
             </button>
-            <button onclick="setGarmentType('skirt')" id="header-garment-skirt" class="px-2.5 py-1 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200 transition flex items-center gap-1 shrink-0 cursor-pointer">
+            <button onclick="setGarmentType('skirt')" id="header-garment-skirt" class="px-3 py-1.5 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200/70 transition flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <span>🩱 Юбка</span>
             </button>
-            <button onclick="setGarmentType('panties')" id="header-garment-panties" class="px-2.5 py-1 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200 transition flex items-center gap-1 shrink-0 cursor-pointer">
-                <span>🩲 Трусики</span>
+            <button onclick="setGarmentType('panties')" id="header-garment-panties" class="px-3 py-1.5 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200/70 transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <span>🩲 Бельё</span>
             </button>
         </div>
 
         <!-- Выбор стандартного размера ГОСТ или своего профиля -->
-        <div class="flex items-center justify-between sm:justify-start gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200 overflow-x-auto w-full sm:w-auto">
-            <button onclick="applyMyProfile()" id="btn-my-profile" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer" title="Загрузить мои сохраненные мерки">
+        <div class="flex items-center justify-between sm:justify-start gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200/80 overflow-x-auto w-full sm:w-auto">
+            <button onclick="applyMyProfile()" id="btn-my-profile" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition flex items-center gap-1 shrink-0 cursor-pointer" title="Загрузить мои сохраненные мерки">
                 <span>⭐ Мои мерки</span>
             </button>
             <div class="w-px h-4 bg-stone-300 mx-0.5 shrink-0"></div>
-            <span class="text-[11px] font-medium text-stone-500 px-1 whitespace-nowrap">ГОСТ:</span>
+            <span class="text-[11px] font-medium text-stone-400 px-1 whitespace-nowrap">ГОСТ:</span>
             <button onclick="applyPreset('42')" data-size="42" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">42</button>
             <button onclick="applyPreset('44')" data-size="44" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">44</button>
-            <button onclick="applyPreset('46')" data-size="46" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">46</button>
+            <button onclick="applyPreset('46')" data-size="46" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-bold rounded-lg bg-indigo-600 text-white shadow-xs transition text-center">46</button>
             <button onclick="applyPreset('48')" data-size="48" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">48</button>
             <button onclick="applyPreset('50')" data-size="50" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">50</button>
             <button onclick="applyPreset('52')" data-size="52" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">52</button>
@@ -66,10 +67,10 @@
 
         <!-- Кнопки действий на десктопе -->
         <div class="hidden sm:flex items-center gap-2">
-            <button onclick="toggleA4Grid()" id="btn-a4-grid" class="px-3 py-1.5 text-xs font-medium border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 rounded-lg transition items-center gap-1.5 shadow-sm">
+            <button onclick="toggleA4Grid()" id="btn-a4-grid" class="px-3 py-1.5 text-xs font-medium border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 rounded-lg transition items-center gap-1.5 shadow-xs">
                 <span>Сетка А4</span>
             </button>
-            <button onclick="openExportModal()" class="px-3.5 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition flex items-center gap-1.5 shadow-sm">
+            <button onclick="openExportModal()" class="px-3.5 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition flex items-center gap-1.5 shadow-xs">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
@@ -82,34 +83,36 @@
     <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
         
         <!-- Панель настроек и параметров (Sidebar) -->
-        <aside id="cad-sidebar" class="w-full max-w-full md:w-80 lg:w-96 bg-white border-r border-stone-200 flex flex-col h-full overflow-hidden z-10 hidden md:flex shrink-0">
+        <aside id="cad-sidebar" class="w-full max-w-full md:w-84 lg:w-96 bg-white border-r border-stone-200 flex flex-col h-full overflow-hidden z-10 hidden md:flex shrink-0">
             
-            <!-- Выбор типа изделия в сайдбаре -->
-            <div class="p-2.5 bg-stone-100/90 border-b border-stone-200">
-                <div class="flex items-center justify-between mb-1.5">
-                    <span class="text-[11px] font-bold text-stone-600 uppercase tracking-wider">Тип изделия:</span>
-                    <span id="garment-type-badge" class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-1.5 py-0.5 rounded">Плечевое (Платье)</span>
+            <!-- Статус изделия и индикатор автосохранения -->
+            <div class="px-3.5 py-2.5 bg-stone-50/80 border-b border-stone-200/80 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="garment-type-badge" class="text-xs font-bold text-stone-800">Плечевое (Платье)</span>
                 </div>
-                <div class="grid grid-cols-3 gap-1 p-0.5 bg-stone-200/70 rounded-xl text-center">
-                    <button onclick="setGarmentType('dress')" id="btn-garment-dress" class="garment-tab-btn py-1.5 px-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 bg-white text-indigo-700 shadow-sm cursor-pointer">
-                        <span>👗 Платье/Топ</span>
-                    </button>
-                    <button onclick="setGarmentType('skirt')" id="btn-garment-skirt" class="garment-tab-btn py-1.5 px-1 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 transition flex items-center justify-center gap-1 cursor-pointer">
-                        <span>🩱 Юбка</span>
-                    </button>
-                    <button onclick="setGarmentType('panties')" id="btn-garment-panties" class="garment-tab-btn py-1.5 px-1 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 transition flex items-center justify-center gap-1 cursor-pointer">
-                        <span>🩲 Трусики</span>
-                    </button>
+                <div id="autosave-indicator" class="opacity-0 transition-opacity duration-300 text-[10px] text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span>✓</span><span>Сохранено</span>
                 </div>
             </div>
 
             <!-- Вкладки управления (шаги САПР) -->
-            <div id="tabs-header-bar" class="grid grid-cols-5 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500">
-                <button onclick="switchTab('measures')" id="tab-measures" class="py-2.5 border-b-2 border-indigo-600 text-indigo-600 bg-white font-bold transition text-center">1. Мерки</button>
-                <button onclick="switchTab('style')" id="tab-style" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center">2. Фасон</button>
-                <button onclick="switchTab('fit')" id="tab-fit" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center">3. Посадка</button>
-                <button onclick="switchTab('layout')" id="tab-layout" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center">4. Ткань</button>
-                <button onclick="switchTab('export')" id="tab-export" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 text-indigo-700 transition text-center">5. Печать</button>
+            <div id="tabs-header-bar" class="grid grid-cols-5 border-b border-stone-200 bg-stone-50 text-[11px] font-semibold text-stone-500">
+                <button onclick="switchTab('measures')" id="tab-measures" class="py-2.5 border-b-2 border-indigo-600 text-indigo-600 bg-white font-bold transition text-center flex flex-col items-center justify-center gap-0.5">
+                    <span>📏</span><span>Мерки</span>
+                </button>
+                <button onclick="switchTab('style')" id="tab-style" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center flex flex-col items-center justify-center gap-0.5">
+                    <span>👗</span><span>Фасон</span>
+                </button>
+                <button onclick="switchTab('fit')" id="tab-fit" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center flex flex-col items-center justify-center gap-0.5">
+                    <span>📐</span><span>Посадка</span>
+                </button>
+                <button onclick="switchTab('layout')" id="tab-layout" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center flex flex-col items-center justify-center gap-0.5">
+                    <span>🧵</span><span>Ткань</span>
+                </button>
+                <button onclick="switchTab('export')" id="tab-export" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 text-indigo-700 transition text-center flex flex-col items-center justify-center gap-0.5">
+                    <span>🖨</span><span>Печать</span>
+                </button>
             </div>
 
             <!-- Содержимое вкладок -->
@@ -335,107 +338,125 @@
                 <!-- ВКЛАДКА 2: МОДЕЛИРОВАНИЕ ФАСОНА -->
                 <div id="panel-style" class="space-y-4 hidden">
                     <!-- Баннер Лукбука и фото-галереи фасонов -->
-                    <div class="bg-gradient-to-r from-stone-900 via-indigo-950 to-purple-950 rounded-2xl p-3.5 text-white shadow-md relative overflow-hidden flex items-center justify-between gap-3">
+                    <div class="bg-gradient-to-r from-stone-900 to-indigo-950 rounded-2xl p-3 text-white shadow-xs relative overflow-hidden flex items-center justify-between gap-3">
                         <div class="relative z-10 space-y-0.5">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold tracking-wide">📸 Лукбук и фото-галерея</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-bold tracking-tight">📸 Лукбук и фото-галерея</span>
                                 <span class="text-[9px] font-bold uppercase bg-amber-400 text-stone-900 px-1.5 py-0.2 rounded-full">New</span>
                             </div>
-                            <p class="text-[11px] text-stone-300">Фэшн-фотографии, свойства тканей и советы по крою</p>
+                            <p class="text-[11px] text-stone-300">Фэшн-эскизы, свойства тканей и советы по крою</p>
                         </div>
-                        <button type="button" onclick="openLookbookModal()" class="relative z-10 shrink-0 px-3 py-1.5 bg-white hover:bg-stone-100 text-indigo-950 font-bold text-xs rounded-xl shadow transition cursor-pointer flex items-center gap-1.5">
+                        <button type="button" onclick="openLookbookModal()" class="relative z-10 shrink-0 px-3 py-1.5 bg-white hover:bg-stone-100 text-indigo-950 font-bold text-xs rounded-xl shadow transition cursor-pointer flex items-center gap-1">
                             <span>Смотреть</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </button>
-                        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-purple-500/20 rounded-full blur-xl pointer-events-none"></div>
-                        <div class="absolute -left-6 -top-6 w-24 h-24 bg-indigo-500/20 rounded-full blur-xl pointer-events-none"></div>
                     </div>
 
                     <!-- СТИЛИ ДЛЯ ПЛАТЬЯ / БЛУЗЫ -->
                     <div id="style-dress-container" class="space-y-4">
+                        <!-- Детальная карточка активного фасона платья -->
                         <div id="dress-active-details"></div>
 
-                        <!-- 1. Нагрудная вытачка -->
+                        <!-- 1. Фасоны платьев (Визуальный каталог с превью и бейджами) -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">1. Перевод нагрудной вытачки</div>
-                            <div class="grid grid-cols-2 gap-2 text-xs">
-                                <button onclick="setDartPosition('shoulder')" data-dart="shoulder" class="dart-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer">
-                                    <div class="font-bold flex items-center justify-between">В плечевой шов <span class="text-[10px] text-indigo-700 mono bg-white px-1 rounded border border-indigo-200">База</span></div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Классическая основа ЕМКО/ЦНИИШП</div>
-                                </button>
-                                <button onclick="setDartPosition('side')" data-dart="side" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold flex items-center justify-between">В боковой шов <span class="text-[10px] text-stone-500 mono bg-stone-100 px-1 rounded">Хит</span></div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Французская вытачка под проймой</div>
-                                </button>
-                                <button onclick="setDartPosition('waist')" data-dart="waist" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold">В талию</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Приталенный силуэт без шва на плече</div>
-                                </button>
-                                <button onclick="setDartPosition('armhole')" data-dart="armhole" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold">В пройму</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Элегантный рельеф проймы</div>
-                                </button>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1 flex items-center justify-between">
+                                <span>1. Каталог и фасоны платьев</span>
+                                <span class="text-[10px] text-indigo-600 font-semibold lowercase">9 моделей</span>
+                            </div>
+                            <div id="dress-catalog-container" class="space-y-3">
+                                <!-- Рендерится динамически через renderDressStyleCatalog() -->
                             </div>
                         </div>
 
-                        <!-- 2. Форма горловины -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">2. Форма выреза горловины</div>
-                            <div class="grid grid-cols-2 gap-2 text-xs">
-                                <button onclick="setNecklineType('round')" data-neckline="round" class="neckline-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer">
-                                    <div class="font-bold">Круглая</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Классический вырез</div>
-                                </button>
-                                <button onclick="setNecklineType('v-neck')" data-neckline="v-neck" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold">V-образный</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Удлиняет шею и силуэт</div>
-                                </button>
-                                <button onclick="setNecklineType('boat')" data-neckline="boat" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold">Лодочка</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Широкий элегантный вырез</div>
-                                </button>
-                                <button onclick="setNecklineType('square')" data-neckline="square" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold">Каре</div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Прямоугольный вырез</div>
-                                </button>
-                                <button onclick="setNecklineType('keyhole')" data-neckline="keyhole" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold flex items-center justify-between">Капелька <span class="text-[10px] text-rose-600 mono bg-rose-50 px-1 rounded border border-rose-200">Тренд</span></div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Акцентный вырез в декольте</div>
-                                </button>
-                                <button onclick="setNecklineType('deep-v')" data-neckline="deep-v" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                    <div class="font-bold flex items-center justify-between">Глубокое V <span class="text-[10px] text-amber-700 mono bg-amber-50 px-1 rounded border border-amber-200">Секси</span></div>
-                                    <div class="text-[10px] text-stone-500 font-normal mt-0.5">Эффектное декольте</div>
-                                </button>
+                        <!-- 2. Конструктор деталей (тонкая настройка кроя) -->
+                        <div class="pt-2 border-t border-stone-200">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center justify-between">
+                                <span>2. Конструктор деталей</span>
+                                <span class="text-[10px] text-stone-400">Тонкая настройка</span>
                             </div>
 
-                            <!-- Слайдер глубины выреза -->
-                            <div class="mt-3 bg-stone-50 p-2.5 rounded-xl border border-stone-200">
-                                <div class="flex justify-between items-center text-xs mb-1">
-                                    <span class="font-medium text-stone-800">Дополнительное углубление выреза:</span>
-                                    <span class="mono font-bold text-indigo-700"><span id="neckline-depth-val">0</span> см</span>
+                            <!-- Нагрудная вытачка -->
+                            <div class="space-y-1.5 mb-3">
+                                <div class="text-[11px] font-semibold text-stone-700">Перевод нагрудной вытачки:</div>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <button onclick="setDartPosition('shoulder')" data-dart="shoulder" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold flex items-center justify-between">В плечевой шов <span class="text-[9px] text-indigo-700 mono bg-indigo-50 px-1 rounded border border-indigo-200">База</span></div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Классическая основа ЕМКО/ЦНИИШП</div>
+                                    </button>
+                                    <button onclick="setDartPosition('side')" data-dart="side" class="dart-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer">
+                                        <div class="font-bold flex items-center justify-between">В боковой шов <span class="text-[9px] text-rose-700 mono bg-rose-50 px-1 rounded border border-rose-200">Хит</span></div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Французская вытачка под проймой</div>
+                                    </button>
+                                    <button onclick="setDartPosition('waist')" data-dart="waist" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold">В талию</div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Приталенный силуэт без шва на плече</div>
+                                    </button>
+                                    <button onclick="setDartPosition('armhole')" data-dart="armhole" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold">В пройму</div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Элегантный рельеф проймы</div>
+                                    </button>
                                 </div>
-                                <input type="range" id="rng-neckline-depth" min="0" max="8" step="0.5" value="0"
-                                    oninput="setNecklineDepth(this.value); document.getElementById('neckline-depth-val').textContent = this.value;"
-                                    class="w-full">
                             </div>
-                        </div>
 
-                        <!-- 3. Длина рукава -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">3. Длина рукава</div>
-                            <div class="grid grid-cols-3 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                                <button onclick="setSleeveLength('long')" data-sleeve="long" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Длинный</button>
-                                <button onclick="setSleeveLength('three-quarter')" data-sleeve="three-quarter" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Рукав 3/4</button>
-                                <button onclick="setSleeveLength('short')" data-sleeve="short" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Короткий</button>
+                            <!-- Форма выреза горловины -->
+                            <div class="space-y-1.5 mb-3">
+                                <div class="text-[11px] font-semibold text-stone-700">Форма выреза горловины:</div>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <button onclick="setNecklineType('round')" data-neckline="round" class="neckline-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer">
+                                        <div class="font-bold">Круглая</div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Классический вырез</div>
+                                    </button>
+                                    <button onclick="setNecklineType('v-neck')" data-neckline="v-neck" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold">V-образный</div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Удлиняет шею и силуэт</div>
+                                    </button>
+                                    <button onclick="setNecklineType('boat')" data-neckline="boat" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold">Лодочка</div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Широкий элегантный вырез</div>
+                                    </button>
+                                    <button onclick="setNecklineType('square')" data-neckline="square" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold">Каре</div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Прямоугольный вырез</div>
+                                    </button>
+                                    <button onclick="setNecklineType('keyhole')" data-neckline="keyhole" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold flex items-center justify-between">Капелька <span class="text-[9px] text-rose-600 mono bg-rose-50 px-1 rounded border border-rose-200">Тренд</span></div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Акцентный вырез в декольте</div>
+                                    </button>
+                                    <button onclick="setNecklineType('deep-v')" data-neckline="deep-v" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                        <div class="font-bold flex items-center justify-between">Глубокое V <span class="text-[9px] text-amber-700 mono bg-amber-50 px-1 rounded border border-amber-200">Секси</span></div>
+                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Эффектное декольте</div>
+                                    </button>
+                                </div>
+
+                                <!-- Слайдер глубины выреза -->
+                                <div class="mt-2.5 bg-stone-50/80 p-2.5 rounded-xl border border-stone-200">
+                                    <div class="flex justify-between items-center text-xs mb-1">
+                                        <span class="font-medium text-stone-800">Дополнительное углубление выреза:</span>
+                                        <span class="mono font-bold text-indigo-700"><span id="neckline-depth-val">0</span> см</span>
+                                    </div>
+                                    <input type="range" id="rng-neckline-depth" min="0" max="8" step="0.5" value="0"
+                                        oninput="setNecklineDepth(this.value); document.getElementById('neckline-depth-val').textContent = this.value;"
+                                        class="w-full">
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- 4. Силуэт изделия -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">4. Силуэт изделия</div>
-                            <div class="grid grid-cols-2 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                                <button onclick="setSilhouette('straight')" data-silhouette="straight" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Прямой базовый</button>
-                                <button onclick="setSilhouette('flare')" data-silhouette="flare" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Трапеция (клеш)</button>
+                            <!-- Длина рукава -->
+                            <div class="space-y-1.5 mb-3">
+                                <div class="text-[11px] font-semibold text-stone-700">Длина рукава:</div>
+                                <div class="grid grid-cols-3 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
+                                    <button onclick="setSleeveLength('long')" data-sleeve="long" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Длинный</button>
+                                    <button onclick="setSleeveLength('three-quarter')" data-sleeve="three-quarter" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Рукав 3/4</button>
+                                    <button onclick="setSleeveLength('short')" data-sleeve="short" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Короткий</button>
+                                </div>
+                            </div>
+
+                            <!-- Силуэт изделия -->
+                            <div class="space-y-1.5">
+                                <div class="text-[11px] font-semibold text-stone-700">Силуэт изделия:</div>
+                                <div class="grid grid-cols-2 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
+                                    <button onclick="setSilhouette('straight')" data-silhouette="straight" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Прямой базовый</button>
+                                    <button onclick="setSilhouette('flare')" data-silhouette="flare" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Трапеция (клеш)</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1136,6 +1157,7 @@
                 resetView();
 
                 // Инициализация каталогов и интерфейса
+                if (typeof renderDressStyleCatalog === 'function') renderDressStyleCatalog();
                 if (typeof renderDressActiveDetails === 'function') renderDressActiveDetails();
                 if (typeof renderSkirtStyleCatalog === 'function') renderSkirtStyleCatalog();
                 if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
@@ -1151,6 +1173,9 @@
                 const garmentParam = urlParams.get('garment');
                 if (garmentParam && ['dress', 'skirt', 'panties'].includes(garmentParam)) {
                     setGarmentType(garmentParam);
+                }
+                if (urlParams.get('dressStyle') && typeof selectDressStyle === 'function') {
+                    selectDressStyle(urlParams.get('dressStyle'));
                 }
                 const tab = urlParams.get('tab') || window.location.hash.replace('#', '');
                 if (tab && ['measures', 'style', 'fit', 'layout', 'export'].includes(tab)) {

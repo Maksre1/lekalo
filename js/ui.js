@@ -8,13 +8,13 @@ function buildInputs() {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = list.map(item => `
-            <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm card-hover">
+            <div class="bg-white p-3 rounded-2xl border border-stone-200/80 shadow-xs card-hover">
                 <div class="flex justify-between items-start mb-2">
                     <div class="flex-1 pr-2">
                         <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="text-xs font-semibold text-stone-900">${item.label}</span>
-                            <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100 font-semibold">${item.abbr}</span>
-                            <button type="button" onclick="showMeasurementHint('${item.label}', '${item.abbr}', '${item.hint.replace(/'/g, "\\'")}')" class="text-stone-400 hover:text-indigo-600 p-0.5 transition" title="Как измерить?">
+                            <span class="text-xs font-bold text-stone-900">${item.label}</span>
+                            <span class="text-[10px] mono px-1.5 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-200 font-bold">${item.abbr}</span>
+                            <button type="button" onclick="showMeasurementHint('${item.label}', '${item.abbr}', '${item.hint.replace(/'/g, "\\'")}')" class="text-stone-400 hover:text-indigo-600 p-0.5 transition cursor-pointer" title="Как измерить?">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <circle cx="12" cy="12" r="10" stroke-width="2"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-4m0-4h.01"/>
@@ -23,17 +23,17 @@ function buildInputs() {
                         </div>
                         <p class="text-[11px] text-stone-500 line-clamp-1 mt-0.5">${item.hint}</p>
                     </div>
-                    <!-- Блок ввода с кнопками + / - для удобства пальцев на смартфонах -->
-                    <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50 shrink-0">
-                        <button type="button" onclick="adjustValue('${item.key}', -${item.step})" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">−</button>
+                    <!-- Блок ввода с кнопками + / - -->
+                    <div class="flex items-center border border-stone-200 rounded-xl overflow-hidden bg-stone-50/80 shadow-xs shrink-0">
+                        <button type="button" onclick="adjustValue('${item.key}', -${item.step})" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:text-stone-900 hover:bg-stone-200/60 font-bold active:bg-stone-300/60 transition cursor-pointer">−</button>
                         <input type="number" id="num-${item.key}" value="${state[item.key]}" min="${item.min}" max="${item.max}" step="${item.step}"
                             oninput="syncInput('${item.key}', this.value)"
-                            class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-300 py-1 focus:outline-none focus:bg-indigo-50">
-                        <button type="button" onclick="adjustValue('${item.key}', ${item.step})" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">+</button>
+                            class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-200 py-1 focus:outline-none focus:bg-indigo-50/50">
+                        <button type="button" onclick="adjustValue('${item.key}', ${item.step})" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:text-stone-900 hover:bg-stone-200/60 font-bold active:bg-stone-300/60 transition cursor-pointer">+</button>
                     </div>
                 </div>
                 <input type="range" id="rng-${item.key}" value="${state[item.key]}" min="${item.min}" max="${item.max}" step="${item.step}"
-                    oninput="syncInput('${item.key}', this.value)" class="w-full mt-1">
+                    oninput="syncInput('${item.key}', this.value)" class="w-full mt-1.5">
             </div>
         `).join('');
     };
@@ -164,10 +164,11 @@ function switchTab(tabName) {
     if (tabName === 'style') {
         if (state.garmentType === 'skirt' && typeof renderSkirtStyleCatalog === 'function') {
             renderSkirtStyleCatalog();
-        } else if (state.garmentType === 'dress' && typeof renderDressActiveDetails === 'function') {
-            renderDressActiveDetails();
-        } else if (state.garmentType === 'panties' && typeof renderPantiesActiveDetails === 'function') {
-            renderPantiesActiveDetails();
+        } else if (state.garmentType === 'dress' && typeof renderDressStyleCatalog === 'function') {
+            renderDressStyleCatalog();
+        } else if (state.garmentType === 'panties') {
+            if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
+            else if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
         }
     }
 }
@@ -722,8 +723,8 @@ function setGarmentType(type) {
 
     if (type === 'skirt' && typeof renderSkirtStyleCatalog === 'function') {
         renderSkirtStyleCatalog();
-    } else if (type === 'dress' && typeof renderDressActiveDetails === 'function') {
-        renderDressActiveDetails();
+    } else if (type === 'dress' && typeof renderDressStyleCatalog === 'function') {
+        renderDressStyleCatalog();
     } else if (type === 'panties') {
         if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
         else if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();

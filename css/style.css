@@ -1,8 +1,9 @@
-/* css/style.css - Современный дружелюбный дизайн САПР и мобильная адаптация */
+/* css/style.css - Современный единый дизайн САПР портновского ателье */
 
 :root {
-    --primary: #4f46e5;       /* Элегантный индиго */
+    --primary: #4f46e5;       /* Фирменный индиго */
     --primary-hover: #4338ca;
+    --primary-light: #eef2ff;
     --canvas-bg: #f8fafc;
 }
 
@@ -14,66 +15,69 @@ html, body {
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #fafaf9; /* Теплый мягкий фон льна/бумаги */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #fafaf9; /* Тёплый тактильный оттенок льна */
     color: #1c1917;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
+    letter-spacing: -0.011em;
 }
 
 .mono {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: -0.02em;
 }
 
-/* Красивые дружелюбные ползунки с крупным ползунком для пальцев на смартфонах */
+/* Красивые дружелюбные ползунки с акцентным стилем */
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    height: 6px;
+    height: 5px;
     background: #e7e5e4;
     border-radius: 9999px;
     outline: none;
     cursor: pointer;
+    transition: background 0.15s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background: #4f46e5;
     cursor: pointer;
-    border: 2.5px solid #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: transform 0.1s ease, background 0.15s ease;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(79, 70, 229, 0.3), 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover,
 input[type="range"]:active::-webkit-slider-thumb {
     background: #4338ca;
-    transform: scale(1.15);
+    transform: scale(1.2);
 }
 
-/* Эстетичный чертежный холст с мягкой сеткой */
+/* Эстетичный чертежный холст с мягкой миллиметровой сеткой */
 .cad-canvas-bg {
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
     background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
-        linear-gradient(to right, rgba(203, 213, 225, 0.5) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(203, 213, 225, 0.5) 1px, transparent 1px);
+        linear-gradient(to right, rgba(226, 232, 240, 0.5) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.5) 1px, transparent 1px),
+        linear-gradient(to right, rgba(203, 213, 225, 0.7) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(203, 213, 225, 0.7) 1px, transparent 1px);
     background-size: 10px 10px, 10px 10px, 50px 50px, 50px 50px;
     touch-action: none;
 }
 
 /* Скроллбары */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 ::-webkit-scrollbar-track {
-    background: #f5f5f4;
+    background: transparent;
 }
 ::-webkit-scrollbar-thumb {
     background: #d6d3d1;
@@ -85,19 +89,19 @@ input[type="range"]:active::-webkit-slider-thumb {
 
 /* Плавные карточки и анимации */
 .card-hover {
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .card-hover:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 /* Тултипы и подсказки */
 .tooltip-box {
-    animation: fadeIn 0.15s ease-out;
+    animation: fadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.96); }
+    from { opacity: 0; transform: scale(0.97); }
     to { opacity: 1; transform: scale(1); }
 }
 
@@ -107,3 +111,4 @@ input[type="range"]:active::-webkit-slider-thumb {
         padding-bottom: env(safe-area-inset-bottom);
     }
 }
+

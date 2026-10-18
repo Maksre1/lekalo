@@ -285,70 +285,145 @@ const STYLE_CATALOG = {
     ],
 
     dress: [
+        // --- 1. БАЗОВЫЕ И ДЕЛОВЫЕ ---
         {
-            id: 'shoulder',
-            name: 'В плечевой шов',
-            badge: 'База ЦНИИШП',
+            id: 'dress-sheath',
+            name: 'Платье-футляр (Little Black Dress)',
+            category: 'basic',
+            badge: 'База',
             badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
             image: null,
-            summary: 'Классическая плечевая вытачка базовой конструкции. Идеальна под пиджак или жакет.',
-            fabrics: 'Костюмная шерсть, хлопок, лен, вискоза',
-            vectorType: 'dress-shoulder'
+            summary: 'Эталонное приталенное платье-футляр. Французская вытачка под проймой, аккуратный круглый вырез и элегантный рукав 3/4.',
+            fabrics: 'Костюмная шерсть, плотный креповый шелк, джерси, поливискоза',
+            difficulty: 'Легко',
+            time: '2.5 – 3 часа',
+            cutTip: 'Потайная молния 50 см по спинке, шлица 16 см для комфортного шага',
+            vectorType: 'dress-sheath',
+            preset: { dartPosition: 'side', necklineType: 'round', necklineDepth: 0, sleeveLengthType: 'three-quarter', silhouette: 'straight' }
         },
         {
-            id: 'side',
-            name: 'Французская (в бок)',
+            id: 'dress-business',
+            name: 'Деловое миди ЦНИИШП',
+            category: 'basic',
+            badge: 'Офис',
+            badgeColor: 'bg-stone-100 text-stone-700 border-stone-200',
+            image: null,
+            summary: 'Строгий лаконичный силуэт с вытачкой в плечевой шов, широким вырезом «лодочка» и длинным анатомическим рукавом.',
+            fabrics: 'Тонкая шерсть, габардин, хлопок с эластаном, плотный твил',
+            difficulty: 'Легко',
+            time: '2.5 часа',
+            cutTip: 'Классическая плечевая вытачка, рукав с локтевой вытачкой для идеальной посадки',
+            vectorType: 'dress-business',
+            preset: { dartPosition: 'shoulder', necklineType: 'boat', necklineDepth: 0, sleeveLengthType: 'long', silhouette: 'straight' }
+        },
+        {
+            id: 'dress-relief',
+            name: 'Платье с рельефом из проймы',
+            category: 'basic',
+            badge: 'Элегантно',
+            badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            image: null,
+            summary: 'Грациозный силуэт с плавными дугообразными рельефами из проймы и четким геометричным вырезом «каре».',
+            fabrics: 'Плательный лен, костюмный твил, вискозный креп, плотный хлопок',
+            difficulty: 'Средняя (дугообразные швы)',
+            time: '3 часа',
+            cutTip: 'Припосаживание рельефа по груди для безупречной посадки без заломов',
+            vectorType: 'dress-relief',
+            preset: { dartPosition: 'armhole', necklineType: 'square', necklineDepth: 1, sleeveLengthType: 'three-quarter', silhouette: 'straight' }
+        },
+
+        // --- 2. КОКТЕЙЛЬНЫЕ И ВЕЧЕРНИЕ ---
+        {
+            id: 'dress-cocktail-v',
+            name: 'Коктейльное с V-декольте',
+            category: 'cocktail',
             badge: 'Хит',
             badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
             image: null,
-            summary: 'Вытачка переведена в боковой шов под пройму. Плечи остаются абсолютно чистыми.',
-            fabrics: 'Плательный шелк, креп, вискоза, батист',
-            vectorType: 'dress-side'
+            summary: 'Приталенное коктейльное платье с выразительным V-образным декольте, удлиняющим шею, и талиевыми вытачками.',
+            fabrics: 'Шелковый атлас, бархат, шелк-дюшес, вискозный сатин',
+            difficulty: 'Легко',
+            time: '2 часа',
+            cutTip: 'Обтачка горловины дублируется тонким клеевым флизелином',
+            vectorType: 'dress-cocktail-v',
+            preset: { dartPosition: 'waist', necklineType: 'v-neck', necklineDepth: 2.5, sleeveLengthType: 'short', silhouette: 'straight' }
         },
         {
-            id: 'waist',
-            name: 'В талию',
-            badge: 'Силуэт',
+            id: 'dress-keyhole',
+            name: 'Платье с вырезом-капелькой',
+            category: 'cocktail',
+            badge: 'Модель 2026',
             badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-            summary: 'Вертикальная вытачка из линии талии. Подчеркивает изгиб фигуры и создает эффект осиной талии.',
-            fabrics: 'Плотный хлопок, деним, жаккард',
-            vectorType: 'dress-waist'
+            image: null,
+            summary: 'Трендовый фокус в портретной зоне: изящный вырез-капелька по центру декольте и французская вытачка под проймой.',
+            fabrics: 'Вискозный креп, модал, шелковый трикотаж, крепдешин',
+            difficulty: 'Средняя',
+            time: '2.5 часа',
+            cutTip: 'Окантовка капельки тонкой бейкой или потайная обтачка',
+            vectorType: 'dress-keyhole',
+            preset: { dartPosition: 'side', necklineType: 'keyhole', necklineDepth: 0.5, sleeveLengthType: 'three-quarter', silhouette: 'straight' }
         },
         {
-            id: 'armhole',
-            name: 'В пройму',
-            badge: 'Рельеф',
-            badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-            summary: 'Плавная изогнутая вытачка из проймы рукава. Изящный женственный рельеф.',
-            fabrics: 'Тонкая шерсть, плательный лен, креп-шифон',
-            vectorType: 'dress-armhole'
-        },
-        {
-            id: 'keyhole',
-            name: 'Капелька (Keyhole)',
+            id: 'dress-deep-v',
+            name: 'Вечернее с глубоким V-вырезом',
+            category: 'cocktail',
             badge: 'Тренд',
-            badgeColor: 'bg-rose-100 text-rose-700 border-rose-200',
-            summary: 'Акцентный фигурный вырез-капелька по центру декольте. Изящный фокус портретной зоны.',
-            fabrics: 'Эластичный трикотаж, рибана, бифлекс, шелк-стрейч',
-            vectorType: 'dress-keyhole'
-        },
-        {
-            id: 'halter',
-            name: 'Холтер с открытой спиной',
-            badge: 'Тренд',
-            badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
-            summary: 'Бретель через шею с открытыми плечами и глубокой проймой. Легкий пошив без рукавов.',
-            fabrics: 'Кулирка с лайкрой, вискозный трикотаж, бифлекс',
-            vectorType: 'dress-halter'
-        },
-        {
-            id: 'bustier',
-            name: 'Мягкий бюстье / топ',
-            badge: 'Секси',
             badgeColor: 'bg-purple-100 text-purple-700 border-purple-200',
-            summary: 'Корсетный фигурный силуэт с мягкими чашечками без косточек. Соблазнительный и удобный.',
-            fabrics: 'Плотный бифлекс, плотный трикотаж понте, атлас-стрейч',
-            vectorType: 'dress-bustier'
+            image: null,
+            summary: 'Смелое соблазнительное декольте. Идеальный баланс полочки без отставания от тела благодаря выверенной формуле ЦНИИШП.',
+            fabrics: 'Тяжелый шелковый креп, струящаяся вискоза, купро',
+            difficulty: 'Средняя',
+            time: '2.5 часа',
+            cutTip: 'Кромка выреза фиксируется нитепрошивной тесьмой от растяжения',
+            vectorType: 'dress-deep-v',
+            preset: { dartPosition: 'side', necklineType: 'deep-v', necklineDepth: 5.5, sleeveLengthType: 'long', silhouette: 'straight' }
+        },
+
+        // --- 3. ПОВСЕДНЕВНЫЕ И ЛЕТНИЕ ---
+        {
+            id: 'dress-trapeze',
+            name: 'Платье А-силуэта (Трапеция)',
+            category: 'casual',
+            badge: 'Хит',
+            badgeColor: 'bg-blue-100 text-blue-700 border-blue-200',
+            image: null,
+            summary: 'Летящее свободное платье-трапеция. Прекрасно драпируется, обеспечивает максимальный комфорт и скрывает нюансы фигуры.',
+            fabrics: 'Умягченный лен, муслин, хлопковый поплин, штапель, вискоза',
+            difficulty: 'Очень легко',
+            time: '1.5 – 2 часа',
+            cutTip: 'Расклешение +7 см по боковым швам, свободный раскрой',
+            vectorType: 'dress-trapeze',
+            preset: { dartPosition: 'side', necklineType: 'boat', necklineDepth: 1, sleeveLengthType: 'short', silhouette: 'flare' }
+        },
+        {
+            id: 'dress-tunic',
+            name: 'Летнее мини / Платье-туника',
+            category: 'casual',
+            badge: 'Легкий пошив',
+            badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            image: null,
+            summary: 'Прямое лаконичное платье-мини на каждый день. Быстрый и простой пошив всего за один вечер.',
+            fabrics: 'Хлопок, вареный лен, батист, трикотажное полотно',
+            difficulty: 'Очень легко (для начинающих)',
+            time: '1.5 часа',
+            cutTip: 'Прямой боковой шов, круглая горловина на обтачке',
+            vectorType: 'dress-tunic',
+            preset: { dartPosition: 'shoulder', necklineType: 'round', necklineDepth: 1, sleeveLengthType: 'short', silhouette: 'straight' }
+        },
+        {
+            id: 'dress-flare-midi',
+            name: 'Миди с клешением от талии',
+            category: 'casual',
+            badge: 'Романтика',
+            badgeColor: 'bg-pink-100 text-pink-700 border-pink-200',
+            image: null,
+            summary: 'Приталенный лиф с талиевой вытачкой и струящийся расклешенный подол длины миди. Женственный силуэт «песочные часы».',
+            fabrics: 'Плательный штапель с принтом, тенсель, вискоза с хлопком',
+            difficulty: 'Легко',
+            time: '2.5 часа',
+            cutTip: 'Совмещение вытачки полочки с расклешением низа',
+            vectorType: 'dress-flare-midi',
+            preset: { dartPosition: 'waist', necklineType: 'v-neck', necklineDepth: 2, sleeveLengthType: 'three-quarter', silhouette: 'flare' }
         }
     ]
 };
@@ -661,6 +736,105 @@ function getStyleVectorSvg(type, size = 64) {
                 <path d="M 40 24 Q 46 32 52 26" stroke="#a855f7" stroke-width="1.3" fill="none"/>
                 <line x1="35" y1="30" x2="35" y2="66" stroke="#c084fc" stroke-width="1.1" stroke-dasharray="2,2"/>
                 <line x1="45" y1="30" x2="45" y2="66" stroke="#c084fc" stroke-width="1.1" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'dress-sheath':
+            content = `
+                <!-- Платье-футляр -->
+                <path d="M 24 19 L 14 38 L 20 40 L 26 31 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 56 19 L 66 38 L 60 40 L 54 31 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 27 18 Q 40 23 53 18 L 54 31 Q 50 44 51 52 L 49 76 L 31 76 L 29 52 Q 30 44 26 31 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 33 18 Q 40 22 47 18" stroke="${stroke}" stroke-width="1.4" fill="none"/>
+                <line x1="51" y1="36" x2="42" y2="34" stroke="#4f46e5" stroke-width="1.3"/>
+                <line x1="36" y1="42" x2="36" y2="52" stroke="#94a3b8" stroke-width="0.9"/>
+                <line x1="44" y1="42" x2="44" y2="52" stroke="#94a3b8" stroke-width="0.9"/>
+                <line x1="40" y1="76" x2="40" y2="67" stroke="#64748b" stroke-width="1" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'dress-business':
+            content = `
+                <!-- Деловое миди ЦНИИШП -->
+                <path d="M 24 18 L 12 50 L 17 51 L 26 32 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 56 18 L 68 50 L 63 51 L 54 32 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 26 18 L 54 18 L 54 32 Q 52 44 52 54 L 52 77 L 28 77 L 28 54 Q 28 44 26 32 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 28 18 Q 40 20 52 18" stroke="${stroke}" stroke-width="1.5" fill="none"/>
+                <line x1="45" y1="18.5" x2="42" y2="32" stroke="#2563eb" stroke-width="1.3"/>
+                <line x1="28" y1="46" x2="52" y2="46" stroke="#475569" stroke-width="1.2"/>
+                <rect x="38" y="44.5" width="4" height="3" fill="#cbd5e1" stroke="#475569" stroke-width="0.8"/>
+            `;
+            break;
+
+        case 'dress-relief':
+            content = `
+                <!-- Платье с рельефом из проймы -->
+                <path d="M 24 19 L 15 39 L 20 40 L 26 31 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 56 19 L 65 39 L 60 40 L 54 31 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 26 18 L 54 18 L 54 31 Q 51 44 51 54 L 50 76 L 30 76 L 29 54 Q 29 44 26 31 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 33 18 L 33 24 L 47 24 L 47 18" stroke="${stroke}" stroke-width="1.4" fill="none"/>
+                <path d="M 26 27 Q 35 34 35 76" stroke="#059669" stroke-width="1.2" fill="none"/>
+                <path d="M 54 27 Q 45 34 45 76" stroke="#059669" stroke-width="1.2" fill="none"/>
+            `;
+            break;
+
+        case 'dress-cocktail-v':
+            content = `
+                <!-- Коктейльное с V-декольте -->
+                <path d="M 24 19 L 17 29 L 23 31 L 26 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 56 19 L 63 29 L 57 31 L 54 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 26 18 L 54 18 L 54 26 Q 49 42 50 50 L 48 72 L 32 72 L 30 50 Q 31 42 26 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 32 18 L 40 32 L 48 18" stroke="#e11d48" stroke-width="1.6" fill="none"/>
+                <line x1="36" y1="46" x2="38" y2="35" stroke="#e11d48" stroke-width="1.2"/>
+                <line x1="44" y1="46" x2="42" y2="35" stroke="#e11d48" stroke-width="1.2"/>
+            `;
+            break;
+
+        case 'dress-deep-v':
+            content = `
+                <!-- Вечернее с глубоким V-вырезом -->
+                <path d="M 24 18 L 12 52 L 18 53 L 26 31 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 56 18 L 68 52 L 62 53 L 54 31 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 26 18 L 54 18 L 54 31 Q 50 42 51 52 L 50 78 L 30 78 L 29 52 Q 30 42 26 31 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 30 18 L 40 44 L 50 18" stroke="#9333ea" stroke-width="1.6" fill="none"/>
+                <circle cx="40" cy="44" r="1.3" fill="#9333ea"/>
+            `;
+            break;
+
+        case 'dress-trapeze':
+            content = `
+                <!-- Платье А-силуэта (Трапеция) -->
+                <path d="M 26 19 L 17 29 L 23 31 L 28 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 54 19 L 63 29 L 57 31 L 52 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 18 Q 40 21 52 18 L 52 26 L 64 74 Q 40 78 16 74 L 28 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 31 18 Q 40 21 49 18" stroke="${stroke}" stroke-width="1.4" fill="none"/>
+                <path d="M 19 70 Q 40 74 61 70" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3,2" fill="none"/>
+            `;
+            break;
+
+        case 'dress-tunic':
+            content = `
+                <!-- Прямое мини / платье-туника -->
+                <path d="M 26 19 L 17 30 L 23 32 L 28 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 54 19 L 63 30 L 57 32 L 52 26 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 28 18 L 52 18 L 52 26 L 54 62 L 26 62 L 28 26 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 34 18 Q 40 22 46 18" stroke="${stroke}" stroke-width="1.4" fill="none"/>
+                <rect x="30" y="45" width="8" height="9" rx="1.5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="42" y="45" width="8" height="9" rx="1.5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="0.8"/>
+            `;
+            break;
+
+        case 'dress-flare-midi':
+            content = `
+                <!-- Миди с клешением от талии -->
+                <path d="M 25 19 L 16 38 L 21 39 L 27 30 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 55 19 L 64 38 L 59 39 L 53 30 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 27 18 L 53 18 L 53 30 Q 48 38 48 44 L 32 44 Q 32 38 27 30 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 32 44 Q 16 62 18 78 Q 40 82 62 78 Q 64 62 48 44 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 34 18 L 40 28 L 46 18" stroke="#db2777" stroke-width="1.4" fill="none"/>
+                <path d="M 32 44 Q 30 62 28 79" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
+                <path d="M 40 44 Q 40 64 40 81" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
+                <path d="M 48 44 Q 50 62 52 79" stroke="#94a3b8" stroke-width="0.8" fill="none"/>
             `;
             break;
 
@@ -983,19 +1157,37 @@ function renderDressActiveDetails() {
     const target = document.getElementById('dress-active-details');
     if (!target) return;
 
-    const info = getStyleInfo('dress', state.dartPosition || 'shoulder');
+    const info = getStyleInfo('dress', state.dressStyle || 'dress-sheath');
     if (!info) return;
 
+    const photoBadge = info.image
+        ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
+        : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+
+    const visual = info.image
+        ? `<div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть фото в полном размере" class="relative w-24 h-28 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm shrink-0 bg-stone-100 cursor-zoom-in group/img">
+               <img src="${info.image}" alt="${info.name}" class="w-full h-full object-cover transition group-hover/img:scale-105" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+               <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 84)}</div>
+               ${photoBadge}
+               <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-white text-xs bg-black/60 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               </div>
+           </div>`
+        : `<div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img">
+               ${getStyleVectorSvg(info.vectorType, 84)}
+               ${photoBadge}
+               <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-stone-800 text-xs bg-white/90 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               </div>
+           </div>`;
+
     target.innerHTML = `
-        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2">
+        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2.5">
             <div class="flex items-start gap-3">
-                <div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img relative">
-                    ${getStyleVectorSvg(info.vectorType, 72)}
-                    <span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>
-                </div>
+                ${visual}
                 <div class="flex-1 min-w-0 space-y-1">
                     <div class="flex items-center justify-between gap-1 flex-wrap">
-                        <h4 class="text-xs font-bold text-indigo-950">Вытачка: ${info.name}</h4>
+                        <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
                             <button onclick="openLookbookModal('dress', '${info.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold bg-white border border-indigo-200 hover:border-indigo-300 px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
@@ -1004,13 +1196,184 @@ function renderDressActiveDetails() {
                         </div>
                     </div>
                     <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
-                    <div class="text-[10px] text-stone-500 pt-0.5">
-                        <b>🧵 Рекомендуемые ткани:</b> ${info.fabrics}
+                    <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
+                        <div><b>🧵 Ткани:</b> ${info.fabrics}</div>
+                        <div><b>✂ Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-stone-600 font-medium">
+                            <span><b>Сложность:</b> ${info.difficulty}</span>
+                            <span>•</span>
+                            <span><b>Пошив:</b> ${info.time}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
+}
+
+function selectDressStyle(styleId) {
+    state.dressStyle = styleId;
+    const info = getStyleInfo('dress', styleId);
+    if (info && info.preset) {
+        if (info.preset.dartPosition) state.dartPosition = info.preset.dartPosition;
+        if (info.preset.necklineType) state.necklineType = info.preset.necklineType;
+        if (typeof info.preset.necklineDepth === 'number') state.necklineDepth = info.preset.necklineDepth;
+        if (info.preset.sleeveLengthType) state.sleeveLengthType = info.preset.sleeveLengthType;
+        if (info.preset.silhouette) state.silhouette = info.preset.silhouette;
+    }
+
+    syncDressControlsUI();
+
+    document.querySelectorAll('[data-dress-style]').forEach(el => {
+        const isMatch = el.dataset.dressStyle === styleId;
+        el.className = `dress-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isMatch ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}`;
+    });
+
+    renderDressActiveDetails();
+    renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    if (typeof showNotification === 'function') {
+        showNotification(`Выбран фасон: ${info ? info.name : styleId}`);
+    }
+}
+
+function syncDressControlsUI() {
+    document.querySelectorAll('.dart-btn').forEach(btn => {
+        const isMatch = btn.dataset.dart === state.dartPosition;
+        btn.className = isMatch
+            ? "dart-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
+            : "dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+    });
+
+    document.querySelectorAll('.neckline-btn').forEach(btn => {
+        const isMatch = btn.dataset.neckline === state.necklineType;
+        btn.className = isMatch
+            ? "neckline-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
+            : "neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+    });
+
+    const depthVal = document.getElementById('neckline-depth-val');
+    const rngDepth = document.getElementById('rng-neckline-depth');
+    if (depthVal) depthVal.textContent = state.necklineDepth || 0;
+    if (rngDepth) rngDepth.value = state.necklineDepth || 0;
+
+    document.querySelectorAll('.sleeve-length-btn').forEach(btn => {
+        const isMatch = btn.dataset.sleeve === state.sleeveLengthType;
+        btn.className = isMatch
+            ? "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
+            : "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+    });
+
+    document.querySelectorAll('.silhouette-btn').forEach(btn => {
+        const isMatch = btn.dataset.silhouette === state.silhouette;
+        btn.className = isMatch
+            ? "silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
+            : "silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+    });
+}
+
+function renderDressStyleCatalog() {
+    const container = document.getElementById('dress-catalog-container');
+    if (!container) return;
+
+    const styles = STYLE_CATALOG.dress || [];
+    const basicStyles = styles.filter(s => s.category === 'basic');
+    const cocktailStyles = styles.filter(s => s.category === 'cocktail');
+    const casualStyles = styles.filter(s => s.category === 'casual');
+
+    const renderCard = (item) => {
+        const isActive = (state.dressStyle || 'dress-sheath') === item.id;
+        const photoBadge = item.image
+            ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
+            : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+
+        const visualContent = item.image
+            ? `<div class="relative w-full h-full group/thumb">
+                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                   <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>
+                   ${photoBadge}
+                   <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
+                       <span class="text-white text-xs bg-black/60 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   </div>
+               </div>`
+            : `<div class="relative w-full h-full group/thumb flex items-center justify-center">
+                   ${getStyleVectorSvg(item.vectorType, 60)}
+                   ${photoBadge}
+                   <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
+                       <span class="text-stone-700 text-xs bg-white/80 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   </div>
+               </div>`;
+
+        return `
+            <div onclick="selectDressStyle('${item.id}')"
+                 data-dress-style="${item.id}"
+                 class="dress-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
+                <div onclick="event.stopPropagation(); openLightbox('${item.image || ''}', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
+                     title="Нажмите для увеличения изображения"
+                     class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative cursor-zoom-in">
+                    ${visualContent}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('dress', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">Детали ↗</button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-400">
+                        <span class="text-stone-600 font-medium">⏱ ${item.time}</span>
+                        <span>•</span>
+                        <span class="text-stone-500">${item.difficulty}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    container.innerHTML = `
+        <!-- Секция 1: БАЗОВЫЕ И ДЕЛОВЫЕ -->
+        <div class="space-y-2">
+            <div class="flex items-center justify-between border-b border-indigo-100 pb-1">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 flex items-center gap-1.5">
+                    <span>👗 БАЗОВЫЕ И ДЕЛОВЫЕ</span>
+                </div>
+                <span class="text-[10px] text-indigo-500 font-medium">${basicStyles.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+                ${basicStyles.map(renderCard).join('')}
+            </div>
+        </div>
+
+        <!-- Секция 2: КОКТЕЙЛЬНЫЕ И ВЕЧЕРНИЕ -->
+        <div class="space-y-2 pt-2">
+            <div class="flex items-center justify-between border-b border-rose-100 pb-1">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
+                    <span>✨ КОКТЕЙЛЬНЫЕ И ВЕЧЕРНИЕ</span>
+                </div>
+                <span class="text-[10px] text-rose-500 font-medium">${cocktailStyles.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+                ${cocktailStyles.map(renderCard).join('')}
+            </div>
+        </div>
+
+        <!-- Секция 3: ПОВСЕДНЕВНЫЕ И ЛЕТНИЕ -->
+        <div class="space-y-2 pt-2">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-1">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
+                    <span>🌿 ПОВСЕДНЕВНЫЕ И ЛЕТНИЕ</span>
+                </div>
+                <span class="text-[10px] text-stone-400 font-medium">${casualStyles.length} модели</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+                ${casualStyles.map(renderCard).join('')}
+            </div>
+        </div>
+    `;
+
+    renderDressActiveDetails();
 }
 
 // --- ИНТЕРАКТИВНОЕ МОДАЛЬНОЕ ОКНО ЛУКБУКА И ФОТО-ГАЛЕРЕИ ---
@@ -1039,6 +1402,15 @@ function getStylingTip(garmentType, styleId) {
         'thong': 'Полная незаметность под облегающими юбками, платьями и брюками.',
         'dolphin-shorts': 'Непринужденный домашний и курортный стиль. Контрастный кант и закругленные бока создают милый ретро-образ.',
         'strappy': 'Двойные стрепы на бедрах визуально сужают талию и создают гармоничный силуэт «песочные часы».',
+        'dress-sheath': 'Эталонное базовое платье. Французская вытачка не перегружает полочку, создавая гладкий элегантный силуэт.',
+        'dress-business': 'Идеально для офиса и деловых встреч. Вырез лодочка подчеркивает шею, а прямой крой гарантирует комфорт в течение всего дня.',
+        'dress-relief': 'Вертикальные рельефы из проймы визуально вытягивают силуэт и создают безупречное прилегание по фигуре.',
+        'dress-cocktail-v': 'V-образное декольте визуально стройнит и гармонично сочетается с короткими рукавами и приталенным лифом.',
+        'dress-keyhole': 'Изящный вырез-капелька — деликатный акцент в портретной зоне, не требующий массивных украшений.',
+        'dress-deep-v': 'Выразительное вечернее декольте с длинными рукавами создает потрясающий баланс открытости и утонченности.',
+        'dress-trapeze': 'Свободный крой трапеции дарит легкость и комфорт в движении. Отлично подходит для льна, хлопка и шелка.',
+        'dress-tunic': 'Универсальное платье-туника прямого кроя для быстрого пошива. Подходит как для дома, так и для летних прогулок.',
+        'dress-flare-midi': 'Классический силуэт New Look: приталенный лиф и женственная струящаяся юбка А-силуэта с красивыми волнами.',
         'shoulder': 'Чистая базовая посадка полочки, идеально под пиджак или строгий блейзер.',
         'side': 'Французская вытачка переносит объем в бок, оставляя грудь и плечи идеально гладкими.',
         'waist': 'Идеально для приталенных платьев с ремешком или акцентным поясом.',
@@ -1059,7 +1431,7 @@ function openLookbookModal(garmentType, styleId) {
     if (!targetId) {
         if (gType === 'skirt') targetId = state.skirtStyle || 'mini-trapeze';
         else if (gType === 'panties') targetId = state.pantiesModel || 'slips';
-        else targetId = state.dartPosition || 'shoulder';
+        else targetId = state.dressStyle || 'dress-sheath';
     }
 
     let item = list.find(s => s.id === targetId);
@@ -1214,7 +1586,9 @@ function applyLookbookStyle() {
             setPantiesModel(sId);
         }
     } else if (gType === 'dress') {
-        if (['shoulder', 'side', 'waist', 'armhole'].includes(sId)) {
+        if (typeof selectDressStyle === 'function') {
+            selectDressStyle(sId);
+        } else if (['shoulder', 'side', 'waist', 'armhole'].includes(sId)) {
             if (typeof setDartPosition === 'function') setDartPosition(sId);
         } else if (['keyhole', 'deep-v', 'round', 'v-neck', 'boat', 'square'].includes(sId)) {
             if (typeof setNecklineType === 'function') setNecklineType(sId);
