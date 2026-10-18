@@ -869,48 +869,48 @@ function renderSkirtStyleCatalog() {
     const renderCard = (item) => {
         const isActive = state.skirtStyle === item.id;
         const photoBadge = item.image
-            ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
-            : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+            ? `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="camera" class="w-2.5 h-2.5"></i><span>Фото</span></span>`
+            : `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
 
         const visualContent = item.image
             ? `<div class="relative w-full h-full group/thumb">
-                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-xl" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
                    <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>
                    ${photoBadge}
-                   <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
-                       <span class="text-white text-xs bg-black/60 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   <div class="absolute inset-0 bg-[#2C2825]/20 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                       <span class="text-white text-xs bg-[#2C2825]/75 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                    </div>
                </div>`
             : `<div class="relative w-full h-full group/thumb flex items-center justify-center">
                    ${getStyleVectorSvg(item.vectorType, 60)}
                    ${photoBadge}
-                   <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
-                       <span class="text-stone-700 text-xs bg-white/80 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                       <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                    </div>
                </div>`;
 
         return `
             <div onclick="selectSkirtStyle('${item.id}', ${item.recLength})"
                  data-skirt-style="${item.id}"
-                 class="skirt-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
+                 class="skirt-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isActive ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}">
                 <div onclick="event.stopPropagation(); openLightbox('${item.image || ''}', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
                      title="Нажмите для увеличения изображения"
-                     class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative cursor-zoom-in">
+                     class="w-16 h-20 rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 border border-[#F0ECE1] flex items-center justify-center relative cursor-zoom-in">
                     ${visualContent}
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-1">
-                        <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
+                        <span class="text-xs font-bold text-[#2C2825] group-hover:text-[#E05A47] truncate">${item.name}</span>
                         <div class="flex items-center gap-1 shrink-0">
-                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
-                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('skirt', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">Детали ↗</button>
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('skirt', '${item.id}');" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-semibold hover:underline cursor-pointer">Детали ↗</button>
                         </div>
                     </div>
-                    <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
-                    <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-400">
-                        <span class="text-stone-600 font-medium">⏱ ${item.time}</span>
+                    <p class="text-[11px] text-[#78716C] line-clamp-2 mt-1 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-2 text-[10px] text-[#78716C]">
+                        <span class="inline-flex items-center gap-1 font-medium"><i data-lucide="clock" class="w-3 h-3 text-[#A8A29E]"></i>${item.time}</span>
                         <span>•</span>
-                        <span class="text-indigo-700 font-bold bg-indigo-50 border border-indigo-100 px-1 py-0.2 rounded">~${item.recLength} см</span>
+                        <span class="font-bold text-[#E05A47] bg-white border border-[#FCDAD5] px-1.5 py-0.5 rounded-md">~${item.recLength} см</span>
                     </div>
                 </div>
             </div>
@@ -920,11 +920,12 @@ function renderSkirtStyleCatalog() {
     container.innerHTML = `
         <!-- Секция: МИНИ-ЮБКИ -->
         <div class="space-y-2">
-            <div class="flex items-center justify-between border-b border-rose-100 pb-1">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
-                    <span>🔥 МИНИ-ЮБКИ (30 – 45 см)</span>
+            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-1.5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-[#E05A47] flex items-center gap-1.5">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>Мини-юбки (30 – 45 см)</span>
                 </div>
-                <span class="text-[10px] text-rose-500 font-medium">${miniStyles.length} моделей</span>
+                <span class="text-[10px] text-[#78716C] font-medium">${miniStyles.length} моделей</span>
             </div>
             <div class="grid grid-cols-1 gap-2">
                 ${miniStyles.map(renderCard).join('')}
@@ -933,11 +934,12 @@ function renderSkirtStyleCatalog() {
 
         <!-- Секция: МИДИ И МАКСИ -->
         <div class="space-y-2 pt-2">
-            <div class="flex items-center justify-between border-b border-stone-100 pb-1">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
-                    <span>👗 МИДИ И МАКСИ (50 – 100 см)</span>
+            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-1.5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-1.5">
+                    <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
+                    <span>Миди и макси (50 – 100 см)</span>
                 </div>
-                <span class="text-[10px] text-stone-400 font-medium">${midiStyles.length} моделей</span>
+                <span class="text-[10px] text-[#78716C] font-medium">${midiStyles.length} моделей</span>
             </div>
             <div class="grid grid-cols-1 gap-2">
                 ${midiStyles.map(renderCard).join('')}
@@ -946,6 +948,9 @@ function renderSkirtStyleCatalog() {
     `;
 
     renderSkirtActiveDetails();
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function renderSkirtActiveDetails() {
@@ -959,45 +964,45 @@ function renderSkirtActiveDetails() {
     const isLenDiff = Math.abs(curLen - info.recLength) > 4;
 
     const photoBadge = info.image
-        ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
-        : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+        ? `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="camera" class="w-2.5 h-2.5"></i><span>Фото</span></span>`
+        : `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
 
     const visual = info.image
-        ? `<div onclick="openLookbookModal('skirt', '${info.id}')" title="Нажмите, чтобы открыть фото в полном размере" class="relative w-24 h-28 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm shrink-0 bg-stone-100 cursor-zoom-in group/img">
+        ? `<div onclick="openLookbookModal('skirt', '${info.id}')" title="Нажмите, чтобы открыть фото в полном размере" class="relative w-24 h-28 rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs shrink-0 bg-[#FAF8F5] cursor-zoom-in group/img">
                <img src="${info.image}" alt="${info.name}" class="w-full h-full object-cover transition group-hover/img:scale-105" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
                <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 84)}</div>
                ${photoBadge}
-               <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
-                   <span class="text-white text-xs bg-black/60 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               <div class="absolute inset-0 bg-[#2C2825]/20 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-white text-xs bg-[#2C2825]/75 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                </div>
            </div>`
-        : `<div onclick="openLookbookModal('skirt', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img">
+        : `<div onclick="openLookbookModal('skirt', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs bg-[#FAF8F5] flex items-center justify-center cursor-zoom-in group/img">
                ${getStyleVectorSvg(info.vectorType, 84)}
                ${photoBadge}
-               <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
-                   <span class="text-stone-800 text-xs bg-white/90 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                </div>
            </div>`;
 
     target.innerHTML = `
-        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2.5">
+        <div class="bg-gradient-to-br from-[#FFF5F3] to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl p-3.5 shadow-xs space-y-3">
             <div class="flex items-start gap-3">
                 ${visual}
-                <div class="flex-1 min-w-0 space-y-1">
+                <div class="flex-1 min-w-0 space-y-1.5">
                     <div class="flex items-center justify-between gap-1 flex-wrap">
-                        <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
+                        <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('skirt', '${info.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold bg-white border border-indigo-200 hover:border-indigo-300 px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
-                                <span>🔍</span><span>Лукбук</span>
+                            <button onclick="openLookbookModal('skirt', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
                     </div>
-                    <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
-                    <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
-                        <div><b>🧵 Ткани:</b> ${info.fabrics}</div>
-                        <div><b>✂ Крой:</b> ${info.cutTip}</div>
-                        <div class="flex items-center gap-3 pt-0.5 text-stone-600 font-medium">
+                    <p class="text-[11px] text-[#78716C] leading-snug">${info.summary}</p>
+                    <div class="text-[10px] text-[#78716C] pt-0.5 space-y-1">
+                        <div><b>Ткани:</b> ${info.fabrics}</div>
+                        <div><b>Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-[#2C2825] font-medium">
                             <span><b>Сложность:</b> ${info.difficulty}</span>
                             <span>•</span>
                             <span><b>Пошив:</b> ${info.time}</span>
@@ -1007,36 +1012,36 @@ function renderSkirtActiveDetails() {
             </div>
 
             ${isLenDiff ? `
-                <div class="flex items-center justify-between bg-white/95 border border-amber-300 rounded-xl p-2 text-[11px] shadow-xs">
-                    <span class="text-amber-900 font-medium">Длина на лекале <b>${curLen} см</b> (для этого фасона советуем <b>${info.recLength} см</b>)</span>
-                    <button onclick="setSkirtLength(${info.recLength}); renderSkirtActiveDetails();" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-[10px] transition shrink-0 ml-2 shadow-xs cursor-pointer">
-                        ⚡ Сделать ${info.recLength} см
+                <div class="flex items-center justify-between bg-white/95 border border-[#F0ECE1] rounded-xl p-2.5 text-[11px] shadow-xs">
+                    <span class="text-[#2C2825] font-medium">Длина на лекале <b>${curLen} см</b> (для этого фасона советуем <b>${info.recLength} см</b>)</span>
+                    <button onclick="setSkirtLength(${info.recLength}); renderSkirtActiveDetails();" class="px-2.5 py-1 bg-[#E05A47] hover:bg-[#D04835] text-white rounded-lg font-bold text-[10px] transition shrink-0 ml-2 shadow-xs cursor-pointer">
+                        Сделать ${info.recLength} см
                     </button>
                 </div>
             ` : ''}
         </div>
     `;
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function selectSkirtStyle(styleId, recLength) {
     state.skirtStyle = styleId;
     const info = getStyleInfo('skirt', styleId);
 
-    // Если переключились на мини-юбку и текущая длина > 50 см, авто-адаптируем длину под мини
     if (info && info.category === 'mini' && state.skirtLength > 50) {
         state.skirtLength = recLength || info.recLength || 40;
         const numEl = document.getElementById('num-skirtLength');
-        const rngEl = document.getElementById('rng-skirtLength');
         const lblEl = document.getElementById('label-skirtLength');
         if (numEl) numEl.value = state.skirtLength;
-        if (rngEl) rngEl.value = state.skirtLength;
         if (lblEl) lblEl.textContent = state.skirtLength + ' см';
     }
 
-    // Подсветка карточек каталога
     document.querySelectorAll('[data-skirt-style]').forEach(el => {
         const isMatch = el.dataset.skirtStyle === styleId;
-        el.className = `skirt-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isMatch ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}`;
+        el.className = `skirt-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isMatch ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}`;
     });
 
     renderSkirtActiveDetails();
@@ -1054,28 +1059,38 @@ function renderPantiesActiveDetails() {
     const info = getStyleInfo('panties', state.pantiesModel || 'slips');
     if (!info) return;
 
+    const photoBadge = info.image
+        ? `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="camera" class="w-2.5 h-2.5"></i><span>Фото</span></span>`
+        : `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
+
     target.innerHTML = `
-        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2">
+        <div class="bg-gradient-to-br from-[#FFF5F3] to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl p-3.5 shadow-xs space-y-3">
             <div class="flex items-start gap-3">
-                <div onclick="openLightbox('${info.image || ''}', '${info.name}', '${info.summary.replace(/'/g, "\\'")}', '${info.vectorType}');" title="Нажмите, чтобы увеличить изображение" class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img relative">
-                    ${getStyleVectorSvg(info.vectorType, 72)}
-                    <span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>
+                <div onclick="openLightbox('${info.image || ''}', '${info.name}', '${info.summary.replace(/'/g, "\\'")}', '${info.vectorType}');" title="Нажмите, чтобы увеличить изображение" class="shrink-0 w-24 h-28 rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs bg-[#FAF8F5] flex items-center justify-center cursor-zoom-in group/img relative">
+                    ${info.image
+                        ? `<img src="${info.image}" alt="${info.name}" class="w-full h-full object-cover transition group-hover/img:scale-105" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                           <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 72)}</div>`
+                        : getStyleVectorSvg(info.vectorType, 72)}
+                    ${photoBadge}
+                    <div class="absolute inset-0 bg-[#2C2825]/20 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                        <span class="text-white text-xs bg-[#2C2825]/75 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
+                    </div>
                 </div>
-                <div class="flex-1 min-w-0 space-y-1">
+                <div class="flex-1 min-w-0 space-y-1.5">
                     <div class="flex items-center justify-between gap-1 flex-wrap">
-                        <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
+                        <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('panties', '${info.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold bg-white border border-indigo-200 hover:border-indigo-300 px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
-                                <span>🔍</span><span>Лукбук</span>
+                            <button onclick="openLookbookModal('panties', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
                     </div>
-                    <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
-                    <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
-                        <div><b>🧵 Ткани:</b> ${info.fabrics}</div>
-                        <div><b>✂ Крой:</b> ${info.cutTip}</div>
-                        <div class="flex items-center gap-3 pt-0.5 text-stone-600 font-medium">
+                    <p class="text-[11px] text-[#78716C] leading-snug">${info.summary}</p>
+                    <div class="text-[10px] text-[#78716C] pt-0.5 space-y-1">
+                        <div><b>Ткани:</b> ${info.fabrics}</div>
+                        <div><b>Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-[#2C2825] font-medium">
                             <span><b>Сложность:</b> ${info.difficulty}</span>
                             <span>•</span>
                             <span><b>Пошив:</b> ${info.time}</span>
@@ -1085,6 +1100,10 @@ function renderPantiesActiveDetails() {
             </div>
         </div>
     `;
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function renderPantiesStyleCatalog() {
@@ -1096,48 +1115,48 @@ function renderPantiesStyleCatalog() {
     const renderCard = (item) => {
         const isActive = (state.pantiesModel || 'slips') === item.id;
         const photoBadge = item.image
-            ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
-            : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+            ? `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="camera" class="w-2.5 h-2.5"></i><span>Фото</span></span>`
+            : `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
 
         const visualContent = item.image
             ? `<div class="relative w-full h-full group/thumb">
-                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-xl" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
                    <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>
                    ${photoBadge}
-                   <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
-                       <span class="text-white text-xs bg-black/60 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   <div class="absolute inset-0 bg-[#2C2825]/20 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                       <span class="text-white text-xs bg-[#2C2825]/75 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                    </div>
                </div>`
             : `<div class="relative w-full h-full group/thumb flex items-center justify-center">
                    ${getStyleVectorSvg(item.vectorType, 60)}
                    ${photoBadge}
-                   <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
-                       <span class="text-stone-700 text-xs bg-white/80 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                       <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                    </div>
                </div>`;
 
         return `
             <div onclick="setPantiesModel('${item.id}')"
                  data-model="${item.id}"
-                 class="panties-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
+                 class="panties-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isActive ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}">
                 <div onclick="event.stopPropagation(); openLightbox('${item.image || ''}', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
                      title="Нажмите для увеличения изображения"
-                     class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative cursor-zoom-in">
+                     class="w-16 h-20 rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 border border-[#F0ECE1] flex items-center justify-center relative cursor-zoom-in">
                     ${visualContent}
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-1">
-                        <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
+                        <span class="text-xs font-bold text-[#2C2825] group-hover:text-[#E05A47] truncate">${item.name}</span>
                         <div class="flex items-center gap-1 shrink-0">
-                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
-                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('panties', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">Детали ↗</button>
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('panties', '${item.id}');" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-semibold hover:underline cursor-pointer">Детали ↗</button>
                         </div>
                     </div>
-                    <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
-                    <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-400">
-                        <span class="text-stone-600 font-medium">⏱ ${item.time}</span>
+                    <p class="text-[11px] text-[#78716C] line-clamp-2 mt-1 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-2 text-[10px] text-[#78716C]">
+                        <span class="inline-flex items-center gap-1 font-medium"><i data-lucide="clock" class="w-3 h-3 text-[#A8A29E]"></i>${item.time}</span>
                         <span>•</span>
-                        <span class="text-indigo-700 font-medium">${item.difficulty}</span>
+                        <span class="text-[#78716C] font-medium">${item.difficulty}</span>
                     </div>
                 </div>
             </div>
@@ -1151,6 +1170,9 @@ function renderPantiesStyleCatalog() {
     `;
 
     renderPantiesActiveDetails();
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function renderDressActiveDetails() {
@@ -1161,45 +1183,45 @@ function renderDressActiveDetails() {
     if (!info) return;
 
     const photoBadge = info.image
-        ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
-        : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+        ? `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="camera" class="w-2.5 h-2.5"></i><span>Фото</span></span>`
+        : `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
 
     const visual = info.image
-        ? `<div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть фото в полном размере" class="relative w-24 h-28 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm shrink-0 bg-stone-100 cursor-zoom-in group/img">
+        ? `<div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть фото в полном размере" class="relative w-24 h-28 rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs shrink-0 bg-[#FAF8F5] cursor-zoom-in group/img">
                <img src="${info.image}" alt="${info.name}" class="w-full h-full object-cover transition group-hover/img:scale-105" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
                <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 84)}</div>
                ${photoBadge}
-               <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
-                   <span class="text-white text-xs bg-black/60 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               <div class="absolute inset-0 bg-[#2C2825]/20 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-white text-xs bg-[#2C2825]/75 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                </div>
            </div>`
-        : `<div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img">
+        : `<div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs bg-[#FAF8F5] flex items-center justify-center cursor-zoom-in group/img">
                ${getStyleVectorSvg(info.vectorType, 84)}
                ${photoBadge}
-               <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
-                   <span class="text-stone-800 text-xs bg-white/90 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                </div>
            </div>`;
 
     target.innerHTML = `
-        <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2.5">
+        <div class="bg-gradient-to-br from-[#FFF5F3] to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl p-3.5 shadow-xs space-y-3">
             <div class="flex items-start gap-3">
                 ${visual}
-                <div class="flex-1 min-w-0 space-y-1">
+                <div class="flex-1 min-w-0 space-y-1.5">
                     <div class="flex items-center justify-between gap-1 flex-wrap">
-                        <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
+                        <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('dress', '${info.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold bg-white border border-indigo-200 hover:border-indigo-300 px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
-                                <span>🔍</span><span>Лукбук</span>
+                            <button onclick="openLookbookModal('dress', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
                     </div>
-                    <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
-                    <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
-                        <div><b>🧵 Ткани:</b> ${info.fabrics}</div>
-                        <div><b>✂ Крой:</b> ${info.cutTip}</div>
-                        <div class="flex items-center gap-3 pt-0.5 text-stone-600 font-medium">
+                    <p class="text-[11px] text-[#78716C] leading-snug">${info.summary}</p>
+                    <div class="text-[10px] text-[#78716C] pt-0.5 space-y-1">
+                        <div><b>Ткани:</b> ${info.fabrics}</div>
+                        <div><b>Крой:</b> ${info.cutTip}</div>
+                        <div class="flex items-center gap-3 pt-0.5 text-[#2C2825] font-medium">
                             <span><b>Сложность:</b> ${info.difficulty}</span>
                             <span>•</span>
                             <span><b>Пошив:</b> ${info.time}</span>
@@ -1209,6 +1231,10 @@ function renderDressActiveDetails() {
             </div>
         </div>
     `;
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function selectDressStyle(styleId) {
@@ -1226,7 +1252,7 @@ function selectDressStyle(styleId) {
 
     document.querySelectorAll('[data-dress-style]').forEach(el => {
         const isMatch = el.dataset.dressStyle === styleId;
-        el.className = `dress-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isMatch ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}`;
+        el.className = `dress-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isMatch ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}`;
     });
 
     renderDressActiveDetails();
@@ -1241,15 +1267,15 @@ function syncDressControlsUI() {
     document.querySelectorAll('.dart-btn').forEach(btn => {
         const isMatch = btn.dataset.dart === state.dartPosition;
         btn.className = isMatch
-            ? "dart-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
-            : "dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+            ? "dart-btn p-2.5 rounded-xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] transition cursor-pointer"
+            : "dart-btn p-2.5 rounded-xl text-left border border-[#F0ECE1] bg-white hover:border-[#E3DDD0] text-[#78716C] transition cursor-pointer";
     });
 
     document.querySelectorAll('.neckline-btn').forEach(btn => {
         const isMatch = btn.dataset.neckline === state.necklineType;
         btn.className = isMatch
-            ? "neckline-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer"
-            : "neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+            ? "neckline-btn p-2.5 rounded-xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] transition cursor-pointer"
+            : "neckline-btn p-2.5 rounded-xl text-left border border-[#F0ECE1] bg-white hover:border-[#E3DDD0] text-[#78716C] transition cursor-pointer";
     });
 
     const depthVal = document.getElementById('neckline-depth-val');
@@ -1260,15 +1286,15 @@ function syncDressControlsUI() {
     document.querySelectorAll('.sleeve-length-btn').forEach(btn => {
         const isMatch = btn.dataset.sleeve === state.sleeveLengthType;
         btn.className = isMatch
-            ? "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
-            : "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+            ? "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center"
+            : "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center";
     });
 
     document.querySelectorAll('.silhouette-btn').forEach(btn => {
         const isMatch = btn.dataset.silhouette === state.silhouette;
         btn.className = isMatch
-            ? "silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center"
-            : "silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+            ? "silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center"
+            : "silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center";
     });
 }
 
@@ -1284,48 +1310,48 @@ function renderDressStyleCatalog() {
     const renderCard = (item) => {
         const isActive = (state.dressStyle || 'dress-sheath') === item.id;
         const photoBadge = item.image
-            ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
-            : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+            ? `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="camera" class="w-2.5 h-2.5"></i><span>Фото</span></span>`
+            : `<span class="absolute bottom-1 right-1 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[8px] font-medium px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs"><i data-lucide="pen-tool" class="w-2.5 h-2.5"></i><span>Эскиз</span></span>`;
 
         const visualContent = item.image
             ? `<div class="relative w-full h-full group/thumb">
-                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-xl" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
                    <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>
                    ${photoBadge}
-                   <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
-                       <span class="text-white text-xs bg-black/60 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   <div class="absolute inset-0 bg-[#2C2825]/20 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                       <span class="text-white text-xs bg-[#2C2825]/75 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                    </div>
                </div>`
             : `<div class="relative w-full h-full group/thumb flex items-center justify-center">
                    ${getStyleVectorSvg(item.vectorType, 60)}
                    ${photoBadge}
-                   <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
-                       <span class="text-stone-700 text-xs bg-white/80 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   <div class="absolute inset-0 bg-[#2C2825]/10 opacity-0 group-hover/thumb:opacity-100 rounded-xl flex items-center justify-center transition">
+                       <span class="text-[#2C2825] text-xs bg-white/90 p-1 rounded-full"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i></span>
                    </div>
                </div>`;
 
         return `
             <div onclick="selectDressStyle('${item.id}')"
                  data-dress-style="${item.id}"
-                 class="dress-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
+                 class="dress-style-card group flex items-start gap-3 p-3 rounded-2xl border transition cursor-pointer card-hover ${isActive ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-soft' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}">
                 <div onclick="event.stopPropagation(); openLightbox('${item.image || ''}', '${item.name}', '${item.summary.replace(/'/g, "\\'")}', '${item.vectorType}');"
                      title="Нажмите для увеличения изображения"
-                     class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative cursor-zoom-in">
+                     class="w-16 h-20 rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 border border-[#F0ECE1] flex items-center justify-center relative cursor-zoom-in">
                     ${visualContent}
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-1">
-                        <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
+                        <span class="text-xs font-bold text-[#2C2825] group-hover:text-[#E05A47] truncate">${item.name}</span>
                         <div class="flex items-center gap-1 shrink-0">
-                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
-                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('dress', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">Детали ↗</button>
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('dress', '${item.id}');" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-semibold hover:underline cursor-pointer">Детали ↗</button>
                         </div>
                     </div>
-                    <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
-                    <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-400">
-                        <span class="text-stone-600 font-medium">⏱ ${item.time}</span>
+                    <p class="text-[11px] text-[#78716C] line-clamp-2 mt-1 leading-snug">${item.summary}</p>
+                    <div class="flex items-center gap-2 mt-2 text-[10px] text-[#78716C]">
+                        <span class="inline-flex items-center gap-1 font-medium"><i data-lucide="clock" class="w-3 h-3 text-[#A8A29E]"></i>${item.time}</span>
                         <span>•</span>
-                        <span class="text-stone-500">${item.difficulty}</span>
+                        <span class="text-[#78716C]">${item.difficulty}</span>
                     </div>
                 </div>
             </div>
@@ -1335,11 +1361,12 @@ function renderDressStyleCatalog() {
     container.innerHTML = `
         <!-- Секция 1: БАЗОВЫЕ И ДЕЛОВЫЕ -->
         <div class="space-y-2">
-            <div class="flex items-center justify-between border-b border-indigo-100 pb-1">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 flex items-center gap-1.5">
-                    <span>👗 БАЗОВЫЕ И ДЕЛОВЫЕ</span>
+            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-1.5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-[#E05A47] flex items-center gap-1.5">
+                    <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+                    <span>Базовые и деловые</span>
                 </div>
-                <span class="text-[10px] text-indigo-500 font-medium">${basicStyles.length} модели</span>
+                <span class="text-[10px] text-[#78716C] font-medium">${basicStyles.length} модели</span>
             </div>
             <div class="grid grid-cols-1 gap-2">
                 ${basicStyles.map(renderCard).join('')}
@@ -1348,11 +1375,12 @@ function renderDressStyleCatalog() {
 
         <!-- Секция 2: КОКТЕЙЛЬНЫЕ И ВЕЧЕРНИЕ -->
         <div class="space-y-2 pt-2">
-            <div class="flex items-center justify-between border-b border-rose-100 pb-1">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
-                    <span>✨ КОКТЕЙЛЬНЫЕ И ВЕЧЕРНИЕ</span>
+            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-1.5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-1.5">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>Коктейльные и вечерние</span>
                 </div>
-                <span class="text-[10px] text-rose-500 font-medium">${cocktailStyles.length} модели</span>
+                <span class="text-[10px] text-[#78716C] font-medium">${cocktailStyles.length} модели</span>
             </div>
             <div class="grid grid-cols-1 gap-2">
                 ${cocktailStyles.map(renderCard).join('')}
@@ -1361,11 +1389,12 @@ function renderDressStyleCatalog() {
 
         <!-- Секция 3: ПОВСЕДНЕВНЫЕ И ЛЕТНИЕ -->
         <div class="space-y-2 pt-2">
-            <div class="flex items-center justify-between border-b border-stone-100 pb-1">
-                <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
-                    <span>🌿 ПОВСЕДНЕВНЫЕ И ЛЕТНИЕ</span>
+            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-1.5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-1.5">
+                    <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+                    <span>Повседневные и летние</span>
                 </div>
-                <span class="text-[10px] text-stone-400 font-medium">${casualStyles.length} модели</span>
+                <span class="text-[10px] text-[#78716C] font-medium">${casualStyles.length} модели</span>
             </div>
             <div class="grid grid-cols-1 gap-2">
                 ${casualStyles.map(renderCard).join('')}
@@ -1374,6 +1403,9 @@ function renderDressStyleCatalog() {
     `;
 
     renderDressActiveDetails();
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 // --- ИНТЕРАКТИВНОЕ МОДАЛЬНОЕ ОКНО ЛУКБУКА И ФОТО-ГАЛЕРЕИ ---
@@ -1454,11 +1486,11 @@ function openLookbookModal(garmentType, styleId) {
     }
     if (typeBadgeEl) {
         if (item.image) {
-            typeBadgeEl.textContent = '📸 Фэшн-иллюстрация';
-            typeBadgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full border bg-rose-50 text-rose-700 border-rose-200';
+            typeBadgeEl.textContent = 'Фэшн-фотография';
+            typeBadgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full border bg-[#FFF5F3] text-[#E05A47] border-[#FCDAD5]';
         } else {
-            typeBadgeEl.textContent = '📐 Векторный эскиз';
-            typeBadgeEl.className = 'text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-stone-100 text-stone-600 border-stone-200';
+            typeBadgeEl.textContent = 'Векторный эскиз';
+            typeBadgeEl.className = 'text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-[#FAF8F5] text-[#78716C] border-[#F0ECE1]';
         }
     }
     if (breadcrumbEl) {
@@ -1483,8 +1515,8 @@ function openLookbookModal(garmentType, styleId) {
             svgEl.innerHTML = '';
         }
         if (tagEl) {
-            tagEl.innerHTML = `<span>📸 Фото</span>`;
-            tagEl.className = 'absolute bottom-2.5 right-2.5 bg-rose-900/85 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1';
+            tagEl.innerHTML = `<i data-lucide="camera" class="w-3 h-3"></i><span>Фото</span>`;
+            tagEl.className = 'absolute bottom-2.5 right-2.5 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1';
         }
     } else {
         if (imgEl) {
@@ -1496,8 +1528,8 @@ function openLookbookModal(garmentType, styleId) {
             svgEl.innerHTML = getStyleVectorSvg(item.vectorType, 180);
         }
         if (tagEl) {
-            tagEl.innerHTML = `<span>📐 Эскиз</span>`;
-            tagEl.className = 'absolute bottom-2.5 right-2.5 bg-stone-900/85 backdrop-blur-xs text-stone-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1';
+            tagEl.innerHTML = `<i data-lucide="pen-tool" class="w-3 h-3"></i><span>Эскиз</span>`;
+            tagEl.className = 'absolute bottom-2.5 right-2.5 bg-[#2C2825]/85 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1';
         }
     }
 
@@ -1530,7 +1562,7 @@ function openLookbookModal(garmentType, styleId) {
 
     const applyBtn = document.getElementById('lb-modal-apply-btn');
     if (applyBtn) {
-        applyBtn.innerHTML = `<span>⚡ Применить «${item.name}» на чертёж</span>`;
+        applyBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i><span>Применить «${item.name}» на чертёж</span>`;
     }
 
     // Рендер миниатюр
@@ -1538,6 +1570,10 @@ function openLookbookModal(garmentType, styleId) {
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function renderLookbookThumbs(garmentType, activeStyleId) {
@@ -1550,18 +1586,22 @@ function renderLookbookThumbs(garmentType, activeStyleId) {
         const hasPhoto = Boolean(item.image);
         return `
             <button type="button" onclick="openLookbookModal('${garmentType}', '${item.id}')"
-                    class="shrink-0 text-left p-1.5 rounded-xl border transition cursor-pointer flex items-center gap-2 ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/80 shadow-xs ring-2 ring-indigo-200' : 'border-stone-200 bg-white hover:bg-stone-50'}">
-                <div class="w-8 h-10 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/60 flex items-center justify-center relative">
+                    class="shrink-0 text-left p-2 rounded-xl border transition cursor-pointer flex items-center gap-2 ${isActive ? 'border-2 border-[#E05A47] bg-[#FFF5F3] shadow-xs' : 'border-[#F0ECE1] bg-white hover:border-[#E3DDD0]'}">
+                <div class="w-8 h-10 rounded-lg overflow-hidden bg-[#FAF8F5] shrink-0 border border-[#F0ECE1] flex items-center justify-center relative">
                     ${item.image ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">` : `<div class="transform scale-65">${getStyleVectorSvg(item.vectorType, 36)}</div>`}
-                    ${hasPhoto ? `<span class="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-rose-500 shadow-xs" title="Есть фото"></span>` : ''}
+                    ${hasPhoto ? `<span class="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-[#E05A47] shadow-xs" title="Есть фото"></span>` : ''}
                 </div>
                 <div class="pr-1">
-                    <span class="text-[10px] font-bold block truncate max-w-[85px] ${isActive ? 'text-indigo-950' : 'text-stone-800'}">${item.name}</span>
-                    <span class="text-[9px] text-stone-500 block">${hasPhoto ? '📸 Фото' : '📐 Эскиз'}</span>
+                    <span class="text-[10px] font-bold block truncate max-w-[85px] ${isActive ? 'text-[#2C2825]' : 'text-[#78716C]'}">${item.name}</span>
+                    <span class="text-[9px] text-[#A8A29E] block">${hasPhoto ? 'Фото' : 'Эскиз'}</span>
                 </div>
             </button>
         `;
     }).join('');
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function closeLookbookModal() {

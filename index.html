@@ -3,78 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Конструктор выкроек — Базовая основа платья и плечевого изделия 1:1</title>
+    <title>Конструктор выкроек — Базовая основа и моделирование 1:1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="vendor/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="vendor/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="h-screen w-full max-w-full flex flex-col select-none bg-stone-100 text-stone-900 overflow-hidden">
+<body class="h-screen w-full max-w-full flex flex-col select-none bg-[#FAF8F5] text-[#2C2825] overflow-hidden">
 
-    <!-- Верхняя шапка приложения -->
-    <!-- Верхняя шапка приложения -->
-    <header class="bg-white/95 backdrop-blur-md border-b border-stone-200/80 px-3 sm:px-4 py-2 sm:py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 z-20 shrink-0">
-        <div class="flex items-center justify-between w-full sm:w-auto">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 sm:w-9 sm:h-9 bg-indigo-600 text-white flex items-center justify-center font-mono font-bold text-xs tracking-tight rounded-xl shadow-xs">
-                    1:1
+    <!-- Верхняя шапка приложения (Cozy Atelier Header) -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-[#F0ECE1] px-3 sm:px-5 py-2.5 flex items-center justify-between gap-3 z-30 shrink-0">
+        <!-- Логотип и название сервиса -->
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-[#FFF5F3] border border-[#FCDAD5] text-[#E05A47] flex items-center justify-center font-mono font-extrabold text-xs tracking-tight rounded-xl shadow-xs">
+                1:1
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="font-extrabold text-[#2C2825] text-sm sm:text-base tracking-tight">Конструктор выкроек</h1>
+                    <span class="text-[10px] font-semibold bg-[#FAF8F5] border border-[#F0ECE1] text-[#78716C] px-2 py-0.5 rounded-full">ЦНИИШП</span>
                 </div>
-                <div>
-                    <div class="flex items-center gap-1.5 sm:gap-2">
-                        <h1 class="font-bold text-stone-900 text-sm sm:text-base tracking-tight">Конструктор выкроек</h1>
-                        <span class="text-[9px] sm:text-[10px] font-semibold bg-indigo-50 border border-indigo-200 text-indigo-700 px-1.5 py-0.5 rounded-full">ЦНИИШП</span>
+                <p class="text-[11px] text-[#78716C] hidden lg:block leading-none mt-0.5">Точное параметрическое построение по индивидуальным меркам</p>
+            </div>
+        </div>
+
+        <!-- Единый переключатель изделия в шапке (Floating Pill Segmented Control) -->
+        <div class="flex items-center justify-center p-1 rounded-full bg-[#FAF8F5] border border-[#F0ECE1] shadow-xs">
+            <button onclick="setGarmentType('dress')" id="header-garment-dress" class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-[#E05A47] text-white shadow-xs transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span>Платье / Топ</span>
+            </button>
+            <button onclick="setGarmentType('skirt')" id="header-garment-skirt" class="px-3.5 py-1.5 text-xs font-medium rounded-full text-[#78716C] hover:text-[#2C2825] transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                <span>Юбка</span>
+            </button>
+            <button onclick="setGarmentType('panties')" id="header-garment-panties" class="px-3.5 py-1.5 text-xs font-medium rounded-full text-[#78716C] hover:text-[#2C2825] transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                <span>Бельё</span>
+            </button>
+        </div>
+
+        <!-- Правая часть: Мои мерки (Popover), ГОСТ размеры и кнопка Экспорта -->
+        <div class="flex items-center gap-2.5">
+            <!-- Выпадающее Popover-меню «Мои мерки» -->
+            <div class="relative">
+                <button onclick="toggleProfilePopover()" id="btn-my-profile" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Управление профилем мерок">
+                    <i data-lucide="user" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                    <span class="hidden sm:inline">Мои мерки</span>
+                    <i data-lucide="chevron-down" class="w-3 h-3 text-[#78716C]"></i>
+                </button>
+
+                <!-- Popover карточка -->
+                <div id="profile-popover" class="hidden absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl border border-[#F0ECE1] shadow-float p-3.5 z-50 flex flex-col gap-2.5 animate-fadeIn">
+                    <div class="flex justify-between items-center pb-2 border-b border-[#F0ECE1]">
+                        <span class="text-xs font-bold text-[#2C2825] flex items-center gap-1.5">
+                            <i data-lucide="user-check" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                            <span>Личный профиль</span>
+                        </span>
+                        <span id="profile-saved-badge" class="text-[10px] text-[#78716C] bg-[#FAF8F5] border border-[#F0ECE1] px-2 py-0.5 rounded-full mono">Не сохранен</span>
                     </div>
-                    <p class="text-[11px] text-stone-500 hidden md:block">Профессиональное построение базовых основ по индивидуальным меркам</p>
+                    <p class="text-[11px] text-[#78716C] leading-snug">Сохраняйте мерки в памяти браузера для мгновенного доступа или скачивайте в файл.</p>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button onclick="saveMyProfile(); toggleProfilePopover(false);" class="py-2 px-2.5 bg-[#E05A47] hover:bg-[#D04835] text-white text-xs font-semibold rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            <span>Сохранить</span>
+                        </button>
+                        <button onclick="applyMyProfile(); toggleProfilePopover(false);" class="py-2 px-2.5 bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] text-xs font-semibold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-[#78716C]"></i>
+                            <span>Загрузить</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-[#F0ECE1] text-[11px]">
+                        <button onclick="exportProfileJson(); toggleProfilePopover(false);" class="text-[#78716C] hover:text-[#2C2825] font-medium flex items-center gap-1 cursor-pointer transition">
+                            <i data-lucide="download" class="w-3 h-3 text-[#E05A47]"></i>
+                            <span>Скачать (.json)</span>
+                        </button>
+                        <label class="text-[#78716C] hover:text-[#2C2825] font-medium cursor-pointer flex items-center gap-1 transition">
+                            <i data-lucide="upload" class="w-3 h-3 text-[#E05A47]"></i>
+                            <span>Загрузить файл</span>
+                            <input type="file" accept=".json" onchange="importProfileJson(this); toggleProfilePopover(false);" class="hidden">
+                        </label>
+                    </div>
                 </div>
             </div>
-            <!-- Мобильная кнопка экспорта -->
-            <button onclick="openExportModal()" class="sm:hidden px-3 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition flex items-center gap-1.5 shadow-xs">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-                <span>Печать</span>
-            </button>
-        </div>
 
-        <!-- Единый переключатель изделия в шапке -->
-        <div class="flex items-center justify-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200/80 shadow-xs">
-            <button onclick="setGarmentType('dress')" id="header-garment-dress" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-xs transition flex items-center gap-1.5 shrink-0 cursor-pointer">
-                <span>👗 Платье / Топ</span>
-            </button>
-            <button onclick="setGarmentType('skirt')" id="header-garment-skirt" class="px-3 py-1.5 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200/70 transition flex items-center gap-1.5 shrink-0 cursor-pointer">
-                <span>🩱 Юбка</span>
-            </button>
-            <button onclick="setGarmentType('panties')" id="header-garment-panties" class="px-3 py-1.5 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200/70 transition flex items-center gap-1.5 shrink-0 cursor-pointer">
-                <span>🩲 Бельё</span>
-            </button>
-        </div>
+            <!-- Стандартные размеры ГОСТ -->
+            <div class="hidden lg:flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-xl border border-[#F0ECE1]">
+                <span class="text-[11px] font-medium text-[#78716C] px-1.5 whitespace-nowrap">ГОСТ:</span>
+                <button onclick="applyPreset('42')" data-size="42" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">42</button>
+                <button onclick="applyPreset('44')" data-size="44" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">44</button>
+                <button onclick="applyPreset('46')" data-size="46" class="preset-btn px-2 py-1 text-xs mono font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center">46</button>
+                <button onclick="applyPreset('48')" data-size="48" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">48</button>
+                <button onclick="applyPreset('50')" data-size="50" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">50</button>
+                <button onclick="applyPreset('52')" data-size="52" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">52</button>
+                <button onclick="applyPreset('54')" data-size="54" class="preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center">54</button>
+            </div>
 
-        <!-- Выбор стандартного размера ГОСТ или своего профиля -->
-        <div class="flex items-center justify-between sm:justify-start gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200/80 overflow-x-auto w-full sm:w-auto">
-            <button onclick="applyMyProfile()" id="btn-my-profile" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition flex items-center gap-1 shrink-0 cursor-pointer" title="Загрузить мои сохраненные мерки">
-                <span>⭐ Мои мерки</span>
-            </button>
-            <div class="w-px h-4 bg-stone-300 mx-0.5 shrink-0"></div>
-            <span class="text-[11px] font-medium text-stone-400 px-1 whitespace-nowrap">ГОСТ:</span>
-            <button onclick="applyPreset('42')" data-size="42" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">42</button>
-            <button onclick="applyPreset('44')" data-size="44" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">44</button>
-            <button onclick="applyPreset('46')" data-size="46" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-bold rounded-lg bg-indigo-600 text-white shadow-xs transition text-center">46</button>
-            <button onclick="applyPreset('48')" data-size="48" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">48</button>
-            <button onclick="applyPreset('50')" data-size="50" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">50</button>
-            <button onclick="applyPreset('52')" data-size="52" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">52</button>
-            <button onclick="applyPreset('54')" data-size="54" class="preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center">54</button>
-        </div>
-
-        <!-- Кнопки действий на десктопе -->
-        <div class="hidden sm:flex items-center gap-2">
-            <button onclick="toggleA4Grid()" id="btn-a4-grid" class="px-3 py-1.5 text-xs font-medium border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 rounded-lg transition items-center gap-1.5 shadow-xs">
-                <span>Сетка А4</span>
-            </button>
-            <button onclick="openExportModal()" class="px-3.5 py-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition flex items-center gap-1.5 shadow-xs">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-                <span>Печать / Экспорт</span>
+            <!-- Главная кнопка экспорта и печати -->
+            <button onclick="openExportModal()" class="px-3.5 py-1.5 text-xs font-bold bg-[#E05A47] hover:bg-[#D04835] text-white rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                <span>Скачать выкройку</span>
             </button>
         </div>
     </header>
@@ -82,197 +111,178 @@
     <!-- Основное рабочее пространство -->
     <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
         
-        <!-- Панель настроек и параметров (Sidebar) -->
-        <aside id="cad-sidebar" class="w-full max-w-full md:w-84 lg:w-96 bg-white border-r border-stone-200 flex flex-col h-full overflow-hidden z-10 hidden md:flex shrink-0">
+        <!-- Сайдбар настроек (390px, чистый белый, мягкие границы) -->
+        <aside id="cad-sidebar" class="w-full max-w-full md:w-[390px] bg-white border-r border-[#F0ECE1] flex flex-col h-full overflow-hidden z-20 hidden md:flex shrink-0">
             
-            <!-- Статус изделия и индикатор автосохранения -->
-            <div class="px-3.5 py-2.5 bg-stone-50/80 border-b border-stone-200/80 flex items-center justify-between">
+            <!-- Статус изделия и индикатор сохранения -->
+            <div class="px-4 py-2.5 bg-[#FAF8F5]/80 border-b border-[#F0ECE1] flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span id="garment-type-badge" class="text-xs font-bold text-stone-800">Плечевое (Платье)</span>
+                    <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                    <span id="garment-type-badge" class="text-xs font-bold text-[#2C2825]">Плечевое (Платье)</span>
                 </div>
-                <div id="autosave-indicator" class="opacity-0 transition-opacity duration-300 text-[10px] text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <span>✓</span><span>Сохранено</span>
+                <div id="autosave-indicator" class="opacity-0 transition-opacity duration-300 text-[10px] text-[#15803D] font-medium bg-[#F0FDF4] border border-[#BBF7D0] px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <i data-lucide="check" class="w-3 h-3"></i>
+                    <span>Сохранено</span>
                 </div>
             </div>
 
-            <!-- Вкладки управления (шаги САПР) -->
-            <div id="tabs-header-bar" class="grid grid-cols-5 border-b border-stone-200 bg-stone-50 text-[11px] font-semibold text-stone-500">
-                <button onclick="switchTab('measures')" id="tab-measures" class="py-2.5 border-b-2 border-indigo-600 text-indigo-600 bg-white font-bold transition text-center flex flex-col items-center justify-center gap-0.5">
-                    <span>📏</span><span>Мерки</span>
+            <!-- Вкладки управления (4 шага в одну строку, Segmented Control без горизонтального скролла) -->
+            <div id="tabs-header-bar" class="grid grid-cols-4 p-1.5 bg-[#FAF8F5] border-b border-[#F0ECE1] gap-1 text-[11px] font-semibold text-[#78716C]">
+                <button onclick="switchTab('measures')" id="tab-measures" class="py-2 rounded-xl bg-white text-[#2C2825] font-bold shadow-xs transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <i data-lucide="ruler" class="w-4 h-4 text-[#E05A47]"></i>
+                    <span>Мерки</span>
                 </button>
-                <button onclick="switchTab('style')" id="tab-style" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center flex flex-col items-center justify-center gap-0.5">
-                    <span>👗</span><span>Фасон</span>
+                <button onclick="switchTab('style')" id="tab-style" class="py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Фасон</span>
                 </button>
-                <button onclick="switchTab('fit')" id="tab-fit" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center flex flex-col items-center justify-center gap-0.5">
-                    <span>📐</span><span>Посадка</span>
+                <button onclick="switchTab('fit')" id="tab-fit" class="py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <i data-lucide="sliders" class="w-4 h-4"></i>
+                    <span>Посадка</span>
                 </button>
-                <button onclick="switchTab('layout')" id="tab-layout" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 transition text-center flex flex-col items-center justify-center gap-0.5">
-                    <span>🧵</span><span>Ткань</span>
-                </button>
-                <button onclick="switchTab('export')" id="tab-export" class="py-2.5 border-b-2 border-transparent hover:text-stone-900 text-indigo-700 transition text-center flex flex-col items-center justify-center gap-0.5">
-                    <span>🖨</span><span>Печать</span>
+                <button onclick="switchTab('layout')" id="tab-layout" class="py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <i data-lucide="scissors" class="w-4 h-4"></i>
+                    <span>Ткань</span>
                 </button>
             </div>
 
-            <!-- Содержимое вкладок -->
-            <div class="flex-1 overflow-y-auto p-3.5 space-y-4">
+            <!-- Содержимое вкладок сайдбара -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4">
                 
-                <!-- ВКЛАДКА 1: МЕРКИ И ОСАНКА -->
+                <!-- ВКЛАДКА 1: МЕРКИ -->
                 <div id="panel-measures" class="space-y-4">
-                    <!-- Карточка личного профиля (сохранение в браузере) -->
-                    <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
-                                <span>⭐ Мой личный профиль</span>
-                            </span>
-                            <span id="profile-saved-badge" class="text-[10px] text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-mono font-medium">Не сохранен</span>
-                        </div>
-                        <p class="text-[11px] text-amber-900/80 leading-snug">Сохраните свои мерки в памяти браузера, чтобы открывать выкройку в 1 клик на любом устройстве.</p>
-                        <div class="grid grid-cols-2 gap-1.5 pt-0.5">
-                            <button onclick="saveMyProfile()" class="py-1.5 px-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition shadow-sm flex items-center justify-center gap-1 cursor-pointer">
-                                <span>💾 Сохранить мерки</span>
-                            </button>
-                            <button onclick="applyMyProfile()" class="py-1.5 px-2 bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1 cursor-pointer">
-                                <span>🔄 Загрузить мои</span>
-                            </button>
-                        </div>
-                        <div class="flex items-center justify-between pt-1 border-t border-amber-200/60 text-[11px]">
-                            <button onclick="exportProfileJson()" class="text-amber-800 hover:underline font-medium flex items-center gap-1 cursor-pointer">
-                                <span>📥 Скачать (.json)</span>
-                            </button>
-                            <label class="text-amber-800 hover:underline font-medium cursor-pointer flex items-center gap-1">
-                                <span>📤 Загрузить файл</span>
-                                <input type="file" accept=".json" onchange="importProfileJson(this)" class="hidden">
-                            </label>
-                        </div>
-                    </div>
-
+                    
                     <!-- МЕРКИ ДЛЯ ПЛАТЬЯ / БЛУЗЫ -->
                     <div id="measures-dress-container" class="space-y-4">
-                        <!-- Выбор типа осанки -->
-                        <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3 space-y-2">
+                        <!-- Осанка фигуры -->
+                        <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5 space-y-2.5">
                             <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-indigo-950">Осанка фигуры:</span>
-                                <span class="text-[10px] text-indigo-700 bg-indigo-100/70 px-1.5 py-0.5 rounded font-mono font-medium">Баланс</span>
+                                <span class="text-xs font-bold text-[#2C2825] flex items-center gap-1.5">
+                                    <i data-lucide="user" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                    <span>Осанка фигуры:</span>
+                                </span>
+                                <span class="text-[10px] text-[#78716C] bg-white border border-[#F0ECE1] px-2 py-0.5 rounded-full mono font-medium">Баланс</span>
                             </div>
                             <div class="grid grid-cols-3 gap-1.5">
-                                <button onclick="setPosture('normal')" data-posture="normal" class="posture-btn py-1.5 px-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition flex flex-col items-center justify-center text-center">Обычная</button>
-                                <button onclick="setPosture('stooped')" data-posture="stooped" class="posture-btn py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition flex flex-col items-center justify-center text-center">Сутулая</button>
-                                <button onclick="setPosture('erect')" data-posture="erect" class="posture-btn py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition flex flex-col items-center justify-center text-center">Прямая</button>
+                                <button onclick="setPosture('normal')" data-posture="normal" class="posture-btn py-1.5 px-1 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition flex flex-col items-center justify-center text-center cursor-pointer">Обычная</button>
+                                <button onclick="setPosture('stooped')" data-posture="stooped" class="posture-btn py-1.5 px-1 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition flex flex-col items-center justify-center text-center cursor-pointer">Сутулая</button>
+                                <button onclick="setPosture('erect')" data-posture="erect" class="posture-btn py-1.5 px-1 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition flex flex-col items-center justify-center text-center cursor-pointer">Прямая</button>
                             </div>
-                            <p id="posture-desc" class="text-[11px] text-indigo-900/80 leading-snug"><b>🚶‍♂️ Обычная осанка:</b> Стандартный пропорциональный баланс спинки и полочки.</p>
+                            <p id="posture-desc" class="text-[11px] text-[#78716C] leading-snug"><b>Обычная осанка:</b> Стандартный пропорциональный баланс спинки и полочки.</p>
                         </div>
 
                         <!-- Обхваты -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">Обхваты фигуры (см)</div>
-                            <div class="space-y-2.5" id="measures-girths"></div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">Обхваты фигуры (см)</div>
+                            <div class="space-y-2" id="measures-girths"></div>
                         </div>
 
                         <!-- Высоты и баланс -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">Длины и контрольные высоты (см)</div>
-                            <div class="space-y-2.5" id="measures-lengths"></div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">Длины и контрольные высоты (см)</div>
+                            <div class="space-y-2" id="measures-lengths"></div>
                         </div>
 
                         <!-- Рукав -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">Мерки руки (см)</div>
-                            <div class="space-y-2.5" id="measures-sleeve"></div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">Мерки руки (см)</div>
+                            <div class="space-y-2" id="measures-sleeve"></div>
                         </div>
                     </div>
 
                     <!-- МЕРКИ ДЛЯ ЮБКИ -->
                     <div id="measures-skirt-container" class="space-y-3.5 hidden">
-                        <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 text-xs text-indigo-950 space-y-1">
+                        <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5 text-xs text-[#2C2825] space-y-1">
                             <div class="font-bold flex items-center gap-1.5">
-                                <span>🩱 Мерки для юбки</span>
-                                <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.2 rounded font-mono">Синхронизировано</span>
+                                <i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                <span>Мерки для юбки</span>
+                                <span class="text-[10px] bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] px-2 py-0.5 rounded-full font-mono">Синхронизировано</span>
                             </div>
-                            <p class="text-[11px] text-indigo-900/80 leading-relaxed">
-                                Обхват талии (От), бедер (Об) и высота бедер (Вб) берутся из вашего профиля. Изменяя их здесь, вы обновляете их для всех выкроек!
+                            <p class="text-[11px] text-[#78716C] leading-relaxed">
+                                Обхват талии (От), бедер (Об) и высота бедер (Вб) синхронизированы со всеми фасонами.
                             </p>
                         </div>
 
                         <!-- Обхват талии (От) -->
-                        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm card-hover">
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="flex-1 pr-2">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-xs font-semibold text-stone-900">Обхват талии</span>
-                                        <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100 font-semibold">От</span>
-                                    </div>
-                                    <p class="text-[11px] text-stone-500 mt-0.5">В самом узком месте талии без натяжения.</p>
-                                </div>
-                                <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50 shrink-0">
-                                    <button type="button" onclick="adjustValue('ot', -1)" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">−</button>
-                                    <input type="number" id="num-ot-skirt" value="74" min="50" max="130" step="1"
-                                        oninput="syncInput('ot', this.value)"
-                                        class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-300 py-1 focus:outline-none">
-                                    <button type="button" onclick="adjustValue('ot', 1)" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">+</button>
+                        <div class="py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <span class="text-xs font-semibold text-[#2C2825]">Обхват талии</span>
+                                <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">От</span>
+                                <div class="relative group/tip inline-flex items-center shrink-0">
+                                    <button type="button" onclick="showMeasurementHint('Обхват талии', 'От', 'В самом узком месте талии без натяжения.')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]">
+                                        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <input type="range" id="rng-ot-skirt" value="74" min="50" max="130" step="1" oninput="syncInput('ot', this.value)" class="w-full mt-1">
+                            <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
+                                <button type="button" onclick="adjustValue('ot', -1)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">−</button>
+                                <div class="w-12 text-center mono text-xs font-bold bg-white border-x border-[#F0ECE1] py-1 text-[#2C2825]">
+                                    <input type="number" id="num-ot-skirt" value="74" min="50" max="130" step="1"
+                                        oninput="syncInput('ot', this.value)"
+                                        class="w-full text-center bg-transparent focus:outline-none">
+                                </div>
+                                <button type="button" onclick="adjustValue('ot', 1)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">+</button>
+                            </div>
                         </div>
 
                         <!-- Обхват бедер (Об) -->
-                        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm card-hover">
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="flex-1 pr-2">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-xs font-semibold text-stone-900">Обхват бедер</span>
-                                        <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100 font-semibold">Об</span>
-                                    </div>
-                                    <p class="text-[11px] text-stone-500 mt-0.5">По самым выступающим точкам ягодиц.</p>
-                                </div>
-                                <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50 shrink-0">
-                                    <button type="button" onclick="adjustValue('ob', -1)" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">−</button>
-                                    <input type="number" id="num-ob-skirt" value="98" min="75" max="145" step="1"
-                                        oninput="syncInput('ob', this.value)"
-                                        class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-300 py-1 focus:outline-none">
-                                    <button type="button" onclick="adjustValue('ob', 1)" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">+</button>
+                        <div class="py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <span class="text-xs font-semibold text-[#2C2825]">Обхват бедер</span>
+                                <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">Об</span>
+                                <div class="relative group/tip inline-flex items-center shrink-0">
+                                    <button type="button" onclick="showMeasurementHint('Обхват бедер', 'Об', 'По самым выступающим точкам ягодиц горизонтально.')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]">
+                                        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <input type="range" id="rng-ob-skirt" value="98" min="75" max="145" step="1" oninput="syncInput('ob', this.value)" class="w-full mt-1">
+                            <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
+                                <button type="button" onclick="adjustValue('ob', -1)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">−</button>
+                                <div class="w-12 text-center mono text-xs font-bold bg-white border-x border-[#F0ECE1] py-1 text-[#2C2825]">
+                                    <input type="number" id="num-ob-skirt" value="98" min="75" max="145" step="1"
+                                        oninput="syncInput('ob', this.value)"
+                                        class="w-full text-center bg-transparent focus:outline-none">
+                                </div>
+                                <button type="button" onclick="adjustValue('ob', 1)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">+</button>
+                            </div>
                         </div>
 
                         <!-- Длина юбки (Дю) -->
-                        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm card-hover space-y-2">
+                        <div class="p-3.5 rounded-2xl bg-white border border-[#F0ECE1] space-y-2.5 shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)]">
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <span class="text-xs font-semibold text-stone-900">Длина юбки:</span>
-                                    <span class="text-[10px] mono text-indigo-700 font-bold ml-1" id="label-skirtLength">60 см</span>
+                                    <span class="text-xs font-semibold text-[#2C2825]">Длина юбки:</span>
+                                    <span class="text-[11px] mono text-[#E05A47] font-bold ml-1.5" id="label-skirtLength">60 см</span>
                                 </div>
-                                <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50 shrink-0">
-                                    <button type="button" onclick="setSkirtLength(Math.max(30, state.skirtLength - 5))" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold">−</button>
-                                    <input type="number" id="num-skirtLength" value="60" min="30" max="105" step="1"
-                                        oninput="setSkirtLength(this.value); document.getElementById('label-skirtLength').textContent = this.value + ' см';"
-                                        class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-300 py-1 focus:outline-none">
-                                    <button type="button" onclick="setSkirtLength(Math.min(105, state.skirtLength + 5))" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold">+</button>
+                                <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
+                                    <button type="button" onclick="setSkirtLength(Math.max(30, state.skirtLength - 5))" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold transition">−</button>
+                                    <div class="w-12 text-center mono text-xs font-bold bg-white border-x border-[#F0ECE1] py-1 text-[#2C2825]">
+                                        <input type="number" id="num-skirtLength" value="60" min="30" max="105" step="1"
+                                            oninput="setSkirtLength(this.value); document.getElementById('label-skirtLength').textContent = this.value + ' см';"
+                                            class="w-full text-center bg-transparent focus:outline-none">
+                                    </div>
+                                    <button type="button" onclick="setSkirtLength(Math.min(105, state.skirtLength + 5))" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold transition">+</button>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-4 gap-1 text-[11px]">
-                                <button type="button" onclick="setSkirtLength(38); document.getElementById('label-skirtLength').textContent='38 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Мини (38)</button>
-                                <button type="button" onclick="setSkirtLength(45); document.getElementById('label-skirtLength').textContent='45 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Короткая (45)</button>
-                                <button type="button" onclick="setSkirtLength(65); document.getElementById('label-skirtLength').textContent='65 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Миди (65)</button>
-                                <button type="button" onclick="setSkirtLength(90); document.getElementById('label-skirtLength').textContent='90 см';" class="py-1 px-1 bg-stone-100 hover:bg-stone-200 rounded font-medium text-stone-700 transition text-center">Макси (90)</button>
+                            <div class="grid grid-cols-4 gap-1.5 text-[11px]">
+                                <button type="button" onclick="setSkirtLength(38); document.getElementById('label-skirtLength').textContent='38 см';" class="py-1.5 px-1 bg-[#FAF8F5] hover:bg-[#F0ECE1] rounded-xl font-medium text-[#78716C] hover:text-[#2C2825] transition text-center cursor-pointer">Мини (38)</button>
+                                <button type="button" onclick="setSkirtLength(45); document.getElementById('label-skirtLength').textContent='45 см';" class="py-1.5 px-1 bg-[#FAF8F5] hover:bg-[#F0ECE1] rounded-xl font-medium text-[#78716C] hover:text-[#2C2825] transition text-center cursor-pointer">Короткая (45)</button>
+                                <button type="button" onclick="setSkirtLength(65); document.getElementById('label-skirtLength').textContent='65 см';" class="py-1.5 px-1 bg-[#FAF8F5] hover:bg-[#F0ECE1] rounded-xl font-medium text-[#78716C] hover:text-[#2C2825] transition text-center cursor-pointer">Миди (65)</button>
+                                <button type="button" onclick="setSkirtLength(90); document.getElementById('label-skirtLength').textContent='90 см';" class="py-1.5 px-1 bg-[#FAF8F5] hover:bg-[#F0ECE1] rounded-xl font-medium text-[#78716C] hover:text-[#2C2825] transition text-center cursor-pointer">Макси (90)</button>
                             </div>
-                            <input type="range" id="rng-skirtLength" value="60" min="30" max="105" step="1"
-                                oninput="setSkirtLength(this.value); document.getElementById('label-skirtLength').textContent = this.value + ' см';" class="w-full">
                         </div>
 
                         <!-- Прибавки юбки -->
-                        <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
-                            <span class="text-[11px] font-bold text-stone-700 uppercase">Прибавки на свободное облегание (см)</span>
+                        <div class="p-3 bg-[#FAF8F5] rounded-2xl border border-[#F0ECE1] space-y-2">
+                            <span class="text-[11px] font-bold text-[#78716C] uppercase tracking-wider">Прибавки на свободное облегание (см)</span>
                             <div class="grid grid-cols-2 gap-2 text-xs">
                                 <div>
-                                    <span class="text-stone-600 text-[11px]">По талии (Пт):</span>
-                                    <input type="number" value="1.0" min="0" max="3" step="0.5" oninput="state.skirtPt = Number(this.value); renderPattern();" class="w-full mt-1 border border-stone-300 rounded-lg p-1 text-center font-bold mono">
+                                    <span class="text-[#78716C] text-[11px]">По талии (Пт):</span>
+                                    <input type="number" value="1.0" min="0" max="3" step="0.5" oninput="state.skirtPt = Number(this.value); renderPattern();" class="w-full mt-1 border border-[#F0ECE1] bg-white rounded-xl p-1.5 text-center font-bold mono text-[#2C2825] focus:outline-none">
                                 </div>
                                 <div>
-                                    <span class="text-stone-600 text-[11px]">По бедрам (Пб):</span>
-                                    <input type="number" value="2.0" min="0.5" max="5" step="0.5" oninput="state.skirtPb = Number(this.value); renderPattern();" class="w-full mt-1 border border-stone-300 rounded-lg p-1 text-center font-bold mono">
+                                    <span class="text-[#78716C] text-[11px]">По бедрам (Пб):</span>
+                                    <input type="number" value="2.0" min="0.5" max="5" step="0.5" oninput="state.skirtPb = Number(this.value); renderPattern();" class="w-full mt-1 border border-[#F0ECE1] bg-white rounded-xl p-1.5 text-center font-bold mono text-[#2C2825] focus:outline-none">
                                 </div>
                             </div>
                         </div>
@@ -280,53 +290,55 @@
 
                     <!-- МЕРКИ ДЛЯ ТРУСИКОВ -->
                     <div id="measures-panties-container" class="space-y-3.5 hidden">
-                        <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-3 text-xs text-rose-950 space-y-1">
+                        <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5 text-xs text-[#2C2825] space-y-1">
                             <div class="font-bold flex items-center gap-1.5">
-                                <span>🩲 Мерки для нижнего белья</span>
-                                <span class="text-[10px] bg-rose-200 text-rose-800 px-1.5 py-0.2 rounded font-mono">Бельевой крой</span>
+                                <i data-lucide="heart" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                <span>Мерки для нижнего белья</span>
+                                <span class="text-[10px] bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] px-2 py-0.5 rounded-full font-mono">Бельевой крой</span>
                             </div>
-                            <p class="text-[11px] text-rose-900/80 leading-relaxed">
-                                Для пошива трусиков главный размер — это <b>Обхват бедер (Об)</b>. Программа автоматически рассчитывает растяжимость ткани, чтобы белье идеально облегало фигуру!
+                            <p class="text-[11px] text-[#78716C] leading-relaxed">
+                                Для пошива трусиков главный размер — это <b>Обхват бедер (Об)</b>. Растяжимость трикотажа учитывается автоматически!
                             </p>
                         </div>
 
                         <!-- Обхват бедер (Об) -->
-                        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm card-hover">
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="flex-1 pr-2">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-xs font-semibold text-stone-900">Обхват бедер</span>
-                                        <span class="text-[10px] mono px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-100 font-semibold">Об</span>
-                                    </div>
-                                    <p class="text-[11px] text-stone-500 mt-0.5">По самым выступающим точкам ягодиц.</p>
-                                </div>
-                                <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-stone-50 shrink-0">
-                                    <button type="button" onclick="adjustValue('ob', -1)" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">−</button>
-                                    <input type="number" id="num-ob-panties" value="98" min="75" max="145" step="1"
-                                        oninput="syncInput('ob', this.value)"
-                                        class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-300 py-1 focus:outline-none">
-                                    <button type="button" onclick="adjustValue('ob', 1)" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 font-bold active:bg-stone-300 transition">+</button>
+                        <div class="py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <span class="text-xs font-semibold text-[#2C2825]">Обхват бедер</span>
+                                <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">Об</span>
+                                <div class="relative group/tip inline-flex items-center shrink-0">
+                                    <button type="button" onclick="showMeasurementHint('Обхват бедер', 'Об', 'По наиболее выступающим точкам ягодиц.')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]">
+                                        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <input type="range" id="rng-ob-panties" value="98" min="75" max="145" step="1" oninput="syncInput('ob', this.value)" class="w-full mt-1">
+                            <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
+                                <button type="button" onclick="adjustValue('ob', -1)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">−</button>
+                                <div class="w-12 text-center mono text-xs font-bold bg-white border-x border-[#F0ECE1] py-1 text-[#2C2825]">
+                                    <input type="number" id="num-ob-panties" value="98" min="75" max="145" step="1"
+                                        oninput="syncInput('ob', this.value)"
+                                        class="w-full text-center bg-transparent focus:outline-none">
+                                </div>
+                                <button type="button" onclick="adjustValue('ob', 1)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">+</button>
+                            </div>
                         </div>
 
                         <!-- Ткань и эластичность -->
-                        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                        <div class="bg-white p-3.5 rounded-2xl border border-[#F0ECE1] shadow-xs space-y-2">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="font-bold text-stone-900">Ткань и растяжимость:</span>
-                                <span class="text-[10px] text-stone-500 mono">коэффициент</span>
+                                <span class="font-bold text-[#2C2825]">Ткань и растяжимость:</span>
+                                <span class="text-[10px] text-[#78716C] mono">коэффициент</span>
                             </div>
                             <div class="grid grid-cols-3 gap-1.5">
-                                <button type="button" onclick="setPantiesStretch(0.90)" data-stretch="0.90" class="panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center flex flex-col items-center">
+                                <button type="button" onclick="setPantiesStretch(0.90)" data-stretch="0.90" class="panties-stretch-btn flex-1 py-2 px-1 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center flex flex-col items-center cursor-pointer">
                                     <span>Трикотаж</span>
                                     <span class="text-[10px] font-normal opacity-90">-10% (кулирка)</span>
                                 </button>
-                                <button type="button" onclick="setPantiesStretch(0.85)" data-stretch="0.85" class="panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center flex flex-col items-center">
+                                <button type="button" onclick="setPantiesStretch(0.85)" data-stretch="0.85" class="panties-stretch-btn flex-1 py-2 px-1 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center flex flex-col items-center cursor-pointer">
                                     <span>Кружево</span>
                                     <span class="text-[10px] font-normal opacity-80">-15% (эластан)</span>
                                 </button>
-                                <button type="button" onclick="setPantiesStretch(0.95)" data-stretch="0.95" class="panties-stretch-btn flex-1 py-1.5 px-1 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center flex flex-col items-center">
+                                <button type="button" onclick="setPantiesStretch(0.95)" data-stretch="0.95" class="panties-stretch-btn flex-1 py-2 px-1 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center flex flex-col items-center cursor-pointer">
                                     <span>Хлопок</span>
                                     <span class="text-[10px] font-normal opacity-80">-5% (плотный)</span>
                                 </button>
@@ -337,18 +349,19 @@
 
                 <!-- ВКЛАДКА 2: МОДЕЛИРОВАНИЕ ФАСОНА -->
                 <div id="panel-style" class="space-y-4 hidden">
-                    <!-- Баннер Лукбука и фото-галереи фасонов -->
-                    <div class="bg-gradient-to-r from-stone-900 to-indigo-950 rounded-2xl p-3 text-white shadow-xs relative overflow-hidden flex items-center justify-between gap-3">
+                    <!-- Теплый уютный баннер Лукбука -->
+                    <div class="bg-gradient-to-r from-[#FFF5F3] to-[#FDE8E4] border border-[#FCDAD5] rounded-2xl p-3.5 text-[#2C2825] shadow-soft relative overflow-hidden flex items-center justify-between gap-3">
                         <div class="relative z-10 space-y-0.5">
                             <div class="flex items-center gap-1.5">
-                                <span class="text-xs font-bold tracking-tight">📸 Лукбук и фото-галерея</span>
-                                <span class="text-[9px] font-bold uppercase bg-amber-400 text-stone-900 px-1.5 py-0.2 rounded-full">New</span>
+                                <i data-lucide="camera" class="w-4 h-4 text-[#E05A47]"></i>
+                                <span class="text-xs font-bold tracking-tight">Лукбук и фото-галерея</span>
+                                <span class="text-[9px] font-bold uppercase bg-[#E05A47] text-white px-2 py-0.5 rounded-full">New</span>
                             </div>
-                            <p class="text-[11px] text-stone-300">Фэшн-эскизы, свойства тканей и советы по крою</p>
+                            <p class="text-[11px] text-[#78716C]">Фэшн-фотографии, свойства тканей и советы по пошиву</p>
                         </div>
-                        <button type="button" onclick="openLookbookModal()" class="relative z-10 shrink-0 px-3 py-1.5 bg-white hover:bg-stone-100 text-indigo-950 font-bold text-xs rounded-xl shadow transition cursor-pointer flex items-center gap-1">
+                        <button type="button" onclick="openLookbookModal()" class="relative z-10 shrink-0 px-3.5 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] font-bold text-xs rounded-xl shadow-xs transition cursor-pointer flex items-center gap-1.5">
                             <span>Смотреть</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#E05A47]"></i>
                         </button>
                     </div>
 
@@ -357,11 +370,11 @@
                         <!-- Детальная карточка активного фасона платья -->
                         <div id="dress-active-details"></div>
 
-                        <!-- 1. Фасоны платьев (Визуальный каталог с превью и бейджами) -->
+                        <!-- 1. Фасоны платьев (Каталог) -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1 flex items-center justify-between">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1 flex items-center justify-between">
                                 <span>1. Каталог и фасоны платьев</span>
-                                <span class="text-[10px] text-indigo-600 font-semibold lowercase">9 моделей</span>
+                                <span class="text-[10px] text-[#E05A47] font-semibold lowercase">9 моделей</span>
                             </div>
                             <div id="dress-catalog-container" class="space-y-3">
                                 <!-- Рендерится динамически через renderDressStyleCatalog() -->
@@ -369,93 +382,96 @@
                         </div>
 
                         <!-- 2. Конструктор деталей (тонкая настройка кроя) -->
-                        <div class="pt-2 border-t border-stone-200">
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center justify-between">
+                        <div class="pt-2 border-t border-[#F0ECE1]">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2.5 flex items-center justify-between">
                                 <span>2. Конструктор деталей</span>
-                                <span class="text-[10px] text-stone-400">Тонкая настройка</span>
+                                <span class="text-[10px] text-[#78716C]">Тонкая настройка</span>
                             </div>
 
                             <!-- Нагрудная вытачка -->
                             <div class="space-y-1.5 mb-3">
-                                <div class="text-[11px] font-semibold text-stone-700">Перевод нагрудной вытачки:</div>
+                                <div class="text-[11px] font-semibold text-[#2C2825]">Перевод нагрудной вытачки:</div>
                                 <div class="grid grid-cols-2 gap-2 text-xs">
-                                    <button onclick="setDartPosition('shoulder')" data-dart="shoulder" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                        <div class="font-bold flex items-center justify-between">В плечевой шов <span class="text-[9px] text-indigo-700 mono bg-indigo-50 px-1 rounded border border-indigo-200">База</span></div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Классическая основа ЕМКО/ЦНИИШП</div>
+                                    <button onclick="setDartPosition('shoulder')" data-dart="shoulder" class="dart-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
+                                        <div class="font-bold flex items-center justify-between">В плечевой шов <span class="text-[9px] text-[#78716C] mono bg-[#FAF8F5] px-1.5 py-0.5 rounded border border-[#F0ECE1]">База</span></div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Классическая основа ЦНИИШП</div>
                                     </button>
-                                    <button onclick="setDartPosition('side')" data-dart="side" class="dart-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer">
-                                        <div class="font-bold flex items-center justify-between">В боковой шов <span class="text-[9px] text-rose-700 mono bg-rose-50 px-1 rounded border border-rose-200">Хит</span></div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Французская вытачка под проймой</div>
+                                    <button onclick="setDartPosition('side')" data-dart="side" class="dart-btn p-2.5 rounded-2xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] transition cursor-pointer">
+                                        <div class="font-bold flex items-center justify-between">В боковой шов <span class="text-[9px] text-[#E05A47] mono bg-white px-1.5 py-0.5 rounded border border-[#FCDAD5]">Популярно</span></div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Французская вытачка под проймой</div>
                                     </button>
-                                    <button onclick="setDartPosition('waist')" data-dart="waist" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <button onclick="setDartPosition('waist')" data-dart="waist" class="dart-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
                                         <div class="font-bold">В талию</div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Приталенный силуэт без шва на плече</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Приталенный силуэт</div>
                                     </button>
-                                    <button onclick="setDartPosition('armhole')" data-dart="armhole" class="dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <button onclick="setDartPosition('armhole')" data-dart="armhole" class="dart-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
                                         <div class="font-bold">В пройму</div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Элегантный рельеф проймы</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Элегантный рельеф</div>
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Форма выреза горловины -->
                             <div class="space-y-1.5 mb-3">
-                                <div class="text-[11px] font-semibold text-stone-700">Форма выреза горловины:</div>
+                                <div class="text-[11px] font-semibold text-[#2C2825]">Форма выреза горловины:</div>
                                 <div class="grid grid-cols-2 gap-2 text-xs">
-                                    <button onclick="setNecklineType('round')" data-neckline="round" class="neckline-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer">
+                                    <button onclick="setNecklineType('round')" data-neckline="round" class="neckline-btn p-2.5 rounded-2xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] transition cursor-pointer">
                                         <div class="font-bold">Круглая</div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Классический вырез</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Классический вырез</div>
                                     </button>
-                                    <button onclick="setNecklineType('v-neck')" data-neckline="v-neck" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <button onclick="setNecklineType('v-neck')" data-neckline="v-neck" class="neckline-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
                                         <div class="font-bold">V-образный</div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Удлиняет шею и силуэт</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Удлиняет силуэт</div>
                                     </button>
-                                    <button onclick="setNecklineType('boat')" data-neckline="boat" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <button onclick="setNecklineType('boat')" data-neckline="boat" class="neckline-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
                                         <div class="font-bold">Лодочка</div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Широкий элегантный вырез</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Широкий вырез</div>
                                     </button>
-                                    <button onclick="setNecklineType('square')" data-neckline="square" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
+                                    <button onclick="setNecklineType('square')" data-neckline="square" class="neckline-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
                                         <div class="font-bold">Каре</div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Прямоугольный вырез</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Прямоугольный вырез</div>
                                     </button>
-                                    <button onclick="setNecklineType('keyhole')" data-neckline="keyhole" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                        <div class="font-bold flex items-center justify-between">Капелька <span class="text-[9px] text-rose-600 mono bg-rose-50 px-1 rounded border border-rose-200">Тренд</span></div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Акцентный вырез в декольте</div>
+                                    <button onclick="setNecklineType('keyhole')" data-neckline="keyhole" class="neckline-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
+                                        <div class="font-bold">Капелька</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Акцентный вырез</div>
                                     </button>
-                                    <button onclick="setNecklineType('deep-v')" data-neckline="deep-v" class="neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer">
-                                        <div class="font-bold flex items-center justify-between">Глубокое V <span class="text-[9px] text-amber-700 mono bg-amber-50 px-1 rounded border border-amber-200">Секси</span></div>
-                                        <div class="text-[10px] text-stone-500 font-normal mt-0.5">Эффектное декольте</div>
+                                    <button onclick="setNecklineType('deep-v')" data-neckline="deep-v" class="neckline-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer">
+                                        <div class="font-bold">Глубокое V</div>
+                                        <div class="text-[10px] text-[#78716C] font-normal mt-0.5">Эффектное декольте</div>
                                     </button>
                                 </div>
 
-                                <!-- Слайдер глубины выреза -->
-                                <div class="mt-2.5 bg-stone-50/80 p-2.5 rounded-xl border border-stone-200">
-                                    <div class="flex justify-between items-center text-xs mb-1">
-                                        <span class="font-medium text-stone-800">Дополнительное углубление выреза:</span>
-                                        <span class="mono font-bold text-indigo-700"><span id="neckline-depth-val">0</span> см</span>
+                                <!-- Дополнительное углубление выреза -->
+                                <div class="mt-2.5 bg-[#FAF8F5] p-3 rounded-2xl border border-[#F0ECE1] flex items-center justify-between">
+                                    <span class="text-xs font-medium text-[#2C2825]">Углубление выреза:</span>
+                                    <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-white shrink-0">
+                                        <button type="button" onclick="setNecklineDepth(Math.max(0, state.necklineDepth - 0.5)); document.getElementById('num-neckline-depth').value = state.necklineDepth;" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold transition">−</button>
+                                        <div class="w-12 text-center mono text-xs font-bold border-x border-[#F0ECE1] py-1 text-[#2C2825]">
+                                            <input type="number" id="num-neckline-depth" value="0" min="0" max="8" step="0.5"
+                                                oninput="setNecklineDepth(this.value);"
+                                                class="w-full text-center bg-transparent focus:outline-none">
+                                        </div>
+                                        <button type="button" onclick="setNecklineDepth(Math.min(8, state.necklineDepth + 0.5)); document.getElementById('num-neckline-depth').value = state.necklineDepth;" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold transition">+</button>
                                     </div>
-                                    <input type="range" id="rng-neckline-depth" min="0" max="8" step="0.5" value="0"
-                                        oninput="setNecklineDepth(this.value); document.getElementById('neckline-depth-val').textContent = this.value;"
-                                        class="w-full">
                                 </div>
                             </div>
 
                             <!-- Длина рукава -->
                             <div class="space-y-1.5 mb-3">
-                                <div class="text-[11px] font-semibold text-stone-700">Длина рукава:</div>
-                                <div class="grid grid-cols-3 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                                    <button onclick="setSleeveLength('long')" data-sleeve="long" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Длинный</button>
-                                    <button onclick="setSleeveLength('three-quarter')" data-sleeve="three-quarter" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Рукав 3/4</button>
-                                    <button onclick="setSleeveLength('short')" data-sleeve="short" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Короткий</button>
+                                <div class="text-[11px] font-semibold text-[#2C2825]">Длина рукава:</div>
+                                <div class="grid grid-cols-3 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
+                                    <button onclick="setSleeveLength('long')" data-sleeve="long" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Длинный</button>
+                                    <button onclick="setSleeveLength('three-quarter')" data-sleeve="three-quarter" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Рукав 3/4</button>
+                                    <button onclick="setSleeveLength('short')" data-sleeve="short" class="sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Короткий</button>
                                 </div>
                             </div>
 
                             <!-- Силуэт изделия -->
                             <div class="space-y-1.5">
-                                <div class="text-[11px] font-semibold text-stone-700">Силуэт изделия:</div>
-                                <div class="grid grid-cols-2 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                                    <button onclick="setSilhouette('straight')" data-silhouette="straight" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Прямой базовый</button>
-                                    <button onclick="setSilhouette('flare')" data-silhouette="flare" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Трапеция (клеш)</button>
+                                <div class="text-[11px] font-semibold text-[#2C2825]">Силуэт изделия:</div>
+                                <div class="grid grid-cols-2 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
+                                    <button onclick="setSilhouette('straight')" data-silhouette="straight" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Прямой базовый</button>
+                                    <button onclick="setSilhouette('flare')" data-silhouette="flare" class="silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Трапеция (клеш)</button>
                                 </div>
                             </div>
                         </div>
@@ -463,14 +479,14 @@
 
                     <!-- СТИЛИ ДЛЯ ЮБКИ -->
                     <div id="style-skirt-container" class="space-y-4 hidden">
-                        <!-- Детальная карточка активного фасона с рекомендациями -->
+                        <!-- Детальная карточка активного фасона юбки -->
                         <div id="skirt-active-details"></div>
 
-                        <!-- 1. Фасон юбки (Визуальный каталог с превью и бейджами) -->
+                        <!-- 1. Фасон юбки (Каталог) -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1 flex items-center justify-between">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1 flex items-center justify-between">
                                 <span>1. Каталог и фасоны юбок</span>
-                                <span class="text-[10px] text-indigo-600 font-semibold lowercase">13 моделей</span>
+                                <span class="text-[10px] text-[#E05A47] font-semibold lowercase">13 моделей</span>
                             </div>
                             <div id="skirt-catalog-container" class="space-y-3">
                                 <!-- Рендерится через renderSkirtStyleCatalog() -->
@@ -479,11 +495,11 @@
 
                         <!-- 2. Высота посадки юбки -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">2. Посадка на талии</div>
-                            <div class="grid grid-cols-3 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                                <button onclick="setSkirtRise('natural')" data-rise="natural" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">На талии</button>
-                                <button onclick="setSkirtRise('low')" data-rise="low" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">На бедрах</button>
-                                <button onclick="setSkirtRise('high')" data-rise="high" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Высокая</button>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">2. Посадка на талии</div>
+                            <div class="grid grid-cols-3 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
+                                <button onclick="setSkirtRise('natural')" data-rise="natural" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">На талии</button>
+                                <button onclick="setSkirtRise('low')" data-rise="low" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">На бедрах</button>
+                                <button onclick="setSkirtRise('high')" data-rise="high" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Высокая</button>
                             </div>
                         </div>
                     </div>
@@ -494,29 +510,29 @@
 
                         <!-- 1. Модели белья -->
                         <div>
-                            <div class="flex items-center justify-between border-b border-stone-100 pb-1 mb-2">
-                                <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400">1. Каталог моделей белья</div>
-                                <span class="text-[10px] text-stone-400 font-medium">6 моделей</span>
+                            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-1 mb-2">
+                                <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C]">1. Каталог моделей белья</div>
+                                <span class="text-[10px] text-[#78716C] font-medium">6 моделей</span>
                             </div>
                             <div id="panties-catalog-container" class="space-y-2"></div>
                         </div>
 
                         <!-- 2. Высота посадки -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">2. Высота посадки</div>
-                            <div class="grid grid-cols-3 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                                <button onclick="setPantiesRise('high')" data-rise="high" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Высокая</button>
-                                <button onclick="setPantiesRise('mid')" data-rise="mid" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Средняя</button>
-                                <button onclick="setPantiesRise('low')" data-rise="low" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Низкая</button>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">2. Высота посадки</div>
+                            <div class="grid grid-cols-3 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
+                                <button onclick="setPantiesRise('high')" data-rise="high" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Высокая</button>
+                                <button onclick="setPantiesRise('mid')" data-rise="mid" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Средняя</button>
+                                <button onclick="setPantiesRise('low')" data-rise="low" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Низкая</button>
                             </div>
                         </div>
 
                         <!-- 3. Вырез ноги -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 border-b border-stone-100 pb-1">3. Вырез по ноге</div>
-                            <div class="grid grid-cols-2 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                                <button onclick="setPantiesLegCut('classic')" data-leg="classic" class="panties-leg-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">Классический</button>
-                                <button onclick="setPantiesLegCut('high')" data-leg="high" class="panties-leg-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">Высокий (удлиняет ноги)</button>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">3. Вырез по ноге</div>
+                            <div class="grid grid-cols-2 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
+                                <button onclick="setPantiesLegCut('classic')" data-leg="classic" class="panties-leg-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Классический</button>
+                                <button onclick="setPantiesLegCut('high')" data-leg="high" class="panties-leg-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Высокий</button>
                             </div>
                         </div>
                     </div>
@@ -524,308 +540,227 @@
 
                 <!-- ВКЛАДКА 3: ПОСАДКА И ПРИБАВКИ -->
                 <div id="panel-fit" class="space-y-4 hidden">
-                    <!-- Карточка степени прилегания -->
-                    <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 space-y-2">
+                    <!-- Степень прилегания -->
+                    <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5 space-y-2.5">
                         <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-indigo-950">Степень прилегания изделия:</span>
-                            <span id="fit-category-badge" class="text-[11px] mono font-bold px-2 py-0.5 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-800">Полуприлегающий</span>
+                            <span class="text-xs font-bold text-[#2C2825]">Степень прилегания изделия:</span>
+                            <span id="fit-category-badge" class="text-[11px] mono font-bold px-2.5 py-0.5 rounded-full border border-[#BBF7D0] bg-[#F0FDF4] text-[#15803D]">Полуприлегающий</span>
                         </div>
-                        <p id="fit-category-desc" class="text-[11px] text-stone-600 leading-snug"><b>Полуприлегающий крой (ГОСТ):</b> Оптимальный баланс элегантности и комфорта в повседневной носке.</p>
+                        <p id="fit-category-desc" class="text-[11px] text-[#78716C] leading-snug"><b>Полуприлегающий крой (ГОСТ):</b> Оптимальный баланс элегантности и комфорта в повседневной носке.</p>
 
-                        <!-- Интерактивные шкалы комфорта по 4 зонам -->
-                        <div class="space-y-1.5 pt-2 border-t border-indigo-100 text-xs">
+                        <!-- Интерактивные шкалы комфорта -->
+                        <div class="space-y-2 pt-2 border-t border-[#F0ECE1] text-xs">
                             <!-- Грудь -->
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="text-stone-700 font-medium">Обхват груди:</span>
-                                <div class="flex items-center gap-1.5">
-                                    <span id="fit-text-bust" class="text-stone-500">Комфорт</span>
-                                    <span id="fit-val-bust" class="mono font-bold text-indigo-700">+8.0 см</span>
+                            <div>
+                                <div class="flex items-center justify-between text-[11px] mb-1">
+                                    <span class="text-[#78716C] font-medium">Обхват груди:</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="fit-text-bust" class="text-[#78716C]">Комфорт</span>
+                                        <span id="fit-val-bust" class="mono font-bold text-[#E05A47]">+8.0 см</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
-                                <div id="fit-bar-bust" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 50%;"></div>
+                                <div class="w-full bg-[#F0ECE1] h-1.5 rounded-full overflow-hidden">
+                                    <div id="fit-bar-bust" class="bg-[#E05A47] h-full rounded-full transition-all duration-300" style="width: 50%;"></div>
+                                </div>
                             </div>
 
                             <!-- Талия -->
-                            <div class="flex items-center justify-between text-[11px] pt-1">
-                                <span class="text-stone-700 font-medium">Обхват талии:</span>
-                                <div class="flex items-center gap-1.5">
-                                    <span id="fit-text-waist" class="text-stone-500">Комфортное дыхание</span>
-                                    <span id="fit-val-waist" class="mono font-bold text-indigo-700">+4.0 см</span>
+                            <div>
+                                <div class="flex items-center justify-between text-[11px] mb-1">
+                                    <span class="text-[#78716C] font-medium">Обхват талии:</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="fit-text-waist" class="text-[#78716C]">Комфортное дыхание</span>
+                                        <span id="fit-val-waist" class="mono font-bold text-[#E05A47]">+4.0 см</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
-                                <div id="fit-bar-waist" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 40%;"></div>
+                                <div class="w-full bg-[#F0ECE1] h-1.5 rounded-full overflow-hidden">
+                                    <div id="fit-bar-waist" class="bg-[#E05A47] h-full rounded-full transition-all duration-300" style="width: 40%;"></div>
+                                </div>
                             </div>
 
                             <!-- Бедра -->
-                            <div class="flex items-center justify-between text-[11px] pt-1">
-                                <span class="text-stone-700 font-medium">Обхват бедер:</span>
-                                <div class="flex items-center gap-1.5">
-                                    <span id="fit-text-hips" class="text-stone-500">Свободный шаг</span>
-                                    <span id="fit-val-hips" class="mono font-bold text-indigo-700">+4.0 см</span>
+                            <div>
+                                <div class="flex items-center justify-between text-[11px] mb-1">
+                                    <span class="text-[#78716C] font-medium">Обхват бедер:</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="fit-text-hips" class="text-[#78716C]">Свободный шаг</span>
+                                        <span id="fit-val-hips" class="mono font-bold text-[#E05A47]">+4.0 см</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
-                                <div id="fit-bar-hips" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 40%;"></div>
+                                <div class="w-full bg-[#F0ECE1] h-1.5 rounded-full overflow-hidden">
+                                    <div id="fit-bar-hips" class="bg-[#E05A47] h-full rounded-full transition-all duration-300" style="width: 40%;"></div>
+                                </div>
                             </div>
 
                             <!-- Рукав -->
-                            <div class="flex items-center justify-between text-[11px] pt-1">
-                                <span class="text-stone-700 font-medium">Обхват руки:</span>
-                                <div class="flex items-center gap-1.5">
-                                    <span id="fit-text-sleeve" class="text-stone-500">Свободный подъем</span>
-                                    <span id="fit-val-sleeve" class="mono font-bold text-indigo-700">+5.5 см</span>
+                            <div>
+                                <div class="flex items-center justify-between text-[11px] mb-1">
+                                    <span class="text-[#78716C] font-medium">Обхват руки:</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="fit-text-sleeve" class="text-[#78716C]">Свободный подъем</span>
+                                        <span id="fit-val-sleeve" class="mono font-bold text-[#E05A47]">+5.5 см</span>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-[#F0ECE1] h-1.5 rounded-full overflow-hidden">
+                                    <div id="fit-bar-sleeve" class="bg-[#E05A47] h-full rounded-full transition-all duration-300" style="width: 55%;"></div>
                                 </div>
                             </div>
-                            <div class="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
-                                <div id="fit-bar-sleeve" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 55%;"></div>
-                            </div>
                         </div>
-
                     </div>
 
-                    <!-- Готовые силуэтные прибавки -->
+                    <!-- Силуэтные пресеты -->
                     <div>
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2">Пресеты силуэта</div>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2">Пресеты силуэта</div>
                         <div class="grid grid-cols-3 gap-1.5">
-                            <button onclick="applyEasePreset(2.5, 1.0, 1.5, 2.0, 4.0)" class="p-2 text-left border border-stone-200 rounded-xl hover:border-indigo-400 bg-stone-50 transition cursor-pointer">
-                                <div class="text-xs font-bold text-stone-900">Облегающий</div>
-                                <div class="text-[10px] mono text-stone-500">Пг +2.5 см</div>
+                            <button onclick="applyEasePreset(2.5, 1.0, 1.5, 2.0, 4.0)" class="p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer">
+                                <div class="text-xs font-bold text-[#2C2825]">Облегающий</div>
+                                <div class="text-[10px] mono text-[#78716C]">Пг +2.5 см</div>
                             </button>
-                            <button onclick="applyEasePreset(4.0, 2.0, 2.0, 2.5, 5.5)" class="p-2 text-left border-2 border-indigo-600 rounded-xl bg-indigo-50/50 transition cursor-pointer">
-                                <div class="text-xs font-bold text-indigo-900">Умеренный</div>
-                                <div class="text-[10px] mono text-indigo-700">Пг +4.0 см</div>
+                            <button onclick="applyEasePreset(4.0, 2.0, 2.0, 2.5, 5.5)" class="p-2.5 text-left border-2 border-[#E05A47] rounded-2xl bg-[#FFF5F3] transition cursor-pointer">
+                                <div class="text-xs font-bold text-[#2C2825]">Умеренный</div>
+                                <div class="text-[10px] mono text-[#E05A47] font-semibold">Пг +4.0 см</div>
                             </button>
-                            <button onclick="applyEasePreset(7.0, 4.5, 4.0, 3.5, 7.5)" class="p-2 text-left border border-stone-200 rounded-xl hover:border-indigo-400 bg-stone-50 transition cursor-pointer">
-                                <div class="text-xs font-bold text-stone-900">Свободный</div>
-                                <div class="text-[10px] mono text-stone-500">Пг +7.0 см</div>
+                            <button onclick="applyEasePreset(7.0, 4.5, 4.0, 3.5, 7.5)" class="p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer">
+                                <div class="text-xs font-bold text-[#2C2825]">Свободный</div>
+                                <div class="text-[10px] mono text-[#78716C]">Пг +7.0 см</div>
                             </button>
                         </div>
                     </div>
 
                     <!-- Детальные ползунки прибавок -->
-                    <div class="space-y-2.5" id="measures-ease"></div>
+                    <div class="space-y-2" id="measures-ease"></div>
 
                     <!-- Опции чертежа -->
-                    <div class="pt-3 border-t border-stone-200 space-y-1.5">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Отображение на чертеже</div>
+                    <div class="pt-3 border-t border-[#F0ECE1] space-y-1.5">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-1">Отображение на чертеже</div>
                         
-                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2 rounded-lg hover:bg-stone-50">
-                            <span class="text-xs text-stone-800 font-medium">Припуски на швы (+1 см по краям, +3 см низ)</span>
-                            <input type="checkbox" id="chk-seam" onchange="state.showSeamAllowance = this.checked; renderPattern();" class="w-4 h-4 accent-indigo-600 rounded">
+                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2.5 rounded-xl hover:bg-[#FAF8F5] transition">
+                            <span class="text-xs text-[#2C2825] font-medium">Припуски на швы (+1 см по краям, +3 см низ)</span>
+                            <input type="checkbox" id="chk-seam" onchange="state.showSeamAllowance = this.checked; renderPattern();" class="w-4 h-4 accent-[#E05A47] rounded-md">
                         </label>
 
-                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2 rounded-lg hover:bg-stone-50">
-                            <span class="text-xs text-stone-800">Контрольные надсечки (втачивание)</span>
-                            <input type="checkbox" id="chk-notches" checked onchange="state.showNotches = this.checked; renderPattern();" class="w-4 h-4 accent-indigo-600 rounded">
+                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2.5 rounded-xl hover:bg-[#FAF8F5] transition">
+                            <span class="text-xs text-[#2C2825]">Контрольные надсечки (втачивание)</span>
+                            <input type="checkbox" id="chk-notches" checked onchange="state.showNotches = this.checked; renderPattern();" class="w-4 h-4 accent-[#E05A47] rounded-md">
                         </label>
 
-                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2 rounded-lg hover:bg-stone-50">
-                            <span class="text-xs text-stone-800">Линии долевой нити и сгиб ткани</span>
-                            <input type="checkbox" id="chk-grain" checked onchange="state.showGrainline = this.checked; renderPattern();" class="w-4 h-4 accent-indigo-600 rounded">
+                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2.5 rounded-xl hover:bg-[#FAF8F5] transition">
+                            <span class="text-xs text-[#2C2825]">Линии долевой нити и сгиб ткани</span>
+                            <input type="checkbox" id="chk-grain" checked onchange="state.showGrainline = this.checked; renderPattern();" class="w-4 h-4 accent-[#E05A47] rounded-md">
                         </label>
 
-                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2 rounded-lg hover:bg-stone-50">
-                            <span class="text-xs text-stone-800">Буквенные точки и конструктивная сетка</span>
-                            <input type="checkbox" id="chk-grid" checked onchange="state.showGrid = this.checked; renderPattern();" class="w-4 h-4 accent-indigo-600 rounded">
+                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2.5 rounded-xl hover:bg-[#FAF8F5] transition">
+                            <span class="text-xs text-[#2C2825]">Буквенные точки и конструктивная сетка</span>
+                            <input type="checkbox" id="chk-grid" checked onchange="state.showGrid = this.checked; renderPattern();" class="w-4 h-4 accent-[#E05A47] rounded-md">
                         </label>
 
-                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2 rounded-lg hover:bg-stone-50">
-                            <span class="text-xs text-stone-800">Раздвинуть Спинку и Полочку</span>
-                            <input type="checkbox" id="chk-separate" onchange="state.separate = this.checked; renderPattern();" class="w-4 h-4 accent-indigo-600 rounded">
+                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2.5 rounded-xl hover:bg-[#FAF8F5] transition">
+                            <span class="text-xs text-[#2C2825]">Раздвинуть Спинку и Полочку</span>
+                            <input type="checkbox" id="chk-separate" onchange="state.separate = this.checked; renderPattern();" class="w-4 h-4 accent-[#E05A47] rounded-md">
                         </label>
 
-                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2 rounded-lg hover:bg-stone-50">
-                            <span class="text-xs text-stone-800">Показать выкройку рукава</span>
-                            <input type="checkbox" id="chk-sleeve" checked onchange="state.showSleeve = this.checked; renderPattern();" class="w-4 h-4 accent-indigo-600 rounded">
+                        <label class="flex items-center justify-between cursor-pointer py-1.5 px-2.5 rounded-xl hover:bg-[#FAF8F5] transition">
+                            <span class="text-xs text-[#2C2825]">Показать выкройку рукава</span>
+                            <input type="checkbox" id="chk-sleeve" checked onchange="state.showSleeve = this.checked; renderPattern();" class="w-4 h-4 accent-[#E05A47] rounded-md">
                         </label>
                     </div>
                 </div>
 
                 <!-- ВКЛАДКА 4: РАСХОД ТКАНИ И РАСКЛАДКА -->
                 <div id="panel-layout" class="space-y-4 hidden">
-                    <!-- Карточка итогового расхода -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-stone-50 border border-indigo-200 rounded-xl p-3.5 space-y-3">
+                    <!-- Итоговый расход -->
+                    <div class="bg-gradient-to-br from-[#FFF5F3] to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl p-4 space-y-3">
                         <div class="flex items-start justify-between">
                             <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700">Точный метраж для покупки</span>
-                                <div class="text-2xl font-bold mono text-stone-900 mt-0.5" id="layout-length-shrink-m">1.50 м</div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#E05A47]">Точный метраж для покупки</span>
+                                <div class="text-2xl font-bold mono text-[#2C2825] mt-0.5" id="layout-length-shrink-m">1.50 м</div>
                             </div>
                             <div class="text-right">
-                                <span class="text-[10px] text-stone-500 font-medium">Полезный крой</span>
-                                <div class="text-base font-bold mono text-emerald-700" id="layout-efficiency-pct">84%</div>
+                                <span class="text-[10px] text-[#78716C] font-medium">Полезный крой</span>
+                                <div class="text-base font-bold mono text-[#15803D]" id="layout-efficiency-pct">84%</div>
                             </div>
                         </div>
-                        <div class="text-[11px] text-stone-600 flex justify-between border-t border-indigo-100 pt-2">
-                            <span>Чистая длина выкройки: <b id="layout-length-m" class="mono text-stone-800">1.40 м</b></span>
-                            <span class="text-stone-500">Запас на усадку: <b>5%</b></span>
+                        <div class="text-[11px] text-[#78716C] flex justify-between border-t border-[#FCDAD5] pt-2">
+                            <span>Чистая длина выкройки: <b id="layout-length-m" class="mono text-[#2C2825]">1.40 м</b></span>
+                            <span>Запас на усадку: <b>5%</b></span>
                         </div>
                     </div>
 
                     <!-- Настройки полотна ткани -->
                     <div class="space-y-2.5">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Ширина ткани в магазине</div>
-                        <div class="grid grid-cols-3 gap-1.5 bg-stone-100 p-1 rounded-xl border border-stone-200">
-                            <button onclick="setFabricWidth(110)" data-width="110" class="fabric-w-btn flex-1 py-1.5 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">110 см</button>
-                            <button onclick="setFabricWidth(140)" data-width="140" class="fabric-w-btn flex-1 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center">140 см</button>
-                            <button onclick="setFabricWidth(150)" data-width="150" class="fabric-w-btn flex-1 py-1.5 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center">150 см</button>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C]">Ширина ткани в магазине</div>
+                        <div class="grid grid-cols-3 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
+                            <button onclick="setFabricWidth(110)" data-width="110" class="fabric-w-btn flex-1 py-1.5 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">110 см</button>
+                            <button onclick="setFabricWidth(140)" data-width="140" class="fabric-w-btn flex-1 py-1.5 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">140 см</button>
+                            <button onclick="setFabricWidth(150)" data-width="150" class="fabric-w-btn flex-1 py-1.5 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">150 см</button>
                         </div>
 
                         <!-- Способ раскроя -->
                         <div class="pt-1">
-                            <button id="btn-fabric-fold" onclick="toggleFabricFold()" class="w-full py-2 px-3 text-xs font-semibold rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-stone-800 flex items-center justify-between transition cursor-pointer">
+                            <button id="btn-fabric-fold" onclick="toggleFabricFold()" class="w-full py-2.5 px-3.5 text-xs font-semibold rounded-2xl bg-white hover:bg-[#FAF8F5] border border-[#F0ECE1] text-[#2C2825] flex items-center justify-between transition cursor-pointer">
                                 <span>Способ раскроя ткани:</span>
-                                <span class="mono font-bold text-indigo-700">В сгиб (вдвое)</span>
+                                <span class="mono font-bold text-[#E05A47]">В сгиб (вдвое)</span>
                             </button>
                         </div>
 
                         <!-- Запас на усадку -->
-                        <div class="bg-stone-50 p-2.5 rounded-xl border border-stone-200 space-y-1">
+                        <div class="bg-[#FAF8F5] p-3 rounded-2xl border border-[#F0ECE1] space-y-1">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="font-medium text-stone-700">Запас на декатирование / усадку:</span>
-                                <span id="fabric-shrinkage-val" class="mono font-bold text-indigo-700">5%</span>
+                                <span class="font-medium text-[#2C2825]">Запас на декатирование / усадку:</span>
+                                <span id="fabric-shrinkage-val" class="mono font-bold text-[#E05A47]">5%</span>
                             </div>
                             <input type="range" id="rng-fabric-shrinkage" min="0" max="15" step="1" value="5"
-                                oninput="setFabricShrinkage(this.value)" class="w-full">
+                                oninput="setFabricShrinkage(this.value)" class="w-full accent-[#E05A47]">
                         </div>
                     </div>
 
                     <!-- Интерактивная карта раскладки полотна -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Схема раскладки на ткани</span>
-                            <span class="text-[10px] text-stone-500 mono">долевая ↕ вдоль рулона</span>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-[#78716C]">Схема раскладки на ткани</span>
+                            <span class="text-[10px] text-[#78716C] mono">долевая ↕ вдоль рулона</span>
                         </div>
-                        <div id="fabric-layout-svg-container" class="rounded-xl overflow-hidden border border-stone-200 shadow-sm bg-stone-50">
+                        <div id="fabric-layout-svg-container" class="rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-xs bg-[#FAF8F5]">
                             <!-- SVG карта раскладки генерируется динамически через fabric-layout.js -->
                         </div>
                     </div>
 
-                    <!-- Советы по раскрою ткани -->
-                    <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-950 space-y-1 leading-relaxed">
-                        <div class="font-bold">✂️ Рекомендации закройщика:</div>
-                        <ul class="list-disc list-inside text-[11px] text-amber-900/90 space-y-0.5">
-                            <li>Обязательно декатируйте ткань утюгом с паром перед раскроем во избежание усадки готового платья.</li>
+                    <!-- Рекомендации закройщика -->
+                    <div class="p-3.5 bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl text-xs text-[#2C2825] space-y-1.5 leading-relaxed">
+                        <div class="font-bold flex items-center gap-1.5 text-[#2C2825]">
+                            <i data-lucide="scissors" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                            <span>Рекомендации закройщика:</span>
+                        </div>
+                        <ul class="list-disc list-inside text-[11px] text-[#78716C] space-y-1">
+                            <li>Декатируйте ткань утюгом с паром перед раскроем во избежание усадки.</li>
                             <li>Середина спинки совмещается строго со сгибом полотна (без среднего шва).</li>
-                            <li>На тканях с направленным рисунком или ворсом (бархат, вельвет) раскраивайте все детали в одном направлении.</li>
+                            <li>На ворсовых тканях (бархат, вельвет) раскраивайте детали строго в одном направлении.</li>
                         </ul>
-                    </div>
-                </div>
-
-                <!-- ВКЛАДКА 5: ДЕТАЛИ И ВЫГРУЗКА (ПЕЧАТЬ) -->
-                <div id="panel-export" class="space-y-3 hidden">
-                    <div class="p-3 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-600 leading-relaxed space-y-1.5">
-                        <div class="font-bold text-stone-900">🖨️ Печать на обычном домашнем принтере (А4):</div>
-                        <p>Выкройка нарезается на страницы А4 с полями для склейки <b>180×267 мм</b>, метками и проверочным квадратом 50×50 мм.</p>
-                        <label class="flex items-center justify-between pt-1.5 border-t border-stone-200 cursor-pointer">
-                            <span class="text-[11px] font-medium text-stone-800">Пропускать пустые листы бумаги</span>
-                            <input type="checkbox" id="chk-skip-empty" checked class="w-4 h-4 accent-indigo-600 rounded">
-                        </label>
-                    </div>
-
-                    <!-- Деталь: Спинка -->
-                    <div class="p-3.5 border border-stone-200 rounded-xl bg-white shadow-sm space-y-2.5">
-                        <div class="flex justify-between items-center">
-                            <span id="export-title-back" class="text-xs font-bold text-stone-900">1. Спинка (со сгибом)</span>
-                            <span id="dim-back" class="text-[11px] mono text-stone-500"></span>
-                        </div>
-                        <button onclick="exportTiledA4PDF('back')" class="w-full py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                            <span>Печать на листах А4 (PDF)</span>
-                            <span id="pages-back" class="mono text-[10px] bg-indigo-800 px-1.5 py-0.5 rounded"></span>
-                        </button>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="exportPiece('back', 'svg')" class="py-1.5 px-2 bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-medium rounded-lg transition cursor-pointer">Вектор SVG</button>
-                            <button onclick="exportPiece('back', 'png')" class="py-1.5 px-2 bg-white hover:bg-stone-50 text-stone-800 border border-stone-300 text-[11px] font-medium rounded-lg transition cursor-pointer">Картинка PNG</button>
-                        </div>
-                    </div>
-
-                    <!-- Деталь: Полочка -->
-                    <div class="p-3.5 border border-stone-200 rounded-xl bg-white shadow-sm space-y-2.5">
-                        <div class="flex justify-between items-center">
-                            <span id="export-title-front" class="text-xs font-bold text-stone-900">2. Полочка (перед)</span>
-                            <span id="dim-front" class="text-[11px] mono text-stone-500"></span>
-                        </div>
-                        <button onclick="exportTiledA4PDF('front')" class="w-full py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                            <span>Печать на листах А4 (PDF)</span>
-                            <span id="pages-front" class="mono text-[10px] bg-indigo-800 px-1.5 py-0.5 rounded"></span>
-                        </button>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="exportPiece('front', 'svg')" class="py-1.5 px-2 bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-medium rounded-lg transition cursor-pointer">Вектор SVG</button>
-                            <button onclick="exportPiece('front', 'png')" class="py-1.5 px-2 bg-white hover:bg-stone-50 text-stone-800 border border-stone-300 text-[11px] font-medium rounded-lg transition cursor-pointer">Картинка PNG</button>
-                        </div>
-                    </div>
-
-                    <!-- Деталь: Рукав -->
-                    <div class="p-3.5 border border-stone-200 rounded-xl bg-white shadow-sm space-y-2.5">
-                        <div class="flex justify-between items-center">
-                            <span id="export-title-sleeve" class="text-xs font-bold text-stone-900">3. Рукав втачной</span>
-                            <span id="dim-sleeve" class="text-[11px] mono text-stone-500"></span>
-                        </div>
-                        <button onclick="exportTiledA4PDF('sleeve')" class="w-full py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                            <span>Печать на листах А4 (PDF)</span>
-                            <span id="pages-sleeve" class="mono text-[10px] bg-indigo-800 px-1.5 py-0.5 rounded"></span>
-                        </button>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="exportPiece('sleeve', 'svg')" class="py-1.5 px-2 bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-medium rounded-lg transition cursor-pointer">Вектор SVG</button>
-                            <button onclick="exportPiece('sleeve', 'png')" class="py-1.5 px-2 bg-white hover:bg-stone-50 text-stone-800 border border-stone-300 text-[11px] font-medium rounded-lg transition cursor-pointer">Картинка PNG</button>
-                        </div>
-                    </div>
-
-                    <!-- Деталь: Все лекала -->
-                    <div class="p-3.5 border border-indigo-200 rounded-xl bg-indigo-50/40 space-y-2.5">
-                        <div class="flex justify-between items-center">
-                            <span id="export-title-all" class="text-xs font-bold text-stone-900">4. Весь комплект (все детали)</span>
-                            <span id="dim-all" class="text-[11px] mono text-indigo-700 font-semibold"></span>
-                        </div>
-                        <button onclick="exportTiledA4PDF('all')" class="w-full py-2 px-3 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                            <span>🖨️ Скачать общий PDF со всеми деталями</span>
-                            <span id="pages-all" class="mono text-[10px] bg-stone-700 px-1.5 py-0.5 rounded"></span>
-                        </button>
-                    </div>
-
-                    <!-- Таблица баланса и сопряжения -->
-                    <div class="pt-2 border-t border-stone-200 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-stone-900">Конструктивный баланс и сопряжение</span>
-                            <span class="text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded font-mono font-medium">Точность 100%</span>
-                        </div>
-                        <div class="border border-stone-200 rounded-xl overflow-hidden shadow-sm">
-                            <table class="w-full text-left border-collapse text-xs">
-                                <thead>
-                                    <tr class="bg-stone-50 border-b border-stone-200 text-stone-600">
-                                        <th class="p-2 font-semibold">Узел изделия</th>
-                                        <th class="p-2 font-semibold">Назначение</th>
-                                        <th class="p-2 font-semibold text-right">Размер</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="calc-table-body" class="divide-y divide-stone-100"></tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
 
             </div>
         </aside>
 
-        <!-- Интерактивный холст лекал (Canvas) -->
+        <!-- Интерактивный холст лекал (Canvas с теплой точечной сеткой) -->
         <main id="cad-canvas-container" class="flex-1 flex flex-col relative cad-canvas-bg overflow-hidden h-full">
             
-            <!-- Панель управления над холстом: Раздвинуть/Совместить + Зум -->
-            <div class="absolute top-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 pointer-events-none z-10">
-                <div class="bg-white/95 backdrop-blur-sm border border-stone-200 p-1 rounded-xl shadow-sm flex items-center gap-1 text-xs pointer-events-auto">
-                    <button onclick="toggleSeparateMode()" id="btn-separate-mode" class="hover:bg-stone-100 text-stone-700 font-semibold px-2.5 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
-                        <span>⇄ Раздельный вид</span>
+            <!-- Панель управления над холстом: Раздвинуть/Совместить + Зум (Floating Glassmorphic Capsules) -->
+            <div class="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none z-10">
+                <div class="bg-white/90 backdrop-blur-md border border-[#F0ECE1] p-1 rounded-2xl shadow-float flex items-center gap-1 text-xs pointer-events-auto">
+                    <button onclick="toggleSeparateMode()" id="btn-separate-mode" class="hover:bg-[#FAF8F5] text-[#2C2825] font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                        <span>Раздельный вид</span>
                     </button>
                 </div>
 
                 <!-- Зум и центрирование -->
-                <div class="bg-white/95 backdrop-blur-sm border border-stone-200 p-1 rounded-xl shadow-sm flex items-center gap-1 pointer-events-auto">
-                    <button onclick="zoomCanvas(-0.15)" title="Уменьшить" class="w-7 h-7 flex items-center justify-center hover:bg-stone-100 rounded-lg text-stone-800 font-bold text-sm">−</button>
-                    <span id="zoom-label" class="mono text-xs font-semibold text-stone-700 px-2 min-w-[48px] text-center">85%</span>
-                    <button onclick="zoomCanvas(0.15)" title="Увеличить" class="w-7 h-7 flex items-center justify-center hover:bg-stone-100 rounded-lg text-stone-800 font-bold text-sm">+</button>
-                    <div class="w-px h-4 bg-stone-200 mx-0.5"></div>
-                    <button onclick="resetView()" class="text-xs font-medium text-stone-700 hover:bg-stone-100 px-2.5 py-1 rounded-lg transition">Вписать</button>
+                <div class="bg-white/90 backdrop-blur-md border border-[#F0ECE1] p-1 rounded-2xl shadow-float flex items-center gap-1 pointer-events-auto">
+                    <button onclick="zoomCanvas(-0.15)" title="Уменьшить" class="w-8 h-8 flex items-center justify-center hover:bg-[#FAF8F5] rounded-xl text-[#2C2825] font-bold text-sm cursor-pointer transition">−</button>
+                    <span id="zoom-label" class="mono text-xs font-bold text-[#2C2825] px-2 min-w-[50px] text-center">85%</span>
+                    <button onclick="zoomCanvas(0.15)" title="Увеличить" class="w-8 h-8 flex items-center justify-center hover:bg-[#FAF8F5] rounded-xl text-[#2C2825] font-bold text-sm cursor-pointer transition">+</button>
+                    <div class="w-px h-4 bg-[#F0ECE1] mx-0.5"></div>
+                    <button onclick="resetView()" class="text-xs font-semibold text-[#78716C] hover:text-[#2C2825] hover:bg-[#FAF8F5] px-3 py-1.5 rounded-xl transition cursor-pointer">Вписать</button>
                 </div>
             </div>
 
@@ -837,11 +772,12 @@
             </div>
 
             <!-- Подсказка по навигации снизу холста -->
-            <div class="absolute bottom-14 md:bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none text-[11px]">
-                <div class="bg-white/90 backdrop-blur-sm border border-stone-200 px-2.5 py-1 rounded-lg shadow-sm text-stone-600 hidden sm:block">
-                    Перемещение: <b>тяните мышкой или пальцем</b> • Масштаб: <b>колёсико мыши</b>
+            <div class="absolute bottom-16 md:bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none text-[11px]">
+                <div class="bg-white/90 backdrop-blur-md border border-[#F0ECE1] px-3 py-1.5 rounded-xl shadow-xs text-[#78716C] hidden sm:flex items-center gap-1.5">
+                    <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                    <span>Перемещение: <b>тяните мышкой</b> • Масштаб: <b>колёсико мыши</b></span>
                 </div>
-                <div id="cursor-coords" class="bg-white/90 backdrop-blur-sm border border-stone-200 px-2.5 py-1 rounded-lg shadow-sm mono text-stone-700 ml-auto">
+                <div id="cursor-coords" class="bg-white/90 backdrop-blur-md border border-[#F0ECE1] px-3 py-1.5 rounded-xl shadow-xs mono text-[#78716C] ml-auto">
                     X: 0.0 см | Y: 0.0 см
                 </div>
             </div>
@@ -849,286 +785,325 @@
     </div>
 
     <!-- Мобильная нижняя панель навигации (для смартфонов) -->
-    <nav class="md:hidden bg-white border-t border-stone-200 flex items-center z-30 shrink-0 safe-bottom shadow-lg">
-        <button id="m-btn-params" onclick="setMobileView('sidebar')" class="flex-1 py-2.5 text-xs font-medium text-stone-600 hover:text-stone-900 border-t-2 border-transparent flex items-center justify-center gap-1.5 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-            </svg>
+    <nav class="md:hidden bg-white/95 backdrop-blur-md border-t border-[#F0ECE1] flex items-center z-30 shrink-0 safe-bottom shadow-lg">
+        <button id="m-btn-params" onclick="setMobileView('sidebar')" class="flex-1 py-3 text-xs font-medium text-[#78716C] hover:text-[#2C2825] flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
             <span>Параметры и мерки</span>
         </button>
-        <div class="w-px h-6 bg-stone-200"></div>
-        <button id="m-btn-canvas" onclick="setMobileView('canvas')" class="flex-1 py-2.5 text-xs font-bold text-indigo-600 bg-indigo-50 border-t-2 border-indigo-600 flex items-center justify-center gap-1.5 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
+        <div class="w-px h-6 bg-[#F0ECE1]"></div>
+        <button id="m-btn-canvas" onclick="setMobileView('canvas')" class="flex-1 py-3 text-xs font-bold text-[#E05A47] bg-[#FFF5F3] flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="eye" class="w-4 h-4"></i>
             <span>Чертёж выкройки</span>
         </button>
     </nav>
 
     <!-- Модальное окно: Быстрый просмотр фото модели (Lightbox) -->
-    <div id="lightbox-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-6 transition-all" onclick="if(event.target === this) closeLightbox();">
-        <div class="relative max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden border border-stone-200 flex flex-col max-h-[92vh] animate-fadeIn">
-            <div class="px-4 py-3 border-b border-stone-150 flex items-center justify-between bg-stone-50/90">
+    <div id="lightbox-modal" class="fixed inset-0 bg-[#2C2825]/80 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-6 transition-all" onclick="if(event.target === this) closeLightbox();">
+        <div class="relative max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#F0ECE1] flex flex-col max-h-[92vh] animate-fadeIn">
+            <div class="px-5 py-3.5 border-b border-[#F0ECE1] flex items-center justify-between bg-[#FAF8F5]">
                 <div>
-                    <h4 id="lightbox-title" class="font-bold text-sm text-stone-900">Фасон</h4>
-                    <p id="lightbox-subtitle" class="text-[11px] text-stone-500">Увеличенный просмотр модели</p>
+                    <h4 id="lightbox-title" class="font-bold text-sm text-[#2C2825]">Фасон</h4>
+                    <p id="lightbox-subtitle" class="text-[11px] text-[#78716C]">Увеличенный просмотр модели</p>
                 </div>
-                <button type="button" onclick="closeLightbox()" class="w-8 h-8 rounded-full hover:bg-stone-200 flex items-center justify-center text-stone-500 hover:text-stone-900 font-bold transition text-base cursor-pointer">✕</button>
+                <button type="button" onclick="closeLightbox()" class="w-8 h-8 rounded-full hover:bg-white flex items-center justify-center text-[#78716C] hover:text-[#2C2825] font-bold transition text-base cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
-            <div class="p-4 flex items-center justify-center bg-stone-100 overflow-hidden min-h-[340px] max-h-[74vh]">
-                <img id="lightbox-img" src="" alt="Модель" class="max-h-[70vh] w-auto max-w-full object-contain rounded-xl shadow-md hidden">
+            <div class="p-4 flex items-center justify-center bg-[#FAF8F5] overflow-hidden min-h-[340px] max-h-[74vh]">
+                <img id="lightbox-img" src="" alt="Модель" class="max-h-[70vh] w-auto max-w-full object-contain rounded-2xl shadow-md hidden">
                 <div id="lightbox-svg" class="w-full flex items-center justify-center hidden"></div>
             </div>
-            <div class="px-4 py-2.5 bg-stone-50 border-t border-stone-150 flex items-center justify-between">
-                <span class="text-[11px] text-stone-500">Нажмите <b>Esc</b> или в любое место вокруг для закрытия</span>
-                <button type="button" onclick="closeLightbox()" class="px-3 py-1 bg-stone-900 hover:bg-black text-white text-xs font-semibold rounded-lg transition cursor-pointer">Закрыть</button>
+            <div class="px-5 py-3 bg-[#FAF8F5] border-t border-[#F0ECE1] flex items-center justify-between">
+                <span class="text-[11px] text-[#78716C]">Нажмите <b>Esc</b> или вне окна для закрытия</span>
+                <button type="button" onclick="closeLightbox()" class="px-4 py-1.5 bg-[#2C2825] hover:bg-black text-white text-xs font-semibold rounded-xl transition cursor-pointer">Закрыть</button>
             </div>
         </div>
     </div>
 
     <!-- Модальное окно: Интерактивный Лукбук и фото-галерея фасонов -->
-    <div id="lookbook-modal" class="fixed inset-0 bg-stone-950/75 backdrop-blur-md z-50 hidden items-center justify-center p-2 sm:p-4 transition-all" onclick="if(event.target === this) closeLookbookModal();">
-        <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[92vh] animate-fadeIn">
+    <div id="lookbook-modal" class="fixed inset-0 bg-[#2C2825]/75 backdrop-blur-md z-50 hidden items-center justify-center p-2 sm:p-4 transition-all" onclick="if(event.target === this) closeLookbookModal();">
+        <div class="bg-white rounded-3xl max-w-3xl w-full shadow-2xl border border-[#F0ECE1] overflow-hidden flex flex-col max-h-[92vh] animate-fadeIn">
             <!-- Шапка модального окна -->
-            <div class="px-5 py-3.5 border-b border-stone-200/80 flex items-center justify-between bg-stone-50/90 shrink-0">
+            <div class="px-5 py-3.5 border-b border-[#F0ECE1] flex items-center justify-between bg-[#FAF8F5] shrink-0">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-xs text-sm">
-                        📸
+                    <div class="w-9 h-9 rounded-2xl bg-[#FFF5F3] border border-[#FCDAD5] text-[#E05A47] flex items-center justify-center shadow-xs">
+                        <i data-lucide="camera" class="w-4 h-4"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 id="lb-modal-title" class="font-bold text-stone-900 text-sm sm:text-base">Мини-трапеция</h3>
-                            <span id="lb-modal-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-rose-100 text-rose-700 border-rose-200">Хит</span>
-                            <span id="lb-modal-type-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-stone-100 text-stone-600 border-stone-200">📸 Фотография</span>
+                            <h3 id="lb-modal-title" class="font-bold text-[#2C2825] text-sm sm:text-base">Мини-трапеция</h3>
+                            <span id="lb-modal-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-[#FFF5F3] text-[#E05A47] border-[#FCDAD5]">Популярно</span>
+                            <span id="lb-modal-type-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-white text-[#78716C] border-[#F0ECE1]">Фотография</span>
                         </div>
-                        <p id="lb-modal-breadcrumb" class="text-[11px] text-stone-500 mt-0.5">Юбка • Фасон мини</p>
+                        <p id="lb-modal-breadcrumb" class="text-[11px] text-[#78716C] mt-0.5">Юбка • Фасон мини</p>
                     </div>
                 </div>
-                <button onclick="closeLookbookModal()" class="w-8 h-8 rounded-full hover:bg-stone-200 flex items-center justify-center text-stone-400 hover:text-stone-700 font-bold transition text-base cursor-pointer">✕</button>
+                <button onclick="closeLookbookModal()" class="w-8 h-8 rounded-full hover:bg-white flex items-center justify-center text-[#78716C] hover:text-[#2C2825] font-bold transition cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
 
             <!-- Тело модального окна -->
-            <div class="p-4 sm:p-6 overflow-y-auto space-y-4">
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-                    <!-- Левая колонка: Превью (фото или вектор) -->
+                    <!-- Левая колонка: Превью -->
                     <div class="md:col-span-5 flex flex-col items-center space-y-3">
-                        <div class="relative w-full aspect-[3/4] max-h-[360px] bg-gradient-to-b from-stone-50 to-stone-100 rounded-2xl overflow-hidden border border-stone-200 shadow-inner flex items-center justify-center">
+                        <div class="relative w-full aspect-[3/4] max-h-[360px] bg-[#FAF8F5] rounded-2xl overflow-hidden border border-[#F0ECE1] shadow-inner flex items-center justify-center">
                             <img id="lb-modal-img" src="" alt="Фасон" class="w-full h-full object-cover hidden">
                             <div id="lb-modal-svg" class="w-full h-full flex items-center justify-center p-3"></div>
-                            <div id="lb-modal-img-tag" class="absolute bottom-2.5 right-2.5 bg-stone-900/85 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1">
-                                <span>📸 Фото</span>
+                            <div id="lb-modal-img-tag" class="absolute bottom-2.5 right-2.5 bg-[#2C2825]/90 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-md flex items-center gap-1">
+                                <i data-lucide="camera" class="w-3 h-3 text-[#E05A47]"></i>
+                                <span>Фото</span>
                             </div>
                         </div>
 
-                        <!-- Карусель / миниатюры других фасонов -->
+                        <!-- Миниатюры других фасонов -->
                         <div class="w-full">
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5 flex items-center justify-between">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-1.5 flex items-center justify-between">
                                 <span>Другие фасоны:</span>
-                                <span id="lb-modal-count" class="text-[10px] text-indigo-600 font-semibold lowercase">13 моделей</span>
+                                <span id="lb-modal-count" class="text-[10px] text-[#E05A47] font-semibold lowercase">13 моделей</span>
                             </div>
-                            <div id="lb-modal-thumbs" class="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin">
+                            <div id="lb-modal-thumbs" class="flex gap-2 overflow-x-auto pb-1.5 pt-0.5">
                                 <!-- Рендерится через renderLookbookThumbs() -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Правая колонка: Описание, ткани, крой, стилизация -->
+                    <!-- Правая колонка: Описание, ткани, крой -->
                     <div class="md:col-span-7 space-y-3">
                         <!-- Описание силуэта -->
-                        <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3">
-                            <h4 class="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                                <span>✨ Особенности силуэта</span>
+                        <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5">
+                            <h4 class="text-xs font-bold text-[#2C2825] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                <span>Особенности силуэта</span>
                             </h4>
-                            <p id="lb-modal-desc" class="text-xs text-stone-700 leading-relaxed"></p>
+                            <p id="lb-modal-desc" class="text-xs text-[#78716C] leading-relaxed"></p>
                         </div>
 
                         <!-- Карточки характеристик -->
                         <div class="grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-2">
-                                <span class="text-[10px] uppercase font-bold text-stone-400 block">Длина</span>
-                                <span id="lb-modal-length" class="text-xs font-bold text-stone-900 block mt-0.5">40 см</span>
+                            <div class="bg-white border border-[#F0ECE1] rounded-2xl p-2.5 shadow-xs">
+                                <span class="text-[10px] uppercase font-bold text-[#78716C] block">Длина</span>
+                                <span id="lb-modal-length" class="text-xs font-bold text-[#2C2825] block mt-0.5">40 см</span>
                             </div>
-                            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-2">
-                                <span class="text-[10px] uppercase font-bold text-stone-400 block">Сложность</span>
-                                <span id="lb-modal-difficulty" class="text-xs font-bold text-emerald-700 block mt-0.5">Легко</span>
+                            <div class="bg-white border border-[#F0ECE1] rounded-2xl p-2.5 shadow-xs">
+                                <span class="text-[10px] uppercase font-bold text-[#78716C] block">Сложность</span>
+                                <span id="lb-modal-difficulty" class="text-xs font-bold text-[#15803D] block mt-0.5">Легко</span>
                             </div>
-                            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-2">
-                                <span class="text-[10px] uppercase font-bold text-stone-400 block">Время</span>
-                                <span id="lb-modal-time" class="text-xs font-bold text-stone-900 block mt-0.5">1.5 – 2 ч</span>
+                            <div class="bg-white border border-[#F0ECE1] rounded-2xl p-2.5 shadow-xs">
+                                <span class="text-[10px] uppercase font-bold text-[#78716C] block">Время</span>
+                                <span id="lb-modal-time" class="text-xs font-bold text-[#2C2825] block mt-0.5">1.5 – 2 ч</span>
                             </div>
                         </div>
 
                         <!-- Ткани -->
-                        <div class="border border-stone-200 rounded-xl p-3 bg-white space-y-1">
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
-                                <span>🧵 Рекомендуемые ткани</span>
+                        <div class="border border-[#F0ECE1] rounded-2xl p-3.5 bg-white space-y-1 shadow-xs">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-1.5">
+                                <i data-lucide="scissors" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                <span>Рекомендуемые ткани</span>
                             </div>
-                            <p id="lb-modal-fabrics" class="text-xs text-stone-800 leading-snug"></p>
+                            <p id="lb-modal-fabrics" class="text-xs text-[#2C2825] leading-snug"></p>
                         </div>
 
                         <!-- Совет по раскрою -->
-                        <div class="border border-stone-200 rounded-xl p-3 bg-white space-y-1">
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
-                                <span>✂ Секрет кроя и моделирования</span>
+                        <div class="border border-[#F0ECE1] rounded-2xl p-3.5 bg-white space-y-1 shadow-xs">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] flex items-center gap-1.5">
+                                <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                <span>Секрет кроя и моделирования</span>
                             </div>
-                            <p id="lb-modal-cuttip" class="text-xs text-stone-800 leading-snug"></p>
+                            <p id="lb-modal-cuttip" class="text-xs text-[#2C2825] leading-snug"></p>
                         </div>
 
                         <!-- Совет по стилизации -->
-                        <div class="bg-indigo-50/60 border border-indigo-150 rounded-xl p-3 space-y-1">
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
-                                <span>💡 Стилизация и баланс пропорций</span>
+                        <div class="bg-[#FFF5F3] border border-[#FCDAD5] rounded-2xl p-3.5 space-y-1">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#E05A47] flex items-center gap-1.5">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i>
+                                <span>Стилизация и пропорции</span>
                             </div>
-                            <p id="lb-modal-tip" class="text-xs text-stone-800 leading-snug"></p>
+                            <p id="lb-modal-tip" class="text-xs text-[#2C2825] leading-snug"></p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Подвал модального окна -->
-            <div class="px-5 py-3 bg-stone-50 border-t border-stone-200/80 flex items-center justify-between gap-3 shrink-0">
-                <button onclick="closeLookbookModal()" class="px-4 py-2 border border-stone-300 hover:bg-stone-200/70 rounded-xl text-xs font-semibold text-stone-700 transition cursor-pointer">
+            <div class="px-5 py-3.5 bg-[#FAF8F5] border-t border-[#F0ECE1] flex items-center justify-between gap-3 shrink-0">
+                <button onclick="closeLookbookModal()" class="px-4 py-2 border border-[#F0ECE1] hover:bg-white rounded-xl text-xs font-semibold text-[#78716C] hover:text-[#2C2825] transition cursor-pointer">
                     Закрыть
                 </button>
-                <button id="lb-modal-apply-btn" onclick="applyLookbookStyle()" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 cursor-pointer">
-                    <span>⚡ Применить на чертёж</span>
+                <button id="lb-modal-apply-btn" onclick="applyLookbookStyle()" class="px-5 py-2.5 bg-[#E05A47] hover:bg-[#D04835] text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-2 cursor-pointer">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>Применить на чертёж</span>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Модальное окно подсказок по снятию мерок -->
-    <div id="hint-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-stone-200 space-y-3.5 animate-fadeIn">
-            <div class="flex items-center justify-between border-b border-stone-100 pb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
+    <div id="hint-modal" class="fixed inset-0 bg-[#2C2825]/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#F0ECE1] space-y-4 animate-fadeIn">
+            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#FFF5F3] border border-[#FCDAD5] text-[#E05A47] flex items-center justify-center font-bold text-xs">
                         ?
                     </div>
                     <div>
-                        <h3 id="hint-modal-title" class="font-bold text-stone-900 text-sm">Как снять мерку</h3>
-                        <span id="hint-modal-abbr" class="text-[10px] mono font-semibold bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded border border-indigo-100">Ог</span>
+                        <h3 id="hint-modal-title" class="font-bold text-[#2C2825] text-sm">Как снять мерку</h3>
+                        <span id="hint-modal-abbr" class="text-[10px] mono font-bold bg-[#FFF5F3] text-[#E05A47] px-2 py-0.5 rounded border border-[#FCDAD5]">Ог</span>
                     </div>
                 </div>
-                <button onclick="closeHintModal()" class="w-8 h-8 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-700 transition">✕</button>
+                <button onclick="closeHintModal()" class="w-8 h-8 rounded-full hover:bg-[#FAF8F5] flex items-center justify-center text-[#78716C] hover:text-[#2C2825] transition cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
             
-            <div class="bg-stone-50 border border-stone-100 rounded-xl p-3.5">
-                <p id="hint-modal-text" class="text-xs text-stone-700 leading-relaxed"></p>
+            <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-4">
+                <p id="hint-modal-text" class="text-xs text-[#2C2825] leading-relaxed"></p>
             </div>
 
             <div class="flex justify-end pt-1">
-                <button onclick="closeHintModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition shadow-sm">
+                <button onclick="closeHintModal()" class="px-4 py-2 bg-[#E05A47] hover:bg-[#D04835] text-white text-xs font-semibold rounded-xl transition shadow-xs cursor-pointer">
                     Понятно, спасибо
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно экспорта и печати -->
-    <div id="export-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full p-5 shadow-2xl border border-stone-200 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between border-b border-stone-100 pb-3">
+    <!-- Модальное окно «Скачать выкройку» (Radix Dialog Style) -->
+    <div id="export-modal" class="fixed inset-0 bg-[#2C2825]/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-[#F0ECE1] space-y-4 max-h-[90vh] overflow-y-auto animate-fadeIn">
+            
+            <!-- Шапка окна -->
+            <div class="flex items-start justify-between border-b border-[#F0ECE1] pb-3">
                 <div>
-                    <h2 class="text-base font-bold text-stone-900">Печать выкройки на листах А4 (PDF 1:1)</h2>
-                    <p class="text-xs text-stone-500 mt-0.5">Файл автоматически разбивает выкройку на страницы А4 с полями для удобной склейки скотчем</p>
+                    <h2 class="text-base font-extrabold text-[#2C2825]">Печать выкройки на листах А4 (PDF 1:1)</h2>
+                    <p class="text-xs text-[#78716C] mt-0.5">Нарезка с полями для склейки скотчем, метками и проверочным квадратом 50×50 мм</p>
                 </div>
-                <button onclick="closeExportModal()" class="w-8 h-8 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-700 font-bold transition">✕</button>
+                <button onclick="closeExportModal()" class="w-8 h-8 rounded-full hover:bg-[#FAF8F5] flex items-center justify-center text-[#78716C] hover:text-[#2C2825] font-bold transition cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
 
             <!-- Индикатор процесса генерации PDF -->
-            <div id="pdf-status-banner" class="hidden bg-indigo-50 border border-indigo-200 text-indigo-900 px-3.5 py-2.5 rounded-xl text-xs font-medium items-center justify-between">
-                <span id="pdf-status-text">Идет формирование листов А4...</span>
-                <span class="mono font-bold animate-pulse text-indigo-700">1:1 PDF</span>
+            <div id="pdf-status-banner" class="hidden bg-[#FFF5F3] border border-[#FCDAD5] text-[#2C2825] px-4 py-3 rounded-2xl text-xs font-medium items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="printer" class="w-4 h-4 text-[#E05A47] animate-bounce"></i>
+                    <span id="pdf-status-text">Идет формирование листов А4...</span>
+                </div>
+                <span class="mono font-bold animate-pulse text-[#E05A47]">1:1 PDF</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Главное действие: Скачать полный комплект для печати на А4 -->
+            <div class="p-4 bg-gradient-to-r from-[#FFF5F3] to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl space-y-3">
+                <button onclick="exportTiledA4PDF('all')" class="w-full py-3.5 px-4 bg-[#E05A47] hover:bg-[#D04835] text-white font-bold text-sm rounded-xl transition flex items-center justify-center gap-2.5 shadow-sm cursor-pointer">
+                    <i data-lucide="printer" class="w-5 h-5"></i>
+                    <span>Скачать полный комплект для печати на А4 (PDF)</span>
+                    <span id="modal-pages-all" class="mono text-xs bg-black/15 px-2 py-0.5 rounded-md"></span>
+                </button>
+                <div class="flex items-center justify-between text-xs text-[#78716C] pt-1">
+                    <span class="text-[11px]">Формат листов: <b>180×267 мм</b> (поля для нахлеста и склейки)</span>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="chk-skip-empty" checked class="w-3.5 h-3.5 accent-[#E05A47] rounded">
+                        <span class="text-[11px]">Пропускать пустые листы</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Список отдельных деталей кроя -->
+            <div class="space-y-2.5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] px-1">Отдельные детали лекал:</div>
+
                 <!-- Спинка -->
-                <div class="p-3.5 rounded-xl border border-stone-200 bg-stone-50 flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <span id="modal-title-back" class="font-bold text-stone-900 text-xs">1. Деталь «Спинка»</span>
-                            <span id="modal-pages-back" class="text-[11px] mono font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded"></span>
+                <div class="p-3.5 rounded-2xl border border-[#F0ECE1] bg-[#FAF8F5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-0.5">
+                        <div class="flex items-center gap-2">
+                            <span id="modal-title-back" class="font-bold text-[#2C2825] text-xs">1. Деталь «Спинка»</span>
+                            <span id="modal-pages-back" class="text-[10px] mono font-bold text-[#E05A47] bg-[#FFF5F3] border border-[#FCDAD5] px-1.5 py-0.2 rounded-md"></span>
                         </div>
-                        <p id="modal-desc-back" class="text-[11px] text-stone-500 mt-1">Контур со сгибом, плечевая и талиевая вытачки.</p>
+                        <p id="modal-desc-back" class="text-[11px] text-[#78716C]">Контур со сгибом, плечевая и талиевая вытачки.</p>
                     </div>
-                    <div class="space-y-1.5">
-                        <button onclick="exportTiledA4PDF('back')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 rounded-lg transition shadow-sm">
-                            🖨️ Скачать PDF (нарезка А4)
+                    <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
+                        <button onclick="exportTiledA4PDF('back')" class="px-2.5 py-1.5 bg-white hover:bg-[#FFF5F3] hover:text-[#E05A47] border border-[#F0ECE1] text-[#2C2825] rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                            <span>PDF A4</span>
                         </button>
-                        <div class="flex gap-2">
-                            <button onclick="exportPiece('back', 'svg')" class="flex-1 bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-medium py-1.5 rounded-lg">SVG 1:1</button>
-                            <button onclick="exportPiece('back', 'png')" class="flex-1 bg-white hover:bg-stone-100 border border-stone-300 text-stone-800 text-[11px] font-medium py-1.5 rounded-lg">PNG</button>
-                        </div>
+                        <button onclick="exportPiece('back', 'png')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">PNG</button>
+                        <button onclick="exportPiece('back', 'svg')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">SVG</button>
+                        <button onclick="exportPiece('back', 'dxf')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">DXF</button>
                     </div>
                 </div>
 
                 <!-- Полочка -->
-                <div class="p-3.5 rounded-xl border border-stone-200 bg-stone-50 flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <span id="modal-title-front" class="font-bold text-stone-900 text-xs">2. Деталь «Полочка»</span>
-                            <span id="modal-pages-front" class="text-[11px] mono font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded"></span>
+                <div class="p-3.5 rounded-2xl border border-[#F0ECE1] bg-[#FAF8F5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-0.5">
+                        <div class="flex items-center gap-2">
+                            <span id="modal-title-front" class="font-bold text-[#2C2825] text-xs">2. Деталь «Полочка»</span>
+                            <span id="modal-pages-front" class="text-[10px] mono font-bold text-[#E05A47] bg-[#FFF5F3] border border-[#FCDAD5] px-1.5 py-0.2 rounded-md"></span>
                         </div>
-                        <p id="modal-desc-front" class="text-[11px] text-stone-500 mt-1">Контур переда, нагрудная вытачка и приталивание.</p>
+                        <p id="modal-desc-front" class="text-[11px] text-[#78716C]">Контур переда, нагрудная вытачка и приталивание.</p>
                     </div>
-                    <div class="space-y-1.5">
-                        <button onclick="exportTiledA4PDF('front')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 rounded-lg transition shadow-sm">
-                            🖨️ Скачать PDF (нарезка А4)
+                    <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
+                        <button onclick="exportTiledA4PDF('front')" class="px-2.5 py-1.5 bg-white hover:bg-[#FFF5F3] hover:text-[#E05A47] border border-[#F0ECE1] text-[#2C2825] rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                            <span>PDF A4</span>
                         </button>
-                        <div class="flex gap-2">
-                            <button onclick="exportPiece('front', 'svg')" class="flex-1 bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-medium py-1.5 rounded-lg">SVG 1:1</button>
-                            <button onclick="exportPiece('front', 'png')" class="flex-1 bg-white hover:bg-stone-100 border border-stone-300 text-stone-800 text-[11px] font-medium py-1.5 rounded-lg">PNG</button>
-                        </div>
+                        <button onclick="exportPiece('front', 'png')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">PNG</button>
+                        <button onclick="exportPiece('front', 'svg')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">SVG</button>
+                        <button onclick="exportPiece('front', 'dxf')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">DXF</button>
                     </div>
                 </div>
 
                 <!-- Рукав -->
-                <div class="p-3.5 rounded-xl border border-stone-200 bg-stone-50 flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <span id="modal-title-sleeve" class="font-bold text-stone-900 text-xs">3. Деталь «Рукав»</span>
-                            <span id="modal-pages-sleeve" class="text-[11px] mono font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded"></span>
+                <div class="p-3.5 rounded-2xl border border-[#F0ECE1] bg-[#FAF8F5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-0.5">
+                        <div class="flex items-center gap-2">
+                            <span id="modal-title-sleeve" class="font-bold text-[#2C2825] text-xs">3. Деталь «Рукав»</span>
+                            <span id="modal-pages-sleeve" class="text-[10px] mono font-bold text-[#E05A47] bg-[#FFF5F3] border border-[#FCDAD5] px-1.5 py-0.2 rounded-md"></span>
                         </div>
-                        <p id="modal-desc-sleeve" class="text-[11px] text-stone-500 mt-1">Анатомический окат, точно согласованный с проймой.</p>
+                        <p id="modal-desc-sleeve" class="text-[11px] text-[#78716C]">Анатомический окат, точно согласованный с проймой.</p>
                     </div>
-                    <div class="space-y-1.5">
-                        <button onclick="exportTiledA4PDF('sleeve')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 rounded-lg transition shadow-sm">
-                            🖨️ Скачать PDF (нарезка А4)
+                    <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
+                        <button onclick="exportTiledA4PDF('sleeve')" class="px-2.5 py-1.5 bg-white hover:bg-[#FFF5F3] hover:text-[#E05A47] border border-[#F0ECE1] text-[#2C2825] rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                            <span>PDF A4</span>
                         </button>
-                        <div class="flex gap-2">
-                            <button onclick="exportPiece('sleeve', 'svg')" class="flex-1 bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-medium py-1.5 rounded-lg">SVG 1:1</button>
-                            <button onclick="exportPiece('sleeve', 'png')" class="flex-1 bg-white hover:bg-stone-100 border border-stone-300 text-stone-800 text-[11px] font-medium py-1.5 rounded-lg">PNG</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Все детали -->
-                <div class="p-3.5 rounded-xl border-2 border-indigo-200 bg-indigo-50/50 flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <span id="modal-title-all" class="font-bold text-stone-900 text-xs">4. Полный комплект выкройки</span>
-                            <span id="modal-pages-all" class="text-[11px] mono font-semibold text-stone-800 bg-white border border-stone-200 px-1.5 py-0.5 rounded"></span>
-                        </div>
-                        <p id="modal-desc-all" class="text-[11px] text-stone-600 mt-1">Все детали единым файлом для сквозной печати.</p>
-                    </div>
-                    <div class="space-y-1.5">
-                        <button onclick="exportTiledA4PDF('all')" class="w-full bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold py-2 rounded-lg transition shadow-sm">
-                            🖨️ Скачать общий PDF (все детали)
-                        </button>
-                        <div class="flex gap-2">
-                            <button onclick="exportPiece('all', 'svg')" class="flex-1 bg-white hover:bg-stone-50 border border-stone-300 text-stone-900 text-[11px] font-medium py-1.5 rounded-lg">Общий SVG</button>
-                            <button onclick="exportPiece('all', 'png')" class="flex-1 bg-white hover:bg-stone-50 border border-stone-300 text-stone-900 text-[11px] font-medium py-1.5 rounded-lg">Общий PNG</button>
-                        </div>
+                        <button onclick="exportPiece('sleeve', 'png')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">PNG</button>
+                        <button onclick="exportPiece('sleeve', 'svg')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">SVG</button>
+                        <button onclick="exportPiece('sleeve', 'dxf')" class="px-2 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#78716C] hover:text-[#2C2825] border border-[#F0ECE1] rounded-xl text-xs font-medium transition cursor-pointer">DXF</button>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-stone-50 border border-stone-200 rounded-xl p-3 text-[11px] text-stone-600 flex flex-wrap items-center justify-between gap-2">
-                <div>
-                    <b>💡 Совет при печати:</b> В диалоге принтера укажите масштаб <b>«100%»</b> (или «Реальный размер»). Сверьте линейкой тестовый квадрат 50×50 мм.
+            <!-- Сворачиваемый блок сопряжения швов (Radix Accordion Style) -->
+            <div class="pt-2 border-t border-[#F0ECE1]">
+                <button type="button" onclick="toggleSeamAccordion()" class="w-full py-2.5 px-3.5 bg-[#FAF8F5] hover:bg-[#F0ECE1]/60 rounded-2xl border border-[#F0ECE1] flex items-center justify-between text-xs font-semibold text-[#2C2825] transition cursor-pointer">
+                    <span class="flex items-center gap-2">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-[#10B981]"></i>
+                        <span>Проверить точность сопряжения швов (100% совпадение)</span>
+                    </span>
+                    <i id="accordion-chevron" data-lucide="chevron-down" class="w-4 h-4 text-[#78716C] transition-transform duration-200"></i>
+                </button>
+                <div id="accordion-seams-content" class="hidden mt-2 border border-[#F0ECE1] rounded-2xl overflow-hidden shadow-xs">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-[#FAF8F5] border-b border-[#F0ECE1] text-[#78716C]">
+                                <th class="p-2.5 font-semibold">Узел изделия</th>
+                                <th class="p-2.5 font-semibold">Назначение</th>
+                                <th class="p-2.5 font-semibold text-right">Размер</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calc-table-body" class="divide-y divide-[#F0ECE1] bg-white"></tbody>
+                    </table>
                 </div>
-                <button onclick="closeExportModal()" class="text-indigo-600 font-semibold hover:underline ml-auto">Закрыть</button>
+            </div>
+
+            <!-- Подвал диалога -->
+            <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5 text-[11px] text-[#78716C] flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                    <span>В диалоге принтера выберите масштаб <b>«100%»</b> (Реальный размер).</span>
+                </div>
+                <button onclick="closeExportModal()" class="text-[#E05A47] font-semibold hover:underline ml-auto cursor-pointer">Закрыть</button>
             </div>
         </div>
     </div>
@@ -1178,7 +1153,7 @@
                     selectDressStyle(urlParams.get('dressStyle'));
                 }
                 const tab = urlParams.get('tab') || window.location.hash.replace('#', '');
-                if (tab && ['measures', 'style', 'fit', 'layout', 'export'].includes(tab)) {
+                if (tab && ['measures', 'style', 'fit', 'layout'].includes(tab)) {
                     switchTab(tab);
                 }
                 if (urlParams.get('dart')) {
@@ -1194,6 +1169,11 @@
                     setPantiesModel(urlParams.get('panties'));
                 }
                 initUserProfile();
+
+                // Преобразуем все иконки Lucide
+                if (window.lucide && typeof lucide.createIcons === 'function') {
+                    lucide.createIcons();
+                }
             } catch (err) {
                 console.error('Ошибка инициализации САПР:', err);
             }

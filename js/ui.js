@@ -8,32 +8,31 @@ function buildInputs() {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = list.map(item => `
-            <div class="bg-white p-3 rounded-2xl border border-stone-200/80 shadow-xs card-hover">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="flex-1 pr-2">
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="text-xs font-bold text-stone-900">${item.label}</span>
-                            <span class="text-[10px] mono px-1.5 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-200 font-bold">${item.abbr}</span>
-                            <button type="button" onclick="showMeasurementHint('${item.label}', '${item.abbr}', '${item.hint.replace(/'/g, "\\'")}')" class="text-stone-400 hover:text-indigo-600 p-0.5 transition cursor-pointer" title="Как измерить?">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="10" stroke-width="2"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-4m0-4h.01"/>
-                                </svg>
-                            </button>
+            <div class="py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                    <span class="text-xs font-semibold text-[#2C2825] truncate">${item.label}</span>
+                    <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">${item.abbr}</span>
+                    <div class="relative group/tip inline-flex items-center shrink-0">
+                        <button type="button" onclick="showMeasurementHint('${item.label}', '${item.abbr}', '${item.hint.replace(/'/g, "\\'")}')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]" aria-label="Справка">
+                            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <div class="radix-tooltip-content hidden group-hover/tip:flex group-focus-within/tip:flex absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 z-40 w-56 p-2.5 rounded-xl bg-[#2C2825] text-white text-[11px] leading-snug shadow-xl flex-col gap-1 pointer-events-none">
+                            <div class="font-bold flex items-center gap-1 text-[#F5F2EB]">${item.label} <span class="text-[#E05A47] font-mono">(${item.abbr})</span></div>
+                            <div class="text-[#D6D3D1]">${item.hint}</div>
+                            <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#2C2825] rotate-45"></div>
                         </div>
-                        <p class="text-[11px] text-stone-500 line-clamp-1 mt-0.5">${item.hint}</p>
-                    </div>
-                    <!-- Блок ввода с кнопками + / - -->
-                    <div class="flex items-center border border-stone-200 rounded-xl overflow-hidden bg-stone-50/80 shadow-xs shrink-0">
-                        <button type="button" onclick="adjustValue('${item.key}', -${item.step})" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:text-stone-900 hover:bg-stone-200/60 font-bold active:bg-stone-300/60 transition cursor-pointer">−</button>
-                        <input type="number" id="num-${item.key}" value="${state[item.key]}" min="${item.min}" max="${item.max}" step="${item.step}"
-                            oninput="syncInput('${item.key}', this.value)"
-                            class="w-12 text-center mono text-xs font-bold bg-white border-x border-stone-200 py-1 focus:outline-none focus:bg-indigo-50/50">
-                        <button type="button" onclick="adjustValue('${item.key}', ${item.step})" class="w-7 h-7 flex items-center justify-center text-stone-600 hover:text-stone-900 hover:bg-stone-200/60 font-bold active:bg-stone-300/60 transition cursor-pointer">+</button>
                     </div>
                 </div>
-                <input type="range" id="rng-${item.key}" value="${state[item.key]}" min="${item.min}" max="${item.max}" step="${item.step}"
-                    oninput="syncInput('${item.key}', this.value)" class="w-full mt-1.5">
+                <!-- Тактильный степпер -->
+                <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
+                    <button type="button" onclick="adjustValue('${item.key}', -${item.step})" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">−</button>
+                    <div class="w-12 text-center mono text-xs font-bold bg-white border-x border-[#F0ECE1] py-1 text-[#2C2825]">
+                        <input type="number" id="num-${item.key}" value="${state[item.key]}" min="${item.min}" max="${item.max}" step="${item.step}"
+                            oninput="syncInput('${item.key}', this.value)"
+                            class="w-full text-center bg-transparent focus:outline-none">
+                    </div>
+                    <button type="button" onclick="adjustValue('${item.key}', ${item.step})" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer">+</button>
+                </div>
             </div>
         `).join('');
     };
@@ -42,6 +41,10 @@ function buildInputs() {
     renderGroup('measures-lengths', inputConfig.lengths);
     renderGroup('measures-sleeve', inputConfig.sleeve);
     renderGroup('measures-ease', inputConfig.ease);
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function adjustValue(key, delta) {
@@ -93,20 +96,20 @@ function setPosture(postureType) {
     state.posture = postureType;
     document.querySelectorAll('.posture-btn').forEach(btn => {
         if (btn.dataset.posture === postureType) {
-            btn.className = "posture-btn flex-1 py-2 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition flex flex-col items-center justify-center text-center";
+            btn.className = "posture-btn py-1.5 px-1 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition flex flex-col items-center justify-center text-center cursor-pointer";
         } else {
-            btn.className = "posture-btn flex-1 py-2 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition flex flex-col items-center justify-center text-center";
+            btn.className = "posture-btn py-1.5 px-1 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition flex flex-col items-center justify-center text-center cursor-pointer";
         }
     });
 
     const descEl = document.getElementById('posture-desc');
     if (descEl) {
         if (postureType === 'stooped') {
-            descEl.innerHTML = '<b>🧘‍♀️ Сутулая осанка:</b> Спинка удлинена на 1 см, вытачка спинки увеличена до 2.4 см для выпуклых лопаток.';
+            descEl.innerHTML = '<b>Сутулая осанка:</b> Спинка удлинена на 1 см, вытачка спинки увеличена до 2.4 см для выпуклых лопаток.';
         } else if (postureType === 'erect') {
-            descEl.innerHTML = '<b>💃 Прямая (перегибистая):</b> Плечи расправлены, перед удлинен на 1.2 см, вытачка спинки уменьшена до 1.1 см.';
+            descEl.innerHTML = '<b>Прямая (перегибистая):</b> Плечи расправлены, перед удлинен на 1.2 см, вытачка спинки уменьшена до 1.1 см.';
         } else {
-            descEl.innerHTML = '<b>🚶‍♂️ Обычная осанка:</b> Стандартный пропорциональный баланс спинки и полочки.';
+            descEl.innerHTML = '<b>Обычная осанка:</b> Стандартный пропорциональный баланс спинки и полочки.';
         }
     }
     renderPattern();
@@ -118,16 +121,14 @@ function applyPreset(sizeKey) {
     Object.keys(p).forEach(k => {
         state[k] = p[k];
         const numEl = document.getElementById(`num-${k}`);
-        const rngEl = document.getElementById(`rng-${k}`);
         if (numEl) numEl.value = p[k];
-        if (rngEl) rngEl.value = p[k];
     });
 
     document.querySelectorAll('.preset-btn').forEach(btn => {
         if (btn.dataset.size === sizeKey) {
-            btn.className = "preset-btn px-2.5 py-1 text-xs mono font-bold rounded-md bg-indigo-600 text-white shadow-sm transition";
+            btn.className = "preset-btn px-2 py-1 text-xs mono font-bold rounded-lg bg-[#E05A47] text-white shadow-xs transition text-center";
         } else {
-            btn.className = "preset-btn px-2.5 py-1 text-xs mono font-medium rounded-md text-stone-700 hover:bg-white transition";
+            btn.className = "preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center";
         }
     });
 
@@ -143,22 +144,20 @@ function applyEasePreset(pg, pt, pb, pspr, pop) {
 }
 
 function switchTab(tabName) {
-    const tabs = ['measures', 'style', 'fit', 'layout', 'export'];
+    const tabs = ['measures', 'style', 'fit', 'layout'];
     tabs.forEach(t => {
         const panel = document.getElementById(`panel-${t}`);
         const btn = document.getElementById(`tab-${t}`);
         if (panel) panel.classList.add('hidden');
         if (btn) {
-            btn.classList.remove('border-indigo-600', 'text-indigo-600', 'bg-white', 'font-bold');
-            btn.classList.add('border-transparent', 'text-stone-500', 'font-medium');
+            btn.className = "py-2 rounded-xl text-[#78716C] hover:text-[#2C2825] font-medium transition flex flex-col items-center justify-center gap-1 cursor-pointer";
         }
     });
     const activePanel = document.getElementById(`panel-${tabName}`);
     const activeBtn = document.getElementById(`tab-${tabName}`);
     if (activePanel) activePanel.classList.remove('hidden');
     if (activeBtn) {
-        activeBtn.classList.add('border-indigo-600', 'text-indigo-600', 'bg-white', 'font-bold');
-        activeBtn.classList.remove('border-transparent', 'text-stone-500', 'font-medium');
+        activeBtn.className = "py-2 rounded-xl bg-white text-[#2C2825] font-bold shadow-xs transition flex flex-col items-center justify-center gap-1 cursor-pointer";
     }
 
     if (tabName === 'style') {
@@ -170,6 +169,10 @@ function switchTab(tabName) {
             if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
             else if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
         }
+    }
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
     }
 }
 
@@ -631,54 +634,19 @@ function updateContextualTabs(garmentType) {
     }
 
     if (garmentType === 'panties') {
-        // Трусики: только 3 логичных шага: Мерки -> Модель -> Печать
-        tabsBar.className = "grid grid-cols-3 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500";
-        tabMeasures.textContent = "1. Мерки";
-        tabStyle.textContent = "2. Модель";
-        tabExport.textContent = "3. Печать";
         if (tabFit) tabFit.classList.add('hidden');
-        if (tabLayout) tabLayout.classList.add('hidden');
-        if (tabExport) tabExport.classList.remove('hidden');
-
-        // Если была открыта скрытая вкладка, переключаем на модель
-        const panelFit = document.getElementById('panel-fit');
-        const panelLayout = document.getElementById('panel-layout');
-        if ((panelFit && !panelFit.classList.contains('hidden')) || (panelLayout && !panelLayout.classList.contains('hidden'))) {
-            switchTab('style');
-        }
-    } else if (garmentType === 'skirt') {
-        // Юбка: 4 шага: Мерки -> Фасон -> Ткань -> Печать (Посадка скрыта)
-        tabsBar.className = "grid grid-cols-4 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500";
-        tabMeasures.textContent = "1. Мерки";
-        tabStyle.textContent = "2. Фасон";
-        if (tabLayout) {
-            tabLayout.textContent = "3. Ткань";
-            tabLayout.classList.remove('hidden');
-        }
-        tabExport.textContent = "4. Печать";
-        if (tabFit) tabFit.classList.add('hidden');
-        if (tabExport) tabExport.classList.remove('hidden');
-
-        // Если была открыта Посадка, переключаем на фасон
+        if (tabsBar) tabsBar.className = "grid grid-cols-3 p-1 m-3.5 bg-[#F5F2EB] rounded-2xl border border-[#F0ECE1] text-xs";
         const panelFit = document.getElementById('panel-fit');
         if (panelFit && !panelFit.classList.contains('hidden')) {
             switchTab('style');
         }
     } else {
-        // Платье / Топ: все 5 шагов
-        tabsBar.className = "grid grid-cols-5 border-b border-stone-200 bg-stone-50 text-[11px] font-medium text-stone-500";
-        tabMeasures.textContent = "1. Мерки";
-        tabStyle.textContent = "2. Фасон";
-        if (tabFit) {
-            tabFit.textContent = "3. Посадка";
-            tabFit.classList.remove('hidden');
-        }
-        if (tabLayout) {
-            tabLayout.textContent = "4. Ткань";
-            tabLayout.classList.remove('hidden');
-        }
-        tabExport.textContent = "5. Печать";
-        tabExport.classList.remove('hidden');
+        if (tabFit) tabFit.classList.remove('hidden');
+        if (tabsBar) tabsBar.className = "grid grid-cols-4 p-1 m-3.5 bg-[#F5F2EB] rounded-2xl border border-[#F0ECE1] text-xs";
+    }
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
     }
 }
 
@@ -688,17 +656,12 @@ function setGarmentType(type) {
     updateContextualTabs(type);
 
     ['dress', 'skirt', 'panties'].forEach(t => {
-        const btn = document.getElementById(`btn-garment-${t}`);
         const headerBtn = document.getElementById(`header-garment-${t}`);
         const isActive = (t === type);
-        const activeClass = "garment-tab-btn py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 bg-white text-indigo-700 shadow-sm cursor-pointer";
-        const inactiveClass = "garment-tab-btn py-1.5 px-2 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 transition flex items-center justify-center gap-1 cursor-pointer";
-
-        if (btn) btn.className = isActive ? activeClass : inactiveClass;
         if (headerBtn) {
             headerBtn.className = isActive
-                ? "px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer"
-                : "px-2.5 py-1 text-xs font-medium rounded-lg text-stone-700 hover:bg-stone-200 transition flex items-center gap-1 shrink-0 cursor-pointer";
+                ? "px-3.5 py-1.5 text-xs font-bold rounded-xl bg-white text-[#2C2825] shadow-xs transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+                : "px-3.5 py-1.5 text-xs font-medium rounded-xl text-[#78716C] hover:text-[#2C2825] transition flex items-center gap-1.5 shrink-0 cursor-pointer";
         }
     });
 
@@ -734,8 +697,12 @@ function setGarmentType(type) {
     renderPattern();
     if (typeof StorageManager !== 'undefined') StorageManager.save();
 
-    const titleRu = type === 'skirt' ? '🩱 Выбрана Юбка (А-силуэт, клеш, прямая, мини)' : (type === 'panties' ? '🩲 Выбраны Женские трусики' : '👗 Выбрано Платье / Блуза');
+    const titleRu = type === 'skirt' ? 'Выбрана выкройка юбки' : (type === 'panties' ? 'Выбрана выкройка белья' : 'Выбрана выкройка платья');
     showNotification(titleRu);
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 function setSkirtStyle(style) {
@@ -876,7 +843,7 @@ function saveMyProfile() {
         updateProfileBadge();
         const btn = document.getElementById('btn-my-profile');
         if (btn) btn.classList.add('ring-2', 'ring-amber-300');
-        showNotification('⭐ Ваши мерки сохранены в памяти браузера!');
+        showNotification('Ваши мерки сохранены в памяти браузера');
     } catch (e) {
         console.error('Ошибка сохранения профиля:', e);
         alert('Не удалось сохранить в память браузера.');
@@ -896,19 +863,13 @@ function applyMyProfile() {
         Object.keys(profile.data).forEach(k => {
             state[k] = profile.data[k];
             const numEl = document.getElementById(`num-${k}`);
-            const rngEl = document.getElementById(`rng-${k}`);
             if (numEl) numEl.value = profile.data[k];
-            if (rngEl) rngEl.value = profile.data[k];
         });
 
-        // Снимаем выделение со стандартных размеров ГОСТ и подсвечиваем "Мои мерки"
+        // Снимаем выделение со стандартных размеров ГОСТ
         document.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.className = "preset-btn flex-1 sm:flex-initial px-2 py-1 text-xs mono font-medium rounded-lg text-stone-700 hover:bg-white transition text-center";
+            btn.className = "preset-btn px-2 py-1 text-xs mono font-medium rounded-lg text-[#78716C] hover:bg-white transition text-center";
         });
-        const myBtn = document.getElementById('btn-my-profile');
-        if (myBtn) {
-            myBtn.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 text-white ring-2 ring-amber-300 shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer";
-        }
 
         if (state.garmentType) setGarmentType(state.garmentType);
         if (state.posture) setPosture(state.posture);
@@ -925,7 +886,7 @@ function applyMyProfile() {
 
         renderPattern();
         updateProfileBadge();
-        showNotification(`⭐ Загружен ваш профиль (${profile.savedAt || ''})`);
+        showNotification(`Загружен ваш профиль (${profile.savedAt || ''})`);
     } catch (e) {
         console.error('Ошибка загрузки профиля:', e);
     }
@@ -939,10 +900,10 @@ function updateProfileBadge() {
         if (raw) {
             const p = JSON.parse(raw);
             badge.textContent = `Сохранен: ${p.savedAt || 'Да'}`;
-            badge.className = "text-[10px] text-amber-900 bg-amber-200/80 px-1.5 py-0.5 rounded font-mono font-medium";
+            badge.className = "text-[10px] text-[#15803D] bg-[#F0FDF4] border border-[#BBF7D0] px-2 py-0.5 rounded-full mono font-medium";
         } else {
             badge.textContent = 'Не сохранен';
-            badge.className = "text-[10px] text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-mono font-medium";
+            badge.className = "text-[10px] text-[#78716C] bg-[#FAF8F5] border border-[#F0ECE1] px-2 py-0.5 rounded-full mono";
         }
     } catch (_) {}
 }
@@ -973,7 +934,7 @@ function exportProfileJson() {
     a.download = `moi_merki_OG${state.og}_OT${state.ot}_OB${state.ob}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showNotification('📥 Файл с вашими мерками скачан на диск!');
+    showNotification('Файл с вашими мерками скачан на диск');
 }
 
 function importProfileJson(inputEl) {
@@ -989,14 +950,12 @@ function importProfileJson(inputEl) {
                 if (k in state) {
                     state[k] = m[k];
                     const numEl = document.getElementById(`num-${k}`);
-                    const rngEl = document.getElementById(`rng-${k}`);
                     if (numEl) numEl.value = m[k];
-                    if (rngEl) rngEl.value = m[k];
                 }
             });
             saveMyProfile();
             renderPattern();
-            showNotification('📤 Ваши мерки успешно загружены из файла!');
+            showNotification('Ваши мерки успешно загружены из файла');
         } catch (err) {
             alert('Ошибка чтения файла мерок. Убедитесь, что это правильный .json файл.');
         }
@@ -1010,16 +969,63 @@ function showNotification(text) {
     if (!el) {
         el = document.createElement('div');
         el.id = 'cad-toast';
-        el.className = 'fixed bottom-16 md:bottom-6 right-6 z-50 bg-stone-900/95 backdrop-blur text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-2xl border border-stone-700/60 flex items-center gap-2 transform transition-all duration-300 opacity-0 translate-y-3 pointer-events-none';
+        el.className = 'fixed bottom-6 right-6 z-50 bg-white/95 backdrop-blur-md border border-[#F0ECE1] text-[#2C2825] text-xs font-semibold py-3 px-4 rounded-2xl sonner-toast flex items-center gap-2.5 transition-all duration-300 opacity-0 translate-y-3 pointer-events-none shadow-float';
         document.body.appendChild(el);
     }
-    el.textContent = text;
-    el.classList.remove('opacity-0', 'translate-y-3');
+    el.innerHTML = `
+        <i data-lucide="sparkles" class="w-4 h-4 text-[#E05A47] shrink-0"></i>
+        <span>${text}</span>
+    `;
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+    el.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
     el.classList.add('opacity-100', 'translate-y-0');
     clearTimeout(window._toastTimeout);
     window._toastTimeout = setTimeout(() => {
         el.classList.remove('opacity-100', 'translate-y-0');
-        el.classList.add('opacity-0', 'translate-y-3');
+        el.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
     }, 2800);
+}
+
+// Управление Popover меню профиля в шапке
+function toggleProfilePopover(forceState) {
+    const popover = document.getElementById('profile-popover');
+    if (!popover) return;
+    const shouldShow = typeof forceState === 'boolean' ? forceState : popover.classList.contains('hidden');
+    if (shouldShow) {
+        popover.classList.remove('hidden');
+    } else {
+        popover.classList.add('hidden');
+    }
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+}
+
+// Закрытие Popover при клике вне его области
+document.addEventListener('click', (e) => {
+    const popover = document.getElementById('profile-popover');
+    const trigger = document.getElementById('btn-my-profile');
+    if (popover && !popover.classList.contains('hidden')) {
+        if (!popover.contains(e.target) && !trigger?.contains(e.target)) {
+            popover.classList.add('hidden');
+        }
+    }
+});
+
+// Управление аккордеоном таблицы сопряжения швов
+function toggleSeamAccordion() {
+    const content = document.getElementById('accordion-seams-content');
+    const chevron = document.getElementById('accordion-chevron');
+    if (!content) return;
+    const isHidden = content.classList.contains('hidden');
+    if (isHidden) {
+        content.classList.remove('hidden');
+        if (chevron) chevron.classList.add('rotate-180');
+    } else {
+        content.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+    }
 }
 

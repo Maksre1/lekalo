@@ -347,6 +347,52 @@ function exportPiece(pieceType, format) {
     if (format === 'svg') {
         const blob = new Blob([standaloneSvg], { type: 'image/svg+xml;charset=utf-8' });
         triggerDownload(URL.createObjectURL(blob), `${fileTitle}_1to1.svg`);
+    } else if (format === 'dxf') {
+        let dxf = "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nENDSEC\n0\nSECTION\n2\nBLOCKS\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(standaloneSvg, 'image/svg+xml');
+            const paths = doc.querySelectorAll('path');
+            paths.forEach((p, idx) => {
+                const d = p.getAttribute('d');
+                if (!d) return;
+                const commands = d.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi) || [];
+                let polyVertices = [];
+                commands.forEach(cmd => {
+                    const type = cmd[0];
+                    const nums = cmd.slice(1).trim().split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
+                    if (type === 'M' || type === 'L') {
+                        for (let i = 0; i < nums.length; i += 2) {
+                            const x = nums[i] - minX;
+                            const y = heightMm - (nums[i + 1] - minY);
+                            polyVertices.push({ x, y });
+                        }
+                    } else if (type === 'Z' || type === 'z') {
+                        if (polyVertices.length > 0) {
+                            dxf += `0\nPOLYLINE\n8\nPATTERN_${idx}\n66\n1\n70\n1\n`;
+                            polyVertices.forEach(v => {
+                                dxf += `0\nVERTEX\n8\nPATTERN_${idx}\n10\n${v.x.toFixed(2)}\n20\n${v.y.toFixed(2)}\n30\n0.0\n`;
+                            });
+                            dxf += "0\nSEQEND\n";
+                            polyVertices = [];
+                        }
+                    }
+                });
+                if (polyVertices.length > 1) {
+                    dxf += `0\nPOLYLINE\n8\nPATTERN_${idx}\n66\n1\n70\n0\n`;
+                    polyVertices.forEach(v => {
+                        dxf += `0\nVERTEX\n8\nPATTERN_${idx}\n10\n${v.x.toFixed(2)}\n20\n${v.y.toFixed(2)}\n30\n0.0\n`;
+                    });
+                    dxf += "0\nSEQEND\n";
+                }
+            });
+        } catch (_) {}
+        dxf += "0\nENDSEC\n0\nEOF\n";
+        const blob = new Blob([dxf], { type: 'application/dxf;charset=utf-8' });
+        triggerDownload(URL.createObjectURL(blob), `${fileTitle}_1to1.dxf`);
+        if (typeof showNotification === 'function') {
+            showNotification('Файл DXF сформирован для плоттера');
+        }
     } else if (format === 'png') {
         const dpiScale = 6; // 6 px/mm ~ 152.4 DPI (четкие линии без размытия)
         const canvas = document.createElement('canvas');

@@ -14,11 +14,11 @@ function generatePatternPiecesMarkup(g, options = {}) {
     const frontShiftX = options.frontShiftX ?? (state.separate ? 16 * CM : 0);
     const sleeveOriginX = options.sleeveOriginX ?? (g.W_grid + (frontShiftX > 0 ? 28 : 14) + g.W_sleeve / 2);
 
-    const colBack = showClassic ? '#09090b' : '#1d4ed8';
-    const colFront = showClassic ? '#09090b' : '#be123c';
-    const colSleeve = showClassic ? '#09090b' : '#047857';
-    const fillBack = showClassic ? '#ffffff' : 'rgba(29, 78, 216, 0.04)';
-    const fillFront = showClassic ? '#ffffff' : 'rgba(190, 18, 60, 0.04)';
+    const colBack = showClassic ? '#2C2825' : '#5B6B8C';
+    const colFront = showClassic ? '#2C2825' : '#D9534F';
+    const colSleeve = showClassic ? '#2C2825' : '#5A826D';
+    const fillBack = showClassic ? '#ffffff' : 'rgba(91, 107, 140, 0.04)';
+    const fillFront = showClassic ? '#ffffff' : 'rgba(217, 83, 79, 0.04)';
 
     // 1. Контур СПИНКИ
     const backOutlinePath = `
@@ -226,8 +226,8 @@ function generatePatternPiecesMarkup(g, options = {}) {
         <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#52525b">
             <line x1="${slCenter}" y1="${slTopY + 15}" x2="${slCenter}" y2="${slBotY - 15}" stroke="#27272a" stroke-width="0.8"/>
             <text x="${slCenter + 4}" y="${(slCapY + slBotY) * 0.5 + 24}" font-size="8">ДОЛЕВАЯ НИТЬ</text>
-            <text x="${slCenter + halfW * 0.4}" y="${slCapY * 0.7}" fill="#047857">ПЕРЕД ➔</text>
-            <text x="${slCenter - halfW * 0.6}" y="${slCapY * 0.7}" fill="#1d4ed8">⬅ СПИНКА</text>
+            <text x="${slCenter + halfW * 0.4}" y="${slCapY * 0.7}" fill="#5A826D">ПЕРЕД ➔</text>
+            <text x="${slCenter - halfW * 0.6}" y="${slCapY * 0.7}" fill="#5B6B8C">⬅ СПИНКА</text>
         </g>
     `;
 
@@ -253,7 +253,10 @@ function renderSkirtPattern() {
     const isSeparate = state.separate;
     const sepBtn = document.getElementById('btn-separate-mode');
     if (sepBtn) {
-        sepBtn.textContent = isSeparate ? '⇄ Раздельный вид' : '⇄ Совмещенный чертеж';
+        sepBtn.innerHTML = isSeparate
+            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельный вид</span>'
+            : '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенный вид</span>';
+        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
 
     const p = generateSkirtPiecesMarkup(g);
@@ -396,7 +399,10 @@ function renderPattern() {
 
     const sepBtn = document.getElementById('btn-separate-mode');
     if (sepBtn) {
-        sepBtn.textContent = isSeparate ? '⇄ Раздельный вид (для раскроя)' : '⇄ Совмещенный чертеж (в сетке)';
+        sepBtn.innerHTML = isSeparate
+            ? '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#E05A47]"></i><span>Раздельный вид</span>'
+            : '<i data-lucide="layers" class="w-3.5 h-3.5 text-[#78716C]"></i><span>Совмещенный вид</span>';
+        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
 
     const p = generatePatternPiecesMarkup(g);
