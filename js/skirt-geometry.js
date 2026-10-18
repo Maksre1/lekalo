@@ -4,7 +4,8 @@
 function calculateSkirtGeometry() {
     const ot = Number(state.ot) || 74;
     const ob = Number(state.ob) || 98;
-    const vb = Number(state.vb) || 19.5;
+    const vb = (typeof AutoMeasurements !== 'undefined') ? AutoMeasurements.getEffective('skirtVb') : (Number(state.skirtVb) || Number(state.vb) || 19.5);
+    const balance = (typeof AutoMeasurements !== 'undefined') ? AutoMeasurements.getEffective('skirtBalance') : (Number(state.skirtBalance) || 0);
     const skirtLength = Number(state.skirtLength) || 60;
     const style = state.skirtStyle || 'a-line';
     const pt = Number(state.skirtPt) || 1.0;
@@ -144,10 +145,10 @@ function calculateSkirtGeometry() {
     const X_frontDart = X_side + (W_grid - X_side) * 0.55;
 
     // Точки заднего полотнища (Back panel)
-    const B_waist_center = { x: 0, y: 0 };
-    const B_dart_left = { x: X_backDart - backDart / 2, y: 0 };
+    const B_waist_center = { x: 0, y: balance * 0.5 };
+    const B_dart_left = { x: X_backDart - backDart / 2, y: balance * 0.25 };
     const B_dart_apex = { x: X_backDart, y: backDartLen };
-    const B_dart_right = { x: X_backDart + backDart / 2, y: 0 };
+    const B_dart_right = { x: X_backDart + backDart / 2, y: balance * 0.25 };
     const B_waist_side = { x: X_side - sideDart / 2, y: -1.2 };
     const B_hip_side = { x: X_side, y: vb };
     const B_hem_side = { x: X_side + flareOffset, y: effectiveLength - hemCurveLift };
@@ -156,10 +157,10 @@ function calculateSkirtGeometry() {
 
     // Точки переднего полотнища (Front panel)
     const F_waist_side = { x: X_side + sideDart / 2, y: -1.2 };
-    const F_dart_left = { x: X_frontDart - frontDart / 2, y: 0 };
+    const F_dart_left = { x: X_frontDart - frontDart / 2, y: -balance * 0.25 };
     const F_dart_apex = { x: X_frontDart, y: frontDartLen };
-    const F_dart_right = { x: X_frontDart + frontDart / 2, y: 0 };
-    const F_waist_center = { x: W_grid, y: 0.5 };
+    const F_dart_right = { x: X_frontDart + frontDart / 2, y: -balance * 0.25 };
+    const F_waist_center = { x: W_grid, y: 0.5 - balance };
     const F_hip_side = { x: X_side, y: vb };
     const F_hem_side = { x: X_side - flareOffset, y: effectiveLength - hemCurveLift };
     const F_hem_center = { x: W_grid, y: effectiveLength };

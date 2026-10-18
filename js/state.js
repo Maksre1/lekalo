@@ -1,4 +1,4 @@
-// js/state.js - Состояние и конфигурация САПР
+// js/state.js - Состояние и конфигурация конструктора выкроек
 const CM = 10; // 1 см = 10 единиц SVG (1 мм)
 
 const state = {
@@ -16,9 +16,12 @@ const state = {
     shp: 13.0,     // Длина плеча (Шп)
     shs: null,     // Ширина спинки (Шс - опционально, авторасчет)
     shg: null,     // Ширина груди (Шг - опционально, авторасчет)
+    vpk: null,     // Высота плеча косая (Впк - опционально, авторасчет)
+    gpr: null,     // Глубина проймы (Гпр - опционально, авторасчет)
     op: 32.5,      // Обхват руки вверху (Оп)
     dr: 61.0,      // Длина рукава (Др)
-    oz: 21.0,      // Ширина рукава внизу (Оз)
+    dr_l: null,    // Длина до локтя (Др.л - опционально, авторасчет)
+    oz: null,      // Обхват запястья (Оз - опционально, авторасчет)
 
     // Прибавки на свободу (см к полуобхвату)
     pg: 4.0,       // Прибавка по груди (Пг)
@@ -47,6 +50,8 @@ const state = {
     skirtRise: 'natural',     // 'natural' (на талии) | 'low' (на бедрах) | 'high' (высокая корсетная)
     skirtPt: 1.0,             // Прибавка по талии для юбки (см)
     skirtPb: 2.0,             // Прибавка по бедрам для юбки (см)
+    skirtVb: null,            // Высота бедер юбки (Вб - опционально, авторасчет)
+    skirtBalance: 0.0,        // Баланс талии юбки (см: -3.0..+3.0, авто = 0)
 
     // Моделирование женских трусиков
     pantiesModel: 'slips',    // 'slips' (Слипы) | 'braziliana' (Бразилиана) | 'high-waist' (Ретро) | 'thong' (Стринги) | 'dolphin-shorts' (Шорты Dolphin) | 'strappy' (Стрепы/V-waist)
@@ -72,6 +77,68 @@ const state = {
 };
 window.state = state;
 
+// Модуль пропорционального авторасчета дополнительных мерок (Smart Auto)
+const AutoMeasurements = {
+    shs(s = state) {
+        const Sg = (Number(s.og) || 92) / 2;
+        return Math.round(((Sg / 3) + 2.1) * 2 * 10) / 10;
+    },
+    shg(s = state) {
+        const Sg = (Number(s.og) || 92) / 2;
+        return Math.round((Sg - 13.0) * 10) / 10;
+    },
+    vpk(s = state) {
+        const dts = Number(s.dts) || 40.0;
+        const shs = s.shs ? Number(s.shs) : AutoMeasurements.shs(s);
+        const shDrop = s.posture === 'stooped' ? 2.6 : s.posture === 'erect' ? 1.9 : 2.2;
+        const xP1 = (shs / 2) + 1.5;
+        const yDist = dts - shDrop;
+        return Math.round(Math.hypot(xP1, yDist) * 10) / 10;
+    },
+    gpr(s = state) {
+        const Sg = (Number(s.og) || 92) / 2;
+        return Math.round((0.28 * Sg + 5.5) * 10) / 10;
+    },
+    dr_l(s = state) {
+        const dr = Number(s.dr) || 61.0;
+        return Math.round((dr * 0.56) * 10) / 10;
+    },
+    oz(s = state) {
+        const op = Number(s.op) || 32.5;
+        return Math.round((op * 0.51) * 10) / 10;
+    },
+    skirtVb(s = state) {
+        return Number(s.vb) || 19.5;
+    },
+    skirtBalance(s = state) {
+        return 0.0;
+    },
+
+    get(key, s = state) {
+        if (typeof this[key] === 'function') {
+            return this[key](s);
+        }
+        return null;
+    },
+
+    isAuto(key, s = state) {
+        if (key === 'skirtBalance') {
+            return s[key] === null || s[key] === undefined || s[key] === '' || Number(s[key]) === 0;
+        }
+        return s[key] === null || s[key] === undefined || s[key] === '';
+    },
+
+    getEffective(key, s = state) {
+        if (!this.isAuto(key, s)) {
+            return Number(s[key]);
+        }
+        return this.get(key, s);
+    }
+};
+if (typeof window !== 'undefined') {
+    window.AutoMeasurements = AutoMeasurements;
+}
+
 // Конфигурация полей ввода с подробными человеческими подсказками
 const inputConfig = {
     girths: [
@@ -88,6 +155,7 @@ const inputConfig = {
             abbr: 'Шс',
             min: 28, max: 48, step: 0.5,
             optional: true,
+            isSmartAuto: true,
             recommended: true,
             placeholder: 'Авто',
             hint: 'Необязательно. Замер лентой по выступающим лопаткам (например, 35 см). При заполнении точно подгоняет спинку и убирает сдавливание груди.'
@@ -98,6 +166,7 @@ const inputConfig = {
             abbr: 'Шг',
             min: 26, max: 46, step: 0.5,
             optional: true,
+            isSmartAuto: true,
             recommended: true,
             placeholder: 'Авто',
             hint: 'Необязательно. Замер лентой над грудью между углами подмышек (например, 33 см). Настраивает идеальный раствор вытачки и объем чашки груди.'
@@ -173,6 +242,24 @@ const inputConfig = {
             abbr: 'Ди',
             min: 48, max: 95, step: 1,
             hint: 'Желаемая длина изделия по центру спинки от 7-го позвонка вниз до низа (топ, блузка, платье).'
+        },
+        {
+            key: 'vpk',
+            label: 'Высота плеча косая',
+            abbr: 'Впк',
+            min: 36, max: 54, step: 0.5,
+            isSmartAuto: true,
+            optional: true,
+            hint: 'От точки пересечения линии талии с позвоночником через лопатку до крайней плечевой точки (косточки). Задает точный угол наклона плеча.'
+        },
+        {
+            key: 'gpr',
+            label: 'Глубина проймы',
+            abbr: 'Гпр',
+            min: 14, max: 28, step: 0.5,
+            isSmartAuto: true,
+            optional: true,
+            hint: 'От 7-го шейного позвонка по спине вертикально вниз до уровня подмышки. Регулирует высоту проймы под рукой.'
         }
     ],
     sleeve: [
@@ -191,11 +278,22 @@ const inputConfig = {
             hint: 'От косточки плеча по слегка согнутой руке через локоть до запястья.'
         },
         {
+            key: 'dr_l',
+            label: 'Длина до локтя',
+            abbr: 'Др.л',
+            min: 24, max: 42, step: 0.5,
+            isSmartAuto: true,
+            optional: true,
+            hint: 'От косточки плеча по слегка согнутой руке до выступающей точки локтя. Задает уровень локтя для правильного сужения рукава.'
+        },
+        {
             key: 'oz',
-            label: 'Ширина рукава внизу',
+            label: 'Обхват запястья',
             abbr: 'Оз',
-            min: 16, max: 36, step: 0.5,
-            hint: 'Обхват запястья с запасом для комфорта надевания и движения (обычно 20–24 см).'
+            min: 13, max: 24, step: 0.5,
+            isSmartAuto: true,
+            optional: true,
+            hint: 'Вокруг запястья по выступающим косточкам. Автоматически рассчитывает комфортную ширину низа рукава (Шрн).'
         }
     ],
     ease: [
@@ -239,14 +337,14 @@ const inputConfig = {
 
 // Типовые размеры ГОСТ и персональный пресет
 const presets = {
-    'my': { og: 92, ot: 75, ob: 96, osh: 36.0, dts: 40.0, dtp: 44.0, vg: 27.0, cg: 10.0, vb: 18.5, di: 95.0, shp: 13.0, shs: null, shg: null, op: 32.5, dr: 61.0, oz: 21.0 },
-    '42': { og: 84, ot: 66, ob: 90, osh: 34.5, dts: 39.5, dtp: 42.5, vg: 24.5, cg: 9.0, vb: 18.5, di: 60, shp: 12.3, shs: null, shg: null, op: 26.5, dr: 59, oz: 20 },
-    '44': { og: 88, ot: 70, ob: 94, osh: 35.2, dts: 40.2, dtp: 43.5, vg: 25.5, cg: 9.4, vb: 19.0, di: 61, shp: 12.7, shs: null, shg: null, op: 27.5, dr: 59.5, oz: 21 },
-    '46': { og: 92, ot: 74, ob: 98, osh: 36.0, dts: 41.0, dtp: 44.5, vg: 26.5, cg: 9.8, vb: 19.0, di: 62, shp: 13.0, shs: null, shg: null, op: 29.0, dr: 60, oz: 22 },
-    '48': { og: 96, ot: 78, ob: 102, osh: 37.0, dts: 41.5, dtp: 45.5, vg: 27.5, cg: 10.2, vb: 19.5, di: 64, shp: 13.3, shs: null, shg: null, op: 30.5, dr: 60.5, oz: 23 },
-    '50': { og: 100, ot: 82, ob: 106, osh: 38.0, dts: 42.0, dtp: 46.8, vg: 28.5, cg: 10.6, vb: 19.5, di: 65, shp: 13.5, shs: null, shg: null, op: 32.0, dr: 61, oz: 24 },
-    '52': { og: 104, ot: 86, ob: 110, osh: 39.0, dts: 42.5, dtp: 47.5, vg: 29.5, cg: 11.0, vb: 20.0, di: 66, shp: 13.8, shs: null, shg: null, op: 33.5, dr: 61.5, oz: 25 },
-    '54': { og: 108, ot: 92, ob: 114, osh: 40.0, dts: 43.0, dtp: 48.5, vg: 30.5, cg: 11.4, vb: 20.0, di: 68, shp: 14.0, shs: null, shg: null, op: 35.0, dr: 62, oz: 26 }
+    'my': { og: 92, ot: 75, ob: 96, osh: 36.0, dts: 40.0, dtp: 44.0, vg: 27.0, cg: 10.0, vb: 18.5, di: 95.0, shp: 13.0, shs: null, shg: null, vpk: null, gpr: null, op: 32.5, dr: 61.0, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 },
+    '42': { og: 84, ot: 66, ob: 90, osh: 34.5, dts: 39.5, dtp: 42.5, vg: 24.5, cg: 9.0, vb: 18.5, di: 60, shp: 12.3, shs: null, shg: null, vpk: null, gpr: null, op: 26.5, dr: 59, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 },
+    '44': { og: 88, ot: 70, ob: 94, osh: 35.2, dts: 40.2, dtp: 43.5, vg: 25.5, cg: 9.4, vb: 19.0, di: 61, shp: 12.7, shs: null, shg: null, vpk: null, gpr: null, op: 27.5, dr: 59.5, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 },
+    '46': { og: 92, ot: 74, ob: 98, osh: 36.0, dts: 41.0, dtp: 44.5, vg: 26.5, cg: 9.8, vb: 19.0, di: 62, shp: 13.0, shs: null, shg: null, vpk: null, gpr: null, op: 29.0, dr: 60, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 },
+    '48': { og: 96, ot: 78, ob: 102, osh: 37.0, dts: 41.5, dtp: 45.5, vg: 27.5, cg: 10.2, vb: 19.5, di: 64, shp: 13.3, shs: null, shg: null, vpk: null, gpr: null, op: 30.5, dr: 60.5, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 },
+    '50': { og: 100, ot: 82, ob: 106, osh: 38.0, dts: 42.0, dtp: 46.8, vg: 28.5, cg: 10.6, vb: 19.5, di: 65, shp: 13.5, shs: null, shg: null, vpk: null, gpr: null, op: 32.0, dr: 61, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 },
+    '52': { og: 104, ot: 86, ob: 110, osh: 39.0, dts: 42.5, dtp: 47.5, vg: 29.5, cg: 11.0, vb: 20.0, di: 66, shp: 13.8, shs: null, shg: null, vpk: null, gpr: null, op: 33.5, dr: 61.5, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 },
+    '54': { og: 108, ot: 92, ob: 114, osh: 40.0, dts: 43.0, dtp: 48.5, vg: 30.5, cg: 11.4, vb: 20.0, di: 68, shp: 14.0, shs: null, shg: null, vpk: null, gpr: null, op: 35.0, dr: 62, dr_l: null, oz: null, skirtVb: null, skirtBalance: 0.0 }
 };
 
 // Модуль надежного автосохранения мерок и настроек в браузере (LocalStorage)
@@ -272,14 +370,19 @@ const StorageManager = {
                     shp: state.shp,
                     shs: state.shs,
                     shg: state.shg,
+                    vpk: state.vpk,
+                    gpr: state.gpr,
                     op: state.op,
                     dr: state.dr,
+                    dr_l: state.dr_l,
                     oz: state.oz,
                     pg: state.pg,
                     pt: state.pt,
                     pb: state.pb,
                     pspr: state.pspr,
                     pop: state.pop,
+                    skirtVb: state.skirtVb,
+                    skirtBalance: state.skirtBalance,
                     posture: state.posture,
                     garmentType: state.garmentType,
                     skirtLength: state.skirtLength,

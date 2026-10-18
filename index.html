@@ -258,6 +258,52 @@
                             </div>
                         </div>
 
+                        <!-- Высота бедер в юбке (Вб) - Smart Auto -->
+                        <div class="py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors">
+                            <div class="flex items-center gap-1.5 min-w-0 pr-2">
+                                <span class="text-xs font-semibold text-[#2C2825] truncate">Высота бедер</span>
+                                <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">Вб</span>
+                                <div id="auto-badge-skirtVb" class="shrink-0"></div>
+                                <div class="relative group/tip inline-flex items-center shrink-0">
+                                    <button type="button" onclick="showMeasurementHint('Высота бедер (юбка)', 'Вб', 'От линии талии по боку вниз до самого широкого места бедер/ягодиц (обычно 18–20 см). Задает уровень линии бедер Б и длину вытачек.')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]" aria-label="Справка">
+                                        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
+                                <button type="button" onclick="adjustValue('skirtVb', -0.5)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer" title="Уменьшить">−</button>
+                                <div class="w-12 text-center mono text-xs bg-white border-x border-[#F0ECE1] py-1 text-[#78716C] font-medium">
+                                    <input type="number" id="num-skirtVb" min="14" max="28" step="0.5"
+                                        oninput="syncInput('skirtVb', this.value)"
+                                        class="w-full text-center bg-transparent focus:outline-none">
+                                </div>
+                                <button type="button" onclick="adjustValue('skirtVb', 0.5)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer" title="Увеличить">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Баланс талии в юбке (Поправка баланса) - Smart Auto -->
+                        <div class="py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors">
+                            <div class="flex items-center gap-1.5 min-w-0 pr-2">
+                                <span class="text-xs font-semibold text-[#2C2825] truncate">Баланс талии</span>
+                                <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">±см</span>
+                                <div id="auto-badge-skirtBalance" class="shrink-0"></div>
+                                <div class="relative group/tip inline-flex items-center shrink-0">
+                                    <button type="button" onclick="showMeasurementHint('Баланс талии (юбка)', '±см', 'Поправка на особенности фигуры: подъем спереди для выступающего животика (+0.5...+2.0 см) или сзади для выступающих ягодиц (-0.5...-2.0 см), чтобы подол не вздергивался.')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]" aria-label="Справка">
+                                        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
+                                <button type="button" onclick="adjustValue('skirtBalance', -0.5)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer" title="Уменьшить">−</button>
+                                <div class="w-12 text-center mono text-xs bg-white border-x border-[#F0ECE1] py-1 text-[#78716C] font-medium">
+                                    <input type="number" id="num-skirtBalance" min="-3" max="3" step="0.5"
+                                        oninput="syncInput('skirtBalance', this.value)"
+                                        class="w-full text-center bg-transparent focus:outline-none">
+                                </div>
+                                <button type="button" onclick="adjustValue('skirtBalance', 0.5)" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer" title="Увеличить">+</button>
+                            </div>
+                        </div>
+
                         <!-- Длина юбки (Дю) -->
                         <div class="p-3.5 rounded-2xl bg-white border border-[#F0ECE1] space-y-2.5 shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)]">
                             <div class="flex justify-between items-center">
@@ -1192,7 +1238,7 @@
                     OnboardingTour.checkFirstVisit();
                 }
             } catch (err) {
-                console.error('Ошибка инициализации САПР:', err);
+                console.error('Ошибка инициализации приложения:', err);
             }
         }
 

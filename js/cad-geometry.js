@@ -1,4 +1,4 @@
-// js/cad-geometry.js - Математическое ядро САПР (ЕМКО / ЦНИИШП)
+// js/cad-geometry.js - Математическое ядро конструктора выкроек (ЕМКО / ЦНИИШП)
 
 function rot(p, center, a) {
     const x = p.x - center.x;
@@ -93,7 +93,8 @@ function calculateGeometry() {
 
     // Горизонтали по Y
     const Y_A = 0;
-    const Y_G = 0.28 * Sg + 5.5 + state.pspr;
+    const effectiveGpr = (typeof AutoMeasurements !== 'undefined') ? AutoMeasurements.getEffective('gpr') : (0.28 * Sg + 5.5);
+    const Y_G = effectiveGpr + state.pspr;
     const Y_T = state.dts + postureDts;
     const Y_B = Y_T + state.vb;
     const Y_H = Math.max(state.di, Y_B + 5.0);
@@ -108,9 +109,18 @@ function calculateGeometry() {
     const A1 = { x: X_G, y: 0 };
 
     const L_back_sh = state.shp + postureBackDart;
-    const dy_back_sh = postureShDrop - A4.y;
+
+    // Расчет наклона плеча с учетом Впк (Высота плеча косая)
+    let postureShDropCalc = postureShDrop;
+    if (typeof AutoMeasurements !== 'undefined' && !AutoMeasurements.isAuto('vpk')) {
+        const userVpk = Number(state.vpk);
+        const approxP1x = Math.max(14.0, W_neck + Math.sqrt(Math.max(1, L_back_sh * L_back_sh - 2.2 * 2.2)));
+        const vertDelta = Math.sqrt(Math.max(100, userVpk * userVpk - approxP1x * approxP1x));
+        postureShDropCalc = Math.max(-0.5, Math.min(6.5, Y_T - vertDelta));
+    }
+    const dy_back_sh = postureShDropCalc - A4.y;
     const dx_back_sh = Math.sqrt(Math.max(1, L_back_sh * L_back_sh - dy_back_sh * dy_back_sh));
-    const P1 = { x: A4.x + dx_back_sh, y: postureShDrop };
+    const P1 = { x: A4.x + dx_back_sh, y: postureShDropCalc };
 
     // Плечевая вытачка спинки
     const back_sh_dart_len = 7.5;
@@ -147,7 +157,7 @@ function calculateGeometry() {
     const G7 = { x: X_G6, y: V3.y + dy_vg };
 
     // Базовое (закрытое) положение плеча полочки
-    const front_sh_drop = 3.6;
+    const front_sh_drop = 3.6 + (postureShDropCalc - 2.2) * 0.6;
     const dx_closed = Math.sqrt(Math.max(1, state.shp * state.shp - front_sh_drop * front_sh_drop));
     const P5_closed = { x: V3.x - dx_closed, y: V3.y + front_sh_drop };
     const f_ux = (P5_closed.x - V3.x) / state.shp;
@@ -225,7 +235,9 @@ function calculateGeometry() {
     // 6. Анатомический втачной рукав с вариациями длины
     const sleeveLengthType = state.sleeveLengthType || 'long';
     let L_sleeve = state.dr;
-    let W_wrist = state.oz + 2.0;
+    const effectiveOz = (typeof AutoMeasurements !== 'undefined') ? AutoMeasurements.getEffective('oz') : (Number(state.oz) || 16.5);
+    const L_elbow = (typeof AutoMeasurements !== 'undefined') ? AutoMeasurements.getEffective('dr_l') : Math.round(state.dr * 0.56);
+    let W_wrist = effectiveOz + 4.5; // комфортная ширина низа рукава (Шрн) с прибавкой
 
     if (sleeveLengthType === 'three-quarter') {
         L_sleeve = Math.round(state.dr * 0.72);
@@ -422,7 +434,7 @@ function calculateGeometry() {
         B1, B3, B4, B5, B8_bot, B_front_bot,
         front_dart_top, L_dart_leg, bust_dart_width, total_waist_intake,
         side_dart_w, back_dart_w, front_dart_w, hip_excess,
-        W_sleeve, H_cap, L_sleeve, W_wrist,
+        W_sleeve, H_cap, L_sleeve, L_elbow, W_wrist, effectiveOz, effectiveGpr,
         len_back_armhole, len_front_armhole, total_armhole_len,
         len_sleeve_front, len_sleeve_back, total_sleeve_cap_len, sleeve_ease,
         posture,

@@ -3,13 +3,116 @@
 // Активный режим отображения на смартфонах ('canvas' | 'sidebar')
 let mobileView = 'canvas';
 
+const SMART_AUTO_KEYS = ['shs', 'shg', 'vpk', 'gpr', 'dr_l', 'oz', 'skirtVb', 'skirtBalance'];
+
+function isSmartAutoKey(key) {
+    return SMART_AUTO_KEYS.includes(key);
+}
+
+function renderAutoBadgeHtml(key, isAuto) {
+    if (isAuto) {
+        return `
+            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-[#F5F2EB] text-[#78716C] border border-[#E8E2D5] shrink-0 flex items-center gap-1 shadow-2xs" title="Рассчитано автоматически от базовых мерок">
+                <i data-lucide="sparkles" class="w-2.5 h-2.5 text-[#E05A47]"></i>Авто
+            </span>
+        `;
+    }
+    return `
+        <button type="button" onclick="resetToAuto('${key}')" class="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-[#FFF0ED] hover:bg-[#FFE5E0] text-[#E05A47] border border-[#FCDAD5] shrink-0 flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-2xs" title="Вернуться к авторасчету по формуле">
+            <i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i>Сбросить в Авто
+        </button>
+    `;
+}
+
+function updateAutoBadge(key) {
+    if (!isSmartAutoKey(key)) return;
+    const badgeEl = document.getElementById(`auto-badge-${key}`);
+    const numEl = document.getElementById(`num-${key}`);
+    const isAuto = typeof AutoMeasurements !== 'undefined' ? AutoMeasurements.isAuto(key) : false;
+
+    if (badgeEl) {
+        badgeEl.innerHTML = renderAutoBadgeHtml(key, isAuto);
+    }
+    if (numEl) {
+        if (isAuto) {
+            numEl.classList.remove('text-[#2C2825]', 'font-bold');
+            numEl.classList.add('text-[#78716C]', 'font-medium');
+        } else {
+            numEl.classList.remove('text-[#78716C]', 'font-medium');
+            numEl.classList.add('text-[#2C2825]', 'font-bold');
+        }
+    }
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+}
+
+function resetToAuto(key) {
+    if (key === 'skirtBalance') {
+        state[key] = 0.0;
+    } else {
+        state[key] = null;
+    }
+    const autoVal = typeof AutoMeasurements !== 'undefined' ? AutoMeasurements.getEffective(key) : '';
+    const numEl = document.getElementById(`num-${key}`);
+    if (numEl) {
+        numEl.value = autoVal;
+    }
+    updateAutoBadge(key);
+    renderPattern();
+    syncAllAutoInputs();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
+    showNotification(`Мерка «${key.toUpperCase()}» возвращена в автоматический расчет ✨`);
+}
+
+function syncAllAutoInputs() {
+    if (typeof AutoMeasurements === 'undefined') return;
+    SMART_AUTO_KEYS.forEach(k => {
+        const isAuto = AutoMeasurements.isAuto(k);
+        const numEl = document.getElementById(`num-${k}`);
+        if (isAuto && numEl && document.activeElement !== numEl) {
+            numEl.value = AutoMeasurements.getEffective(k);
+        }
+        updateAutoBadge(k);
+    });
+}
+
+function syncSkirtOptionalInputs() {
+    const vbEl = document.getElementById('num-skirtVb');
+    if (vbEl && typeof AutoMeasurements !== 'undefined') {
+        const isAutoVb = AutoMeasurements.isAuto('skirtVb');
+        if (isAutoVb && document.activeElement !== vbEl) {
+            vbEl.value = AutoMeasurements.getEffective('skirtVb');
+        }
+        updateAutoBadge('skirtVb');
+    }
+
+    const balEl = document.getElementById('num-skirtBalance');
+    if (balEl && typeof AutoMeasurements !== 'undefined') {
+        const isAutoBal = AutoMeasurements.isAuto('skirtBalance');
+        if (isAutoBal && document.activeElement !== balEl) {
+            balEl.value = 0;
+        }
+        updateAutoBadge('skirtBalance');
+    }
+}
+
 function buildInputs() {
     const renderGroup = (containerId, list) => {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = list.map(item => {
             const isRec = Boolean(item.recommended);
-            const val = (state[item.key] !== null && state[item.key] !== undefined && state[item.key] !== '') ? state[item.key] : '';
+            const isSmart = Boolean(item.isSmartAuto);
+            const isAuto = isSmart && typeof AutoMeasurements !== 'undefined' ? AutoMeasurements.isAuto(item.key) : false;
+            
+            let val = '';
+            if (isSmart && isAuto) {
+                val = AutoMeasurements.getEffective(item.key);
+            } else if (state[item.key] !== null && state[item.key] !== undefined && state[item.key] !== '') {
+                val = state[item.key];
+            }
+
             const cardClasses = isRec
                 ? "py-2.5 px-3 rounded-xl bg-[#FFFBF9] border border-[#FADCD5] mb-2 flex items-center justify-between shadow-[0_2px_10px_-2px_rgba(224,90,71,0.08)] hover:border-[#F4B4A8] transition-colors"
                 : "py-2.5 px-3 rounded-xl bg-white border border-[#F0ECE1] mb-2 flex items-center justify-between shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)] hover:border-[#E3DDD0] transition-colors";
@@ -20,11 +123,16 @@ function buildInputs() {
                 </span>
             ` : '';
 
+            const autoBadgeHtml = isSmart ? `<div id="auto-badge-${item.key}" class="shrink-0">${renderAutoBadgeHtml(item.key, isAuto)}</div>` : '';
+
+            const inputColorClass = (isSmart && isAuto) ? 'text-[#78716C] font-medium' : 'text-[#2C2825] font-bold';
+
             return `
             <div class="${cardClasses}">
-                <div class="flex items-center gap-2 min-w-0 pr-2">
+                <div class="flex items-center gap-1.5 min-w-0 pr-2">
                     <span class="text-xs font-semibold text-[#2C2825] truncate">${item.label}</span>
                     <span class="text-[10px] mono font-bold px-1.5 py-0.5 rounded-md bg-[#FFF5F3] text-[#E05A47] border border-[#FCDAD5] shrink-0">${item.abbr}</span>
+                    ${autoBadgeHtml}
                     ${recBadge}
                     <div class="relative group/tip inline-flex items-center shrink-0">
                         <button type="button" onclick="showMeasurementHint('${item.label}', '${item.abbr}', '${item.hint.replace(/'/g, "\\'")}')" class="text-[#A8A29E] hover:text-[#E05A47] p-0.5 transition cursor-pointer flex items-center justify-center rounded-full hover:bg-[#FAF8F5]" aria-label="Справка">
@@ -40,7 +148,7 @@ function buildInputs() {
                 <!-- Тактильный степпер -->
                 <div class="flex items-center border border-[#F0ECE1] rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0">
                     <button type="button" onclick="adjustValue('${item.key}', -${item.step})" class="w-7 h-7 flex items-center justify-center text-[#78716C] hover:text-[#2C2825] hover:bg-[#F0ECE1] font-bold active:scale-95 transition cursor-pointer" title="Уменьшить">−</button>
-                    <div class="w-12 text-center mono text-xs font-bold bg-white border-x border-[#F0ECE1] py-1 text-[#2C2825]">
+                    <div class="w-12 text-center mono text-xs bg-white border-x border-[#F0ECE1] py-1 ${inputColorClass}">
                         <input type="number" id="num-${item.key}" value="${val}" placeholder="${item.placeholder || ''}" min="${item.min}" max="${item.max}" step="${item.step}"
                             oninput="syncInput('${item.key}', this.value)"
                             class="w-full text-center bg-transparent focus:outline-none placeholder:text-[#A8A29E] placeholder:font-normal placeholder:italic">
@@ -57,6 +165,8 @@ function buildInputs() {
     renderGroup('measures-sleeve', inputConfig.sleeve);
     renderGroup('measures-ease', inputConfig.ease);
 
+    syncSkirtOptionalInputs();
+
     if (window.lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
     }
@@ -64,8 +174,12 @@ function buildInputs() {
 
 function adjustValue(key, delta) {
     let cur = state[key];
+    const isSmart = isSmartAutoKey(key);
+
     if (cur === null || cur === undefined || cur === '' || isNaN(parseFloat(cur))) {
-        if (key === 'shs') cur = 35.0;
+        if (isSmart && typeof AutoMeasurements !== 'undefined') {
+            cur = AutoMeasurements.getEffective(key);
+        } else if (key === 'shs') cur = 35.0;
         else if (key === 'shg') cur = 33.0;
         else cur = 0;
     } else {
@@ -76,14 +190,26 @@ function adjustValue(key, delta) {
 }
 
 function syncInput(key, value) {
+    const isSmart = isSmartAutoKey(key);
+
     if (value === '' || value === null || value === undefined) {
-        state[key] = null;
-        const numEl = document.getElementById(`num-${key}`);
-        if (numEl && document.activeElement !== numEl) numEl.value = '';
+        if (isSmart) {
+            state[key] = (key === 'skirtBalance') ? 0.0 : null;
+            const numEl = document.getElementById(`num-${key}`);
+            const autoVal = typeof AutoMeasurements !== 'undefined' ? AutoMeasurements.getEffective(key) : '';
+            if (numEl && document.activeElement !== numEl) numEl.value = autoVal;
+            updateAutoBadge(key);
+        } else {
+            state[key] = null;
+            const numEl = document.getElementById(`num-${key}`);
+            if (numEl && document.activeElement !== numEl) numEl.value = '';
+        }
         renderPattern();
+        syncAllAutoInputs();
         if (typeof StorageManager !== 'undefined') StorageManager.save();
         return;
     }
+
     const val = parseFloat(value);
     if (isNaN(val)) return;
     state[key] = val;
@@ -93,7 +219,21 @@ function syncInput(key, value) {
     if (numEl && document.activeElement !== numEl) numEl.value = val;
     if (rngEl && document.activeElement !== rngEl) rngEl.value = val;
 
+    if (key === 'ot') {
+        const otSkirt = document.getElementById('num-ot-skirt');
+        if (otSkirt && document.activeElement !== otSkirt) otSkirt.value = val;
+    }
+    if (key === 'ob') {
+        const obSkirt = document.getElementById('num-ob-skirt');
+        if (obSkirt && document.activeElement !== obSkirt) obSkirt.value = val;
+    }
+
+    if (isSmart) {
+        updateAutoBadge(key);
+    }
+
     renderPattern();
+    syncAllAutoInputs();
     if (typeof StorageManager !== 'undefined') StorageManager.save();
 }
 
@@ -163,6 +303,7 @@ function applyPreset(sizeKey) {
     });
 
     renderPattern();
+    syncAllAutoInputs();
     if (typeof StorageManager !== 'undefined') StorageManager.save();
     if (sizeKey === 'my') {
         showNotification('Применён ваш персональный пресет мерок (92/75/96)');
@@ -845,6 +986,7 @@ const PROFILE_STORAGE_KEY = 'lekalo_user_profile';
 
 function initUserProfile() {
     updateProfileBadge();
+    syncAllAutoInputs();
     try {
         const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
         if (raw) {
@@ -857,10 +999,10 @@ function initUserProfile() {
 function saveMyProfile() {
     const keys = [
         'garmentType',
-        'og', 'shs', 'shg', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
+        'og', 'shs', 'shg', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'dr_l', 'oz', 'vpk', 'gpr',
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
         'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
-        'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb',
+        'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb', 'skirtVb', 'skirtBalance',
         'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch'
     ];
     const profileData = {
@@ -923,6 +1065,7 @@ function applyMyProfile() {
         if (state.pantiesStretch) setPantiesStretch(state.pantiesStretch);
 
         renderPattern();
+        syncAllAutoInputs();
         updateProfileBadge();
         showNotification(`Загружен ваш профиль (${profile.savedAt || ''})`);
     } catch (e) {
@@ -949,14 +1092,14 @@ function updateProfileBadge() {
 function exportProfileJson() {
     const keys = [
         'garmentType',
-        'og', 'shs', 'shg', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'oz',
+        'og', 'shs', 'shg', 'ot', 'ob', 'osh', 'dts', 'dtp', 'vg', 'cg', 'vb', 'di', 'shp', 'op', 'dr', 'dr_l', 'oz', 'vpk', 'gpr',
         'pg', 'pt', 'pb', 'pspr', 'pop', 'posture',
         'dartPosition', 'necklineType', 'necklineDepth', 'sleeveLengthType', 'silhouette',
-        'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb',
+        'skirtLength', 'skirtStyle', 'skirtRise', 'skirtPt', 'skirtPb', 'skirtVb', 'skirtBalance',
         'pantiesModel', 'pantiesRise', 'pantiesLegCut', 'pantiesStretch'
     ];
     const exportData = {
-        app: 'Конструктор выкроек САПР 1:1',
+        app: 'Конструктор выкроек Лекало 1:1',
         name: 'Мои индивидуальные мерки',
         exportedAt: new Date().toISOString(),
         measurements: {}

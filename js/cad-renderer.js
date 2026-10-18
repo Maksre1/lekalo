@@ -176,14 +176,18 @@ function generatePatternPiecesMarkup(g, options = {}) {
     const slTopY = 0;
     const slCapY = g.H_cap * CM;
     const slBotY = g.L_sleeve * CM;
+    const slElbowY = (g.L_elbow || (g.L_sleeve * 0.56)) * CM;
     const halfW = (g.W_sleeve / 2) * CM;
     const halfWrist = (g.W_wrist / 2) * CM;
+    const halfElbow = halfW * 0.85;
 
     const sleeveOutlinePath = `
         M ${slCenter} ${slTopY}
         C ${slCenter + halfW * 0.45} ${slTopY}, ${slCenter + halfW * 0.70} ${slCapY * 1.12}, ${slCenter + halfW} ${slCapY}
+        ${g.sleeveLengthType === 'long' ? `L ${slCenter + halfElbow} ${slElbowY}` : ''}
         L ${slCenter + halfWrist} ${slBotY}
         L ${slCenter - halfWrist} ${slBotY}
+        ${g.sleeveLengthType === 'long' ? `L ${slCenter - halfElbow} ${slElbowY}` : ''}
         L ${slCenter - halfW} ${slCapY}
         C ${slCenter - halfW * 0.78} ${slCapY * 0.88}, ${slCenter - halfW * 0.50} ${slTopY}, ${slCenter} ${slTopY}
         Z
@@ -199,12 +203,16 @@ function generatePatternPiecesMarkup(g, options = {}) {
         <g transform="translate(${frontShiftX}, 0)">
             <line x1="${(notchFrontPoint.x - notchLen/10) * CM}" y1="${notchFrontPoint.y * CM}" x2="${(notchFrontPoint.x + notchLen/10) * CM}" y2="${notchFrontPoint.y * CM}" stroke="#dc2626" stroke-width="1.6"/>
         </g>
-        <!-- Надсечки рукава: вершина, перед (1 засечка), спинка (2 засечки) -->
+        <!-- Надсечки рукава: вершина, перед (1 засечка), спинка (2 засечки), локоть -->
         <g id="sleeve-notches">
             <line x1="${slCenter}" y1="${slTopY - notchLen}" x2="${slCenter}" y2="${slTopY + notchLen}" stroke="#dc2626" stroke-width="1.6"/>
             <line x1="${slCenter + halfW * 0.58 - notchLen}" y1="${slCapY * 0.55}" x2="${slCenter + halfW * 0.58 + notchLen}" y2="${slCapY * 0.55}" stroke="#dc2626" stroke-width="1.6"/>
             <line x1="${slCenter - halfW * 0.62 - notchLen}" y1="${slCapY * 0.50 - 3}" x2="${slCenter - halfW * 0.62 + notchLen}" y2="${slCapY * 0.50 - 3}" stroke="#dc2626" stroke-width="1.6"/>
             <line x1="${slCenter - halfW * 0.62 - notchLen}" y1="${slCapY * 0.50 + 3}" x2="${slCenter - halfW * 0.62 + notchLen}" y2="${slCapY * 0.50 + 3}" stroke="#dc2626" stroke-width="1.6"/>
+            ${g.sleeveLengthType === 'long' ? `
+                <line x1="${slCenter - halfElbow}" y1="${slElbowY}" x2="${slCenter + halfElbow}" y2="${slElbowY}" stroke="#A8A29E" stroke-dasharray="4,3" stroke-width="0.8"/>
+                <text x="${slCenter + halfElbow + 6}" y="${slElbowY + 3}" font-family="JetBrains Mono, monospace" font-size="8" fill="#78716C">ЛОКОТЬ (${(g.L_elbow || (g.L_sleeve * 0.56)).toFixed(1)} см)</text>
+            ` : ''}
         </g>
     `;
 

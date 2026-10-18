@@ -1,4 +1,4 @@
-// js/onboarding-tour.js - Интерактивный путеводитель (Spotlight Tour) по САПР «Лекало»
+// js/onboarding-tour.js - Интерактивный путеводитель (Spotlight Tour) по «Лекало»
 
 const OnboardingTour = {
     STORAGE_KEY: 'lekalo_onboarding_completed_v1',
@@ -51,7 +51,7 @@ const OnboardingTour = {
             id: 'fit-tab',
             selector: '[data-tour="fit-tab"]',
             title: 'Посадка, прибавки и осанка',
-            desc: 'Регулируйте свободу облегания (прилегающий, умеренный, оверсайз) и тип осанки. САПР автоматически скорректирует баланс спинки и полочки.',
+            desc: 'Регулируйте свободу облегания (прилегающий, умеренный, оверсайз) и тип осанки. Конструктор автоматически скорректирует баланс спинки и полочки.',
             badge: 'Шаг 4 из 7',
             prepare: () => {
                 if (typeof setMobileView === 'function' && window.innerWidth < 768) {
@@ -130,7 +130,7 @@ const OnboardingTour = {
                                 <i data-lucide="compass" class="w-6 h-6"></i>
                             </div>
                             <div>
-                                <h3 class="text-base sm:text-lg font-extrabold text-[#2C2825] leading-tight">Добро пожаловать в САПР Лекало!</h3>
+                                <h3 class="text-base sm:text-lg font-extrabold text-[#2C2825] leading-tight">Добро пожаловать в Лекало!</h3>
                                 <p class="text-xs text-[#78716C] mt-0.5">Параметрический конструктор выкроек 1:1</p>
                             </div>
                         </div>
@@ -496,7 +496,7 @@ const OnboardingTour = {
     finish() {
         this.close();
         if (typeof showNotification === 'function') {
-            showNotification('Поздравляем! Вы познакомились с САПР Лекало 1:1 ✨');
+            showNotification('Поздравляем! Вы познакомились с Конструктором Лекало 1:1 ✨');
         }
     },
 
