@@ -417,48 +417,86 @@ function getPieceExportData(pieceType) {
             <text x="${((g.X_G2 + g.X_G3) * 0.5) * CM}" y="${(g.Y_G - 0.8) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Ог=${state.og} | От=${state.ot} | Вг=${state.vg} | Осанка: ${state.posture}</text>
         `;
     } else if (pieceType === 'sleeve') {
-        minX = -20;
-        minY = -20;
-        widthMm = Math.ceil(g.W_sleeve * CM) + 40;
-        heightMm = Math.ceil((g.L_sleeve + 2) * CM) + 40;
-        fileTitle = `rukav_OG${state.og}_DR${state.dr}`;
-        pieceLabelRu = `Рукав втачной (Оп ${state.op}, Др ${state.dr})`;
+        const hasSleevePiece = Boolean(state.showSleeve && state.sleeveLengthType !== 'sleeveless');
+        if (!hasSleevePiece) {
+            minX = -20;
+            minY = -20;
+            widthMm = 350;
+            heightMm = 180;
+            fileTitle = `bez_rukava_OG${state.og}`;
+            pieceLabelRu = `Модель без рукавов`;
+            contentSvg = `
+                <g stroke="#09090b" stroke-width="1.5" fill="none">
+                    <rect x="0" y="0" width="310" height="140" rx="8" fill="#ffffff" stroke="#09090b"/>
+                    <text x="20" y="35" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#09090b">МОДЕЛЬ БЕЗ РУКАВОВ</text>
+                    <text x="20" y="65" font-family="Arial, sans-serif" font-size="10" fill="#3f3f46">• Деталь рукава отключена в параметрах моделирования.</text>
+                    <text x="20" y="85" font-family="Arial, sans-serif" font-size="10" fill="#3f3f46">• Обработка проймы: обтачка 3.0 см или косая бейка 3.5 см.</text>
+                    <text x="20" y="105" font-family="Arial, sans-serif" font-size="10" fill="#3f3f46">• Периметр проймы: ${(g.total_armhole_len || 0).toFixed(1)} см.</text>
+                </g>
+            `;
+        } else {
+            minX = -20;
+            minY = -20;
+            widthMm = Math.ceil(g.W_sleeve * CM) + 40;
+            heightMm = Math.ceil((g.L_sleeve + 2) * CM) + 40;
+            fileTitle = `rukav_OG${state.og}_DR${state.dr}`;
+            pieceLabelRu = `Рукав втачной (Оп ${state.op}, Др ${state.dr})`;
 
-        contentSvg = `
-            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
-                <path d="${p.sleeveOutlinePath}" fill="#ffffff"/>
-                <line x1="${p.slCenter - p.halfW}" y1="${p.slCapY}" x2="${p.slCenter + p.halfW}" y2="${p.slCapY}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
-                <line x1="${p.slCenter}" y1="0" x2="${p.slCenter}" y2="${p.slBotY}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
-            </g>
-            <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) * 0.42}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">РУКАВ ВТАЧНОЙ (2 дет.)</text>
-            <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) * 0.42 + 16}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Оп=${state.op} см | Др=${state.dr} см | Посадка: +${g.sleeve_ease.toFixed(1)} см</text>
-            <text x="${p.slCenter + p.halfW * 0.45}" y="${p.slCapY * 0.7}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#047857">ПЕРЕД ➔</text>
-            <text x="${p.slCenter - p.halfW * 0.65}" y="${p.slCapY * 0.7}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#1d4ed8">⬅ СПИНКА</text>
-        `;
+            contentSvg = `
+                <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                    <path d="${p.sleeveOutlinePath}" fill="#ffffff"/>
+                    <line x1="${p.slCenter - p.halfW}" y1="${p.slCapY}" x2="${p.slCenter + p.halfW}" y2="${p.slCapY}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                    <line x1="${p.slCenter}" y1="0" x2="${p.slCenter}" y2="${p.slBotY}" stroke="#52525b" stroke-width="0.65" stroke-dasharray="4,3"/>
+                </g>
+                <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) * 0.42}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">РУКАВ ВТАЧНОЙ (2 дет.)</text>
+                <text x="${p.slCenter}" y="${(p.slCapY + p.slBotY) * 0.42 + 16}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#3f3f46">Оп=${state.op} см | Др=${state.dr} см | Посадка: +${g.sleeve_ease.toFixed(1)} см</text>
+                <text x="${p.slCenter + p.halfW * 0.45}" y="${p.slCapY * 0.7}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#047857">ПЕРЕД ➔</text>
+                <text x="${p.slCenter - p.halfW * 0.65}" y="${p.slCapY * 0.7}" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#1d4ed8">⬅ СПИНКА</text>
+            `;
+        }
     } else {
         // Полный комплект: чистая аналитическая генерация без клонирования экранного DOM!
         const sepShift = 20 * CM;
-        const slOrigin = g.W_grid * CM + sepShift + (g.W_sleeve / 2) * CM + 60;
-        const pAll = generatePatternPiecesMarkup(g, { showClassic: true, frontShiftX: sepShift, sleeveOriginX: slOrigin / CM });
+        const hasSleevePiece = Boolean(state.showSleeve && state.sleeveLengthType !== 'sleeveless');
 
-        minX = -25;
-        minY = -45;
-        widthMm = Math.ceil((slOrigin + (g.W_sleeve / 2) * CM) + 60);
-        heightMm = Math.ceil((Math.max(g.Y_H, g.L_sleeve) + 6) * CM) + 60;
-        fileTitle = `chertezh_polny_OG${state.og}_OT${state.ot}`;
-        pieceLabelRu = `Полный комплект лекал (Ог ${state.og}, От ${state.ot}, Об ${state.ob})`;
-
-        contentSvg = `
-            <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
-                <path d="${pAll.backOutlinePath}" fill="#ffffff"/>
-                <path d="${pAll.backDiamondPath}" />
-                <g transform="translate(${sepShift}, 0)">
-                    <path d="${pAll.frontOutlinePath}" fill="#ffffff"/>
-                    <path d="${pAll.frontDiamondPath}" />
+        if (hasSleevePiece) {
+            const slOrigin = g.W_grid * CM + sepShift + (g.W_sleeve / 2) * CM + 60;
+            const pAll = generatePatternPiecesMarkup(g, { showClassic: true, frontShiftX: sepShift, sleeveOriginX: slOrigin / CM });
+            minX = -25;
+            minY = -45;
+            widthMm = Math.ceil((slOrigin + (g.W_sleeve / 2) * CM) + 60);
+            heightMm = Math.ceil((Math.max(g.Y_H, g.L_sleeve) + 6) * CM) + 60;
+            contentSvg = `
+                <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                    <path d="${pAll.backOutlinePath}" fill="#ffffff"/>
+                    <path d="${pAll.backDiamondPath}" />
+                    <g transform="translate(${sepShift}, 0)">
+                        <path d="${pAll.frontOutlinePath}" fill="#ffffff"/>
+                        <path d="${pAll.frontDiamondPath}" />
+                    </g>
+                    <path d="${pAll.sleeveOutlinePath}" fill="#ffffff"/>
                 </g>
-                <path d="${pAll.sleeveOutlinePath}" fill="#ffffff"/>
-            </g>
-        `;
+            `;
+        } else {
+            const pAll = generatePatternPiecesMarkup(g, { showClassic: true, frontShiftX: sepShift });
+            minX = -25;
+            minY = -45;
+            widthMm = Math.ceil((g.W_grid * CM + sepShift) + 50);
+            heightMm = Math.ceil((g.Y_H + 6) * CM) + 60;
+            contentSvg = `
+                <g stroke="#09090b" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                    <path d="${pAll.backOutlinePath}" fill="#ffffff"/>
+                    <path d="${pAll.backDiamondPath}" />
+                    <g transform="translate(${sepShift}, 0)">
+                        <path d="${pAll.frontOutlinePath}" fill="#ffffff"/>
+                        <path d="${pAll.frontDiamondPath}" />
+                    </g>
+                </g>
+            `;
+        }
+
+        fileTitle = `chertezh_polny_OG${state.og}_OT${state.ot}`;
+        pieceLabelRu = `Полный комплект лекал (Ог ${state.og}, От ${state.ot}, Об ${state.ob})${hasSleevePiece ? '' : ' [без рукава]'}`;
     }
 
     return { minX, minY, widthMm, heightMm, contentSvg, fileTitle, pieceLabelRu };

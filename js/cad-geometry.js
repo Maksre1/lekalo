@@ -39,6 +39,26 @@ function bezierQuadLen(p0, p1, p2, steps = 100) {
 }
 
 function calculateGeometry() {
+    // 0. Защита от пустых значений, деления на ноль и нечисловых параметров
+    const og = Math.max(40, Number(state.og) || 92);
+    const ot = Math.max(30, Number(state.ot) || 74);
+    const ob = Math.max(40, Number(state.ob) || 98);
+    const osh = Math.max(20, Number(state.osh) || 36);
+    const dts = Math.max(25, Number(state.dts) || 40.0);
+    const dtp = Math.max(25, Number(state.dtp) || 43.5);
+    const vg = Math.max(15, Number(state.vg) || 26.5);
+    const cg = Math.max(5, Number(state.cg) || 10.0);
+    const vb = Math.max(10, Number(state.vb) || 19.5);
+    const di = Math.max(35, Number(state.di) || 100.0);
+    const shp = Math.max(6, Number(state.shp) || 12.8);
+    const dr = Math.max(15, Number(state.dr) || 57.0);
+    const op = Math.max(15, Number(state.op) || 28.5);
+    const pg = (typeof state.pg === 'number' && !isNaN(state.pg)) ? state.pg : 5.0;
+    const pt = (typeof state.pt === 'number' && !isNaN(state.pt)) ? state.pt : 2.0;
+    const pb = (typeof state.pb === 'number' && !isNaN(state.pb)) ? state.pb : 3.0;
+    const pspr = (typeof state.pspr === 'number' && !isNaN(state.pspr)) ? state.pspr : 2.0;
+    const pop = (typeof state.pop === 'number' && !isNaN(state.pop)) ? state.pop : 5.5;
+
     // 0. Корректировки осанки (ЦНИИШП)
     const posture = state.posture || 'normal';
     const postureDts = posture === 'stooped' ? 1.0 : posture === 'erect' ? -0.8 : 0.0;
@@ -49,42 +69,52 @@ function calculateGeometry() {
     const postureNeckDrop = posture === 'stooped' ? 0.3 : 0.0;
 
     // 1. Полуобхваты
-    const Sg = state.og / 2;
-    const St = state.ot / 2;
-    const Sb = state.ob / 2;
-    const Ssh = state.osh / 2;
+    const Sg = og / 2;
+    const St = ot / 2;
+    const Sb = ob / 2;
+    const Ssh = osh / 2;
 
-    // 2. Базисная сетка (ЕМКО / ЦНИИШП с адаптацией под индивидуальные мерки Шс и Шг)
-    const W_grid = Sg + state.pg;
-    
-    let W_back, W_armhole, W_front;
+    // 2. Базисная сетка (ЕМКО / ЦНИИШП с анатомической гармонизацией)
+    const W_grid = Math.max(25, Sg + pg);
     const shsVal = parseFloat(state.shs);
     const shgVal = parseFloat(state.shg);
-    
-    if (shsVal > 20 && shgVal > 20) {
-        // Индивидуальные анатомические ширины спины и груди
-        W_back = (shsVal / 2) + (0.22 * state.pg);
-        W_armhole = 0.21 * Sg + 1.0 + (0.35 * state.pg);
-        W_front = W_grid - W_back - W_armhole;
-        
-        // Гарантируем, что полочка не уже костного основания груди между подмышками
-        const min_front_bone = (shgVal / 2) + (0.20 * state.pg);
-        if (W_front < min_front_bone) {
-            W_front = min_front_bone;
-            W_armhole = Math.max(9.5, W_grid - W_back - W_front);
-        }
-    } else if (shsVal > 20) {
-        W_back = (shsVal / 2) + (0.22 * state.pg);
-        W_armhole = Math.max(9.5, 0.22 * Sg + 1.2 + (0.55 * state.pg));
-        W_front = W_grid - W_back - W_armhole;
+
+    // Минимально допустимая анатомическая ширина проймы для исключения схождения линий Г1 и Г2
+    const W_arm_min = Math.max(8.5, 0.20 * Sg + 0.35 * Math.max(0, pg));
+
+    // Целевые ширины спинки и полочки
+    let W_back_target, W_front_target;
+    if (shsVal > 20) {
+        W_back_target = (shsVal / 2) + (0.22 * pg);
     } else {
-        // Стандартный пропорциональный расчет ЦНИИШП/ЕМКО
-        W_back = (Sg / 3) + 2.1 + (0.25 * state.pg);
-        W_armhole = 0.22 * Sg + 1.2 + (0.55 * state.pg);
-        W_front = W_grid - W_back - W_armhole;
+        W_back_target = (Sg / 3) + 2.1 + (0.25 * pg);
     }
 
-    // Вертикали по X
+    if (shgVal > 20) {
+        W_front_target = (shgVal / 2) + (0.20 * pg);
+    } else {
+        W_front_target = (Sg / 3) - 0.5 + (0.20 * pg);
+    }
+
+    let W_back, W_armhole, W_front;
+    const W_body_avail = W_grid - W_arm_min;
+
+    if (W_back_target + W_front_target > W_body_avail) {
+        // Если сумма введенных мерок Шс и Шг превышает доступную ширину сетки за вычетом проймы,
+        // пропорционально масштабируем спинку и полочку, гарантируя наличие проймы W_arm_min
+        const scale = Math.max(0.4, W_body_avail / (W_back_target + W_front_target));
+        W_back = Math.max(10.0, W_back_target * scale);
+        W_front = Math.max(10.0, W_front_target * scale);
+        W_armhole = Math.max(W_arm_min, W_grid - W_back - W_front);
+        // Корректируем полочку для строгого равенства сумме W_grid
+        W_front = W_grid - W_back - W_armhole;
+    } else {
+        W_back = W_back_target;
+        W_front = W_front_target;
+        W_armhole = W_grid - W_back - W_front;
+    }
+
+    // Вертикали по X (строго 0 < X_G < X_G4 < X_G2 < X_G3 = W_grid)
     const X_A = 0;
     const X_G = W_back;
     const X_G2 = W_back + W_armhole;
@@ -94,10 +124,10 @@ function calculateGeometry() {
     // Горизонтали по Y
     const Y_A = 0;
     const effectiveGpr = (typeof AutoMeasurements !== 'undefined') ? AutoMeasurements.getEffective('gpr') : (0.28 * Sg + 5.5);
-    const Y_G = effectiveGpr + state.pspr;
-    const Y_T = state.dts + postureDts;
-    const Y_B = Y_T + state.vb;
-    const Y_H = Math.max(state.di, Y_B + 5.0);
+    const Y_G = effectiveGpr + pspr;
+    const Y_T = dts + postureDts;
+    const Y_B = Y_T + vb;
+    const Y_H = Math.max(di, Y_B + 5.0);
 
     // 3. Спинка: горловина, плечо, вытачка
     const W_neck = (Ssh / 3) + 1.0;
@@ -151,17 +181,17 @@ function calculateGeometry() {
     const A2 = { x: X_G2, y: 0 };
 
     // Центр груди Г7
-    const X_G6 = Math.max(X_G2 + 2.0, X_G3 - state.cg);
+    const X_G6 = Math.max(X_G4 + 1.0, Math.min(X_G3 - 4.0, X_G3 - cg));
     const dx_vg = V3.x - X_G6;
-    const dy_vg = Math.sqrt(Math.max(4, state.vg * state.vg - dx_vg * dx_vg));
+    const dy_vg = Math.sqrt(Math.max(4, vg * vg - dx_vg * dx_vg));
     const G7 = { x: X_G6, y: V3.y + dy_vg };
 
     // Базовое (закрытое) положение плеча полочки
     const front_sh_drop = 3.6 + (postureShDropCalc - 2.2) * 0.6;
-    const dx_closed = Math.sqrt(Math.max(1, state.shp * state.shp - front_sh_drop * front_sh_drop));
+    const dx_closed = Math.sqrt(Math.max(1, shp * shp - front_sh_drop * front_sh_drop));
     const P5_closed = { x: V3.x - dx_closed, y: V3.y + front_sh_drop };
-    const f_ux = (P5_closed.x - V3.x) / state.shp;
-    const f_uy = (P5_closed.y - V3.y) / state.shp;
+    const f_ux = (P5_closed.x - V3.x) / shp;
+    const f_uy = (P5_closed.y - V3.y) / shp;
 
     // Первая сторона вытачки (4 см от горловины)
     const V7 = { x: V3.x + f_ux * 4.0, y: V3.y + f_uy * 4.0 };
@@ -420,6 +450,8 @@ function calculateGeometry() {
     }
 
     return {
+        type: 'dress',
+        hasSleeve: (state.showSleeve !== false && state.sleeveLengthType !== 'sleeveless'),
         Sg, St, Sb, Ssh,
         W_grid, W_back, W_armhole, W_front,
         X_A, X_G, X_G2, X_G3, X_G4, X_G6, X_G8,

@@ -343,6 +343,12 @@ function switchTab(tabName) {
         } else if (state.garmentType === 'panties') {
             if (typeof renderPantiesStyleCatalog === 'function') renderPantiesStyleCatalog();
             else if (typeof renderPantiesActiveDetails === 'function') renderPantiesActiveDetails();
+        } else if (state.garmentType === 'top') {
+            if (typeof renderTopStyleCatalog === 'function') renderTopStyleCatalog();
+            else if (typeof renderTopActiveDetails === 'function') renderTopActiveDetails();
+        } else if (state.garmentType === 'corset') {
+            if (typeof renderCorsetStyleCatalog === 'function') renderCorsetStyleCatalog();
+            else if (typeof renderCorsetActiveDetails === 'function') renderCorsetActiveDetails();
         }
     }
 
@@ -855,18 +861,24 @@ function updateExportDimensions(g) {
     }
 
     // Платье (по умолчанию)
+    const hasDressSleeve = Boolean(state.showSleeve !== false && state.sleeveLengthType !== 'sleeveless');
+    const modalCardSleeve = document.getElementById('modal-card-sleeve');
+    if (modalCardSleeve) {
+        modalCardSleeve.classList.toggle('hidden', !hasDressSleeve);
+    }
+
     setText('export-title-back', '1. Спинка (со сгибом)');
     setText('export-title-front', '2. Полочка (перед)');
-    setText('export-title-sleeve', '3. Рукав втачной');
-    setText('export-title-all', '4. Весь комплект (все детали)');
+    setText('export-title-sleeve', hasDressSleeve ? '3. Рукав втачной' : '3. Без рукава');
+    setText('export-title-all', hasDressSleeve ? '4. Весь комплект (все детали)' : '4. Комплект (спинка + полочка)');
     setText('modal-title-back', '1. Деталь «Спинка»');
     setText('modal-title-front', '2. Деталь «Полочка»');
-    setText('modal-title-sleeve', '3. Деталь «Рукав»');
-    setText('modal-title-all', '4. Полный комплект выкройки');
+    setText('modal-title-sleeve', hasDressSleeve ? '3. Деталь «Рукав»' : '3. Без рукава (пройма обработана)');
+    setText('modal-title-all', hasDressSleeve ? '4. Полный комплект выкройки' : '4. Комплект выкройки (без рукава)');
     setText('modal-desc-back', 'Контур со сгибом, плечевая и талиевая вытачки.');
     setText('modal-desc-front', 'Контур переда, нагрудная вытачка и приталивание.');
-    setText('modal-desc-sleeve', 'Анатомический окат, точно согласованный с проймой.');
-    setText('modal-desc-all', 'Все детали единым файлом для сквозной печати.');
+    setText('modal-desc-sleeve', hasDressSleeve ? 'Анатомический окат, точно согласованный с проймой.' : 'Модель без рукавов, детали рукава исключены из раскроя.');
+    setText('modal-desc-all', hasDressSleeve ? 'Все детали единым файлом для сквозной печати.' : 'Спинка и полочка единым файлом для сквозной печати.');
 
     const maxBackX = Math.max(g.X_G4, g.B3.x, g.P1.x, g.H_back_side ? g.H_back_side.x : g.B3.x);
     const backW = maxBackX.toFixed(1);
@@ -875,23 +887,26 @@ function updateExportDimensions(g) {
     const frontW = (g.X_G3 - minFrontX).toFixed(1);
     const frontH = (g.Y_H + 1.2 - g.Y_V1).toFixed(1);
 
+    const allWidthCm = hasDressSleeve ? Math.round(g.W_grid + g.W_sleeve + 24) : Math.round(g.W_grid + 14);
+    const allHeightCm = Math.round(Math.max(g.Y_H, hasDressSleeve ? g.L_sleeve : 0) + 12);
+
     if (elBack) elBack.textContent = `${backW} × ${backH} см`;
     if (elFront) elFront.textContent = `${frontW} × ${frontH} см`;
-    if (elSleeve) elSleeve.textContent = `${g.W_sleeve.toFixed(1)} × ${g.L_sleeve.toFixed(1)} см`;
-    if (elAll) elAll.textContent = `${Math.round(g.W_grid + g.W_sleeve + 24)} × ${Math.round(Math.max(g.Y_H, g.L_sleeve) + 15)} см`;
+    if (elSleeve) elSleeve.textContent = hasDressSleeve ? `${g.W_sleeve.toFixed(1)} × ${g.L_sleeve.toFixed(1)} см` : 'Не требуется';
+    if (elAll) elAll.textContent = `${allWidthCm} × ${allHeightCm} см`;
 
     const tBack = calcTiles(backW, backH);
     const tFront = calcTiles(frontW, frontH);
-    const tSleeve = calcTiles(g.W_sleeve, g.L_sleeve);
-    const tAll = calcTiles(g.W_grid + g.W_sleeve + 24, Math.max(g.Y_H, g.L_sleeve) + 12);
+    const tSleeve = hasDressSleeve ? calcTiles(g.W_sleeve, g.L_sleeve) : { c: 0, r: 0, total: 0 };
+    const tAll = calcTiles(allWidthCm, allHeightCm);
 
     setBadge('pages-back', tBack);
     setBadge('pages-front', tFront);
-    setBadge('pages-sleeve', tSleeve);
+    setBadge('pages-sleeve', hasDressSleeve ? tSleeve : '—');
     setBadge('pages-all', tAll);
     setBadge('modal-pages-back', tBack);
     setBadge('modal-pages-front', tFront);
-    setBadge('modal-pages-sleeve', tSleeve);
+    setBadge('modal-pages-sleeve', hasDressSleeve ? tSleeve : '—');
     setBadge('modal-pages-all', tAll);
 }
 
@@ -983,18 +998,24 @@ function setGarmentType(type) {
     const sleeveInputs = document.getElementById('measures-sleeve');
     if (sleeveInputs && sleeveInputs.parentElement) {
         if (type === 'top') {
-            sleeveInputs.parentElement.classList.toggle('hidden', state.topStyle !== 'smart-tee');
-            state.showSleeve = (state.topStyle === 'smart-tee');
+            const isSmartTee = (state.topStyle === 'smart-tee');
+            sleeveInputs.parentElement.classList.toggle('hidden', !isSmartTee);
+            state.showSleeve = isSmartTee;
         } else if (type === 'dress') {
             sleeveInputs.parentElement.classList.remove('hidden');
-            state.showSleeve = true;
-        } else if (type === 'corset') {
+            state.showSleeve = (state.sleeveLengthType !== 'sleeveless');
+        } else {
+            // skirt, panties, corset
             sleeveInputs.parentElement.classList.add('hidden');
+            state.showSleeve = false;
+        }
+    } else {
+        if (type === 'skirt' || type === 'panties' || type === 'corset') {
             state.showSleeve = false;
         }
     }
     const chkSleeve = document.getElementById('chk-sleeve');
-    if (chkSleeve) chkSleeve.checked = state.showSleeve;
+    if (chkSleeve) chkSleeve.checked = Boolean(state.showSleeve);
 
     const dressStyle = document.getElementById('style-dress-container');
     const topStyle = document.getElementById('style-top-container');
@@ -1316,6 +1337,8 @@ function applyMyProfile() {
         if (state.pantiesRise) setPantiesRise(state.pantiesRise);
         if (state.pantiesLegCut) setPantiesLegCut(state.pantiesLegCut);
         if (state.pantiesStretch) setPantiesStretch(state.pantiesStretch);
+        if (state.corsetStyle && typeof selectCorsetStyle === 'function') selectCorsetStyle(state.corsetStyle);
+        if (typeof setCorsetReduction === 'function' && state.corsetReduction !== undefined) setCorsetReduction(state.corsetReduction);
 
         renderPattern();
         syncAllAutoInputs();
@@ -1438,14 +1461,45 @@ function toggleProfilePopover(forceState) {
     }
 }
 
-// Закрытие Popover при клике вне его области
+// Закрытие Popover и модальных окон при клике вне их области
 document.addEventListener('click', (e) => {
+    // 1. Профиль
     const popover = document.getElementById('profile-popover');
     const trigger = document.getElementById('btn-my-profile');
     if (popover && !popover.classList.contains('hidden')) {
         if (!popover.contains(e.target) && !trigger?.contains(e.target)) {
             popover.classList.add('hidden');
         }
+    }
+
+    // 2. Модальные окна (клик строго по затемненному фону backdrop)
+    const modals = [
+        { id: 'hint-modal', close: closeHintModal },
+        { id: 'export-modal', close: closeExportModal },
+        { id: 'lookbook-modal', close: (typeof closeLookbookModal === 'function' ? closeLookbookModal : null) },
+        { id: 'lightbox-modal', close: (typeof closeLightbox === 'function' ? closeLightbox : null) }
+    ];
+    modals.forEach(m => {
+        const el = document.getElementById(m.id);
+        if (el && !el.classList.contains('hidden') && e.target === el) {
+            if (typeof m.close === 'function') m.close();
+        }
+    });
+});
+
+// Закрытие всех модальных окон и поповеров по клавише Escape
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const popover = document.getElementById('profile-popover');
+        if (popover && !popover.classList.contains('hidden')) {
+            popover.classList.add('hidden');
+        }
+        if (typeof closeHintModal === 'function') closeHintModal();
+        if (typeof closeExportModal === 'function') closeExportModal();
+        if (typeof closeLookbookModal === 'function') closeLookbookModal();
+        if (typeof closeLightbox === 'function') closeLightbox();
+        if (window.OnboardingTour && OnboardingTour.isActive) OnboardingTour.close();
+        if (window.OnboardingTour && typeof OnboardingTour.dismissWelcome === 'function') OnboardingTour.dismissWelcome(false);
     }
 });
 

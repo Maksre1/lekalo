@@ -432,6 +432,10 @@ const StorageManager = {
                     quickRelease: state.quickRelease,
                     gussetType: state.gussetType,
                     bodysuitStretchVertical: state.bodysuitStretchVertical,
+                    corsetStyle: state.corsetStyle,
+                    corsetReduction: state.corsetReduction,
+                    shrugWithHood: state.shrugWithHood,
+                    zeroWasteAccessories: state.zeroWasteAccessories,
                     timestamp: Date.now()
                 };
                 localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));

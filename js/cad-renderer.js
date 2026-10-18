@@ -555,7 +555,7 @@ function renderPattern() {
     updateExportDimensions(g);
 
     const isSeparate = state.separate;
-    const showSleeve = state.showSleeve;
+    const showSleeve = Boolean(state.showSleeve && state.sleeveLengthType !== 'sleeveless');
     const showGrid = state.showGrid;
     const showSeam = state.showSeamAllowance;
 
@@ -569,7 +569,7 @@ function renderPattern() {
 
     const p = generatePatternPiecesMarkup(g);
     const totalWidthCm = showSleeve ? (p.sleeveOriginX + g.W_sleeve / 2 + 6) : (g.W_grid + (isSeparate ? 24 : 10));
-    const totalHeightCm = Math.max(g.Y_H, g.L_sleeve) + 14;
+    const totalHeightCm = Math.max(g.Y_H, showSleeve ? g.L_sleeve : 0) + 14;
 
     let html = `<g id="viewport" transform="translate(${viewState.panX}, ${viewState.panY}) scale(${viewState.scale})">`;
 
@@ -728,10 +728,12 @@ function renderFitHeatmapMarkup(g, p) {
             <rect x="${(g.X_G4 * CM) - 60}" y="${yHips - 9}" width="120" height="18" rx="4" fill="#ffffff" stroke="${hipsColor}" stroke-width="1.2"/>
             <text x="${g.X_G4 * CM}" y="${yHips + 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="${hipsColor}">Бедра: +${g.totalEaseHips.toFixed(1)} см</text>
 
+            ${(state.showSleeve && state.sleeveLengthType !== 'sleeveless') ? `
             <!-- Подсветка зоны рукава -->
             <rect x="${p.slCenter - p.halfW}" y="${p.slCapY - 10}" width="${p.halfW * 2}" height="20" rx="4" fill="${sleeveColor}" fill-opacity="0.14" stroke="${sleeveColor}" stroke-width="1.2" stroke-dasharray="4,2"/>
             <rect x="${p.slCenter - 55}" y="${p.slCapY - 9}" width="110" height="18" rx="4" fill="#ffffff" stroke="${sleeveColor}" stroke-width="1.2"/>
             <text x="${p.slCenter}" y="${p.slCapY + 4}" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="${sleeveColor}">Рукав: +${g.totalEaseSleeve.toFixed(1)} см</text>
+            ` : ''}
         </g>
     `;
 }
@@ -904,8 +906,9 @@ function resetView() {
         totalH = (g.heightCm + 12) * CM;
     } else {
         const g = calculateGeometry();
-        totalW = (state.showSleeve ? (g.W_grid + (state.separate ? 28 : 14) + g.W_sleeve) : (g.W_grid + (state.separate ? 20 : 6))) * CM;
-        totalH = (Math.max(g.Y_H, g.L_sleeve) + 18) * CM;
+        const hasSleeve = Boolean(state.showSleeve && state.sleeveLengthType !== 'sleeveless');
+        totalW = (hasSleeve ? (g.W_grid + (state.separate ? 28 : 14) + g.W_sleeve) : (g.W_grid + (state.separate ? 20 : 6))) * CM;
+        totalH = (Math.max(g.Y_H, hasSleeve ? g.L_sleeve : 0) + 18) * CM;
     }
 
     const scaleX = (rect.width - 90) / totalW;

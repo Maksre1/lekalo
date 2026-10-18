@@ -121,6 +121,9 @@ const OnboardingTour = {
             modal = document.createElement('div');
             modal.id = 'tour-welcome-modal';
             modal.className = 'fixed inset-0 z-50 bg-[#2C2825]/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300';
+            modal.onclick = (e) => {
+                if (e.target === modal) this.dismissWelcome(true);
+            };
             modal.innerHTML = `
                 <div class="bg-white rounded-3xl border border-[#F0ECE1] shadow-2xl max-w-md w-full p-6 sm:p-7 flex flex-col gap-5 transform transition-all duration-300 scale-95 opacity-0 font-sans" id="tour-welcome-card">
                     <!-- Заголовок и иконка -->
@@ -180,7 +183,8 @@ const OnboardingTour = {
             document.body.appendChild(modal);
         }
 
-        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden', 'pointer-events-none');
         if (window.lucide && typeof lucide.createIcons === 'function') {
             lucide.createIcons();
         }
@@ -202,9 +206,11 @@ const OnboardingTour = {
                 card.classList.remove('scale-100', 'opacity-100');
                 card.classList.add('scale-95', 'opacity-0');
             }
+            modal.classList.add('pointer-events-none');
             setTimeout(() => {
                 modal.classList.add('hidden');
-            }, 250);
+                modal.style.display = 'none';
+            }, 200);
         }
         if (markAsCompleted) {
             try {
@@ -226,7 +232,8 @@ const OnboardingTour = {
         if (!root) {
             root = document.createElement('div');
             root.id = 'tour-spotlight-root';
-            root.className = 'fixed inset-0 pointer-events-none transition-opacity duration-300 opacity-0 z-[9990]';
+            root.className = 'fixed inset-0 pointer-events-none transition-opacity duration-300 opacity-0 z-[9990] hidden';
+            root.style.display = 'none';
             root.innerHTML = `
                 <!-- SVG затемнение с динамическим круглым вырезом (Spotlight) -->
                 <svg id="tour-spotlight-svg" class="fixed inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
@@ -295,7 +302,8 @@ const OnboardingTour = {
         this.dismissWelcome(false);
 
         const root = this.ensureSpotlightElements();
-        root.classList.remove('pointer-events-none', 'opacity-0');
+        root.style.display = 'block';
+        root.classList.remove('pointer-events-none', 'opacity-0', 'hidden');
         root.classList.add('pointer-events-auto', 'opacity-100');
 
         // Привязываем слушатели ресайза и клавиатуры
@@ -509,21 +517,22 @@ const OnboardingTour = {
         const root = document.getElementById('tour-spotlight-root');
         if (root) {
             root.classList.remove('opacity-100', 'pointer-events-auto');
-            root.classList.add('opacity-0', 'pointer-events-none');
+            root.classList.add('opacity-0', 'pointer-events-none', 'hidden');
+            root.style.display = 'none';
+        }
+
+        const modal = document.getElementById('tour-welcome-modal');
+        if (modal) {
+            modal.classList.add('hidden', 'pointer-events-none');
+            modal.style.display = 'none';
         }
 
         this.unbindEvents();
     },
 
     onBackdropClick() {
-        // Мягкое покачивание карточки подсказки при клике на фон
-        const card = document.getElementById('tour-card');
-        if (card) {
-            card.classList.add('scale-105');
-            setTimeout(() => {
-                card.classList.remove('scale-105');
-            }, 180);
-        }
+        // Клик вне карточки подсказки закрывает путеводитель
+        this.close();
     },
 
     reposition() {
