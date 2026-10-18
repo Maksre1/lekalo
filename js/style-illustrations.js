@@ -694,22 +694,43 @@ function renderSkirtStyleCatalog() {
 
     const renderCard = (item) => {
         const isActive = state.skirtStyle === item.id;
+        const photoBadge = item.image
+            ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
+            : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+
         const visualContent = item.image
-            ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-               <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>`
-            : `<div class="w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>`;
+            ? `<div class="relative w-full h-full group/thumb">
+                   <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                   <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(item.vectorType, 60)}</div>
+                   ${photoBadge}
+                   <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
+                       <span class="text-white text-xs bg-black/60 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   </div>
+               </div>`
+            : `<div class="relative w-full h-full group/thumb flex items-center justify-center">
+                   ${getStyleVectorSvg(item.vectorType, 60)}
+                   ${photoBadge}
+                   <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/thumb:opacity-100 rounded-lg flex items-center justify-center transition">
+                       <span class="text-stone-700 text-xs bg-white/80 px-1.5 py-0.5 rounded-full font-bold">🔍</span>
+                   </div>
+               </div>`;
 
         return `
             <div onclick="selectSkirtStyle('${item.id}', ${item.recLength})"
                  data-skirt-style="${item.id}"
                  class="skirt-style-card group flex items-start gap-3 p-2.5 rounded-xl border transition cursor-pointer ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/70 shadow-sm' : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300'}">
-                <div class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative">
+                <div onclick="event.stopPropagation(); openLookbookModal('skirt', '${item.id}');"
+                     title="Нажмите, чтобы открыть фото в полном размере"
+                     class="w-16 h-20 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 flex items-center justify-center relative cursor-zoom-in">
                     ${visualContent}
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-1">
                         <span class="text-xs font-bold text-stone-900 group-hover:text-indigo-600 truncate">${item.name}</span>
-                        <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border shrink-0 ${item.badgeColor}">${item.badge}</span>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${item.badgeColor}">${item.badge}</span>
+                            <button type="button" onclick="event.stopPropagation(); openLookbookModal('skirt', '${item.id}');" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold hover:underline">🔍 Лукбук</button>
+                        </div>
                     </div>
                     <p class="text-[11px] text-stone-500 line-clamp-2 mt-0.5 leading-snug">${item.summary}</p>
                     <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-400">
@@ -763,12 +784,26 @@ function renderSkirtActiveDetails() {
     const curLen = Number(state.skirtLength) || 60;
     const isLenDiff = Math.abs(curLen - info.recLength) > 4;
 
+    const photoBadge = info.image
+        ? `<span class="absolute bottom-1 right-1 bg-rose-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-0.5">📸 Фото</span>`
+        : `<span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>`;
+
     const visual = info.image
-        ? `<div class="relative w-24 h-28 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm shrink-0 bg-stone-100">
-               <img src="${info.image}" alt="${info.name}" class="w-full h-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+        ? `<div onclick="openLookbookModal('skirt', '${info.id}')" title="Нажмите, чтобы открыть фото в полном размере" class="relative w-24 h-28 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm shrink-0 bg-stone-100 cursor-zoom-in group/img">
+               <img src="${info.image}" alt="${info.name}" class="w-full h-full object-cover transition group-hover/img:scale-105" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
                <div class="hidden w-full h-full flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 84)}</div>
+               ${photoBadge}
+               <div class="absolute inset-0 bg-indigo-950/25 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-white text-xs bg-black/60 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               </div>
            </div>`
-        : `<div class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center">${getStyleVectorSvg(info.vectorType, 84)}</div>`;
+        : `<div onclick="openLookbookModal('skirt', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="relative w-24 h-28 shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img">
+               ${getStyleVectorSvg(info.vectorType, 84)}
+               ${photoBadge}
+               <div class="absolute inset-0 bg-indigo-950/15 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition">
+                   <span class="text-stone-800 text-xs bg-white/90 px-2 py-0.5 rounded-full font-bold">🔍 Увеличить</span>
+               </div>
+           </div>`;
 
     target.innerHTML = `
         <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2.5">
@@ -777,7 +812,12 @@ function renderSkirtActiveDetails() {
                 <div class="flex-1 min-w-0 space-y-1">
                     <div class="flex items-center justify-between gap-1 flex-wrap">
                         <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
-                        <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                            <button onclick="openLookbookModal('skirt', '${info.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold bg-white border border-indigo-200 hover:border-indigo-300 px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <span>🔍</span><span>Лукбук</span>
+                            </button>
+                        </div>
                     </div>
                     <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
                     <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
@@ -842,13 +882,19 @@ function renderPantiesActiveDetails() {
     target.innerHTML = `
         <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2">
             <div class="flex items-start gap-3">
-                <div class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center">
+                <div onclick="openLookbookModal('panties', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img relative">
                     ${getStyleVectorSvg(info.vectorType, 72)}
+                    <span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>
                 </div>
                 <div class="flex-1 min-w-0 space-y-1">
                     <div class="flex items-center justify-between gap-1 flex-wrap">
                         <h4 class="text-xs font-bold text-indigo-950">${info.name}</h4>
-                        <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                            <button onclick="openLookbookModal('panties', '${info.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold bg-white border border-indigo-200 hover:border-indigo-300 px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <span>🔍</span><span>Лукбук</span>
+                            </button>
+                        </div>
                     </div>
                     <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
                     <div class="text-[10px] text-stone-500 pt-0.5 space-y-0.5">
@@ -876,13 +922,19 @@ function renderDressActiveDetails() {
     target.innerHTML = `
         <div class="bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white border border-indigo-200/80 rounded-2xl p-3 shadow-xs space-y-2">
             <div class="flex items-start gap-3">
-                <div class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center">
+                <div onclick="openLookbookModal('dress', '${info.id}')" title="Нажмите, чтобы открыть эскиз в Лукбуке" class="shrink-0 rounded-xl overflow-hidden border border-indigo-200/80 shadow-sm bg-stone-50 flex items-center justify-center cursor-zoom-in group/img relative">
                     ${getStyleVectorSvg(info.vectorType, 72)}
+                    <span class="absolute bottom-1 right-1 bg-stone-900/80 text-stone-200 text-[8px] font-medium px-1 py-0.5 rounded">📐 Эскиз</span>
                 </div>
                 <div class="flex-1 min-w-0 space-y-1">
                     <div class="flex items-center justify-between gap-1 flex-wrap">
                         <h4 class="text-xs font-bold text-indigo-950">Вытачка: ${info.name}</h4>
-                        <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
+                            <button onclick="openLookbookModal('dress', '${info.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold bg-white border border-indigo-200 hover:border-indigo-300 px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                                <span>🔍</span><span>Лукбук</span>
+                            </button>
+                        </div>
                     </div>
                     <p class="text-[11px] text-stone-600 leading-tight">${info.summary}</p>
                     <div class="text-[10px] text-stone-500 pt-0.5">
@@ -893,3 +945,225 @@ function renderDressActiveDetails() {
         </div>
     `;
 }
+
+// --- ИНТЕРАКТИВНОЕ МОДАЛЬНОЕ ОКНО ЛУКБУКА И ФОТО-ГАЛЕРЕИ ---
+
+let currentLookbookGarment = 'skirt';
+let currentLookbookStyleId = 'mini-trapeze';
+
+function getStreamerTip(garmentType, styleId) {
+    const tips = {
+        'mini-trapeze': 'Держит форму при сидении в стримерском кресле. Отлично сочетается с оверсайз-худи, укороченными кардиганами или кроп-топами.',
+        'mini-pleated': 'Культовый фасон для аниме, косплея и школьных образов. Кокетка на бедрах обеспечивает удобную посадку, а складки эффектно играют при движении.',
+        'mini-wrap': 'Диагональная линия запаха визуально удлиняет ноги и создает динамичный акцент в веб-камеру.',
+        'mini-slit': 'Аккуратный разрез придает образу пикантности, оставаясь в рамках минималистичной элегантности.',
+        'mini-skater': 'Романтичный силуэт с красивыми струящимися фалдами. Отлично кружится во время стрима или танцевальных трансляций.',
+        'mini-laceup': 'Шнуровка на боку — главный стрим-акцент! Можно затягивать потуже или оставлять открытую шнуровку с яркими атласными лентами.',
+        'mini-ruched': 'Шнурками по бокам можно регулировать длину прямо в эфире: от базовой длины 38 см до дерзкого ультра-мини 28 см.',
+        'mini-micro': 'Эстетика Y2K и трендов TikTok. Рекомендуется носить с высокими гольфами, гетрами и массивной обувью.',
+        'a-line': 'Универсальная база для повседневных образов. Скрывает нюансы фигуры и акцентирует талию.',
+        'half-sun': 'Мягкие драпировки ткани смотрятся очень женственно и легко в кадре.',
+        'sun': 'Максимальная пышность и легкость ткани для праздничных и танцевальных эфиров.',
+        'pencil': 'Строгий и соблазнительный силуэт, выгодно подчеркивающий плавный изгиб бедер.',
+        'straight': 'Классика делового стиля. Подходит под любые строгие блейзеры и рубашки.',
+        'slips': 'Анатомический комфорт на каждый день под любой тип повседневной одежды.',
+        'braziliana': 'Кокетливый V-образный вырез сзади визуально приподнимает линию ягодиц.',
+        'high-waist': 'Ретро-силуэт с акцентом на тонкую талию и плоский животик в винтажном стиле.',
+        'thong': 'Полная незаметность под облегающими мини-юбками, платьями и лосинами.',
+        'dolphin-shorts': 'Уютный домашний стримерский вайб. Белый кант и закругленные бока создают милый ретро-образ.',
+        'strappy': 'Двойные стрепы на бедрах визуально сужают талию и создают вау-эффект «песочные часы».',
+        'shoulder': 'Чистая базовая посадка полочки, идеально под пиджак или строгий блейзер.',
+        'side': 'Французская вытачка переносит объем в бок, оставляя грудь и плечи идеально гладкими.',
+        'waist': 'Идеально для приталенных платьев с ремешком или акцентным поясом.',
+        'armhole': 'Элегантная плавная линия от проймы, подчеркивающая рельеф груди.',
+        'keyhole': 'Вырез-капелька притягивает взгляд к портретной зоне веб-камеры.',
+        'halter': 'Открытые плечи и спина — эффектно и соблазнительно при фронтальной съемке.',
+        'bustier': 'Корсетный силуэт подчеркивает фигуру без жестких неудобных косточек.'
+    };
+    return tips[styleId] || 'Стильный фасон с отличной посадкой по индивидуальным меркам.';
+}
+
+function openLookbookModal(garmentType, styleId) {
+    const gType = garmentType || state.garmentType || 'skirt';
+    currentLookbookGarment = gType;
+
+    const list = STYLE_CATALOG[gType] || STYLE_CATALOG.skirt;
+    let targetId = styleId;
+    if (!targetId) {
+        if (gType === 'skirt') targetId = state.skirtStyle || 'mini-trapeze';
+        else if (gType === 'panties') targetId = state.pantiesModel || 'slips';
+        else targetId = state.dartPosition || 'shoulder';
+    }
+
+    let item = list.find(s => s.id === targetId);
+    if (!item) item = list[0];
+    currentLookbookStyleId = item.id;
+
+    const modal = document.getElementById('lookbook-modal');
+    if (!modal) return;
+
+    // Заполнение заголовка
+    const titleEl = document.getElementById('lb-modal-title');
+    const badgeEl = document.getElementById('lb-modal-badge');
+    const typeBadgeEl = document.getElementById('lb-modal-type-badge');
+    const breadcrumbEl = document.getElementById('lb-modal-breadcrumb');
+
+    if (titleEl) titleEl.textContent = item.name;
+    if (badgeEl) {
+        badgeEl.textContent = item.badge || 'Фасон';
+        badgeEl.className = `text-[10px] font-bold px-2 py-0.5 rounded-full border ${item.badgeColor || 'bg-indigo-100 text-indigo-700 border-indigo-200'}`;
+    }
+    if (typeBadgeEl) {
+        if (item.image) {
+            typeBadgeEl.textContent = '📸 Фэшн-иллюстрация';
+            typeBadgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full border bg-rose-50 text-rose-700 border-rose-200';
+        } else {
+            typeBadgeEl.textContent = '📐 Векторный эскиз';
+            typeBadgeEl.className = 'text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-stone-100 text-stone-600 border-stone-200';
+        }
+    }
+    if (breadcrumbEl) {
+        const typeRu = gType === 'skirt' ? 'Юбка' : (gType === 'panties' ? 'Белье' : 'Платье / Топ');
+        const catRu = item.category === 'mini' ? 'Мини-модель' : (item.category === 'midi' ? 'Миди / Макси' : 'Фасон');
+        breadcrumbEl.textContent = `${typeRu} • ${catRu}`;
+    }
+
+    // Заполнение визуала (фото или SVG)
+    const imgEl = document.getElementById('lb-modal-img');
+    const svgEl = document.getElementById('lb-modal-svg');
+    const tagEl = document.getElementById('lb-modal-img-tag');
+
+    if (item.image) {
+        if (imgEl) {
+            imgEl.src = item.image;
+            imgEl.alt = item.name;
+            imgEl.classList.remove('hidden');
+        }
+        if (svgEl) {
+            svgEl.classList.add('hidden');
+            svgEl.innerHTML = '';
+        }
+        if (tagEl) {
+            tagEl.innerHTML = `<span>📸 Фото</span>`;
+            tagEl.className = 'absolute bottom-2.5 right-2.5 bg-rose-900/85 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1';
+        }
+    } else {
+        if (imgEl) {
+            imgEl.classList.add('hidden');
+            imgEl.src = '';
+        }
+        if (svgEl) {
+            svgEl.classList.remove('hidden');
+            svgEl.innerHTML = getStyleVectorSvg(item.vectorType, 180);
+        }
+        if (tagEl) {
+            tagEl.innerHTML = `<span>📐 Эскиз</span>`;
+            tagEl.className = 'absolute bottom-2.5 right-2.5 bg-stone-900/85 backdrop-blur-xs text-stone-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1';
+        }
+    }
+
+    // Текстовые поля
+    const descEl = document.getElementById('lb-modal-desc');
+    if (descEl) descEl.textContent = item.summary || 'Стильный фасон с выверенными пропорциями.';
+
+    const lenEl = document.getElementById('lb-modal-length');
+    if (lenEl) {
+        lenEl.textContent = item.recLength ? `${item.recLength} см` : (gType === 'panties' ? 'По меркам' : 'Базовая');
+    }
+
+    const diffEl = document.getElementById('lb-modal-difficulty');
+    if (diffEl) diffEl.textContent = item.difficulty || 'Легко';
+
+    const timeEl = document.getElementById('lb-modal-time');
+    if (timeEl) timeEl.textContent = item.time || '1–2 часа';
+
+    const fabEl = document.getElementById('lb-modal-fabrics');
+    if (fabEl) fabEl.textContent = item.fabrics || 'Хлопок, вискоза, деним, костюмные ткани';
+
+    const cutEl = document.getElementById('lb-modal-cuttip');
+    if (cutEl) cutEl.textContent = item.cutTip || 'Классический раскрой по долевой с припусками на швы.';
+
+    const tipEl = document.getElementById('lb-modal-tip');
+    if (tipEl) tipEl.textContent = item.streamerTip || getStreamerTip(gType, item.id);
+
+    const countEl = document.getElementById('lb-modal-count');
+    if (countEl) countEl.textContent = `${list.length} моделей`;
+
+    const applyBtn = document.getElementById('lb-modal-apply-btn');
+    if (applyBtn) {
+        applyBtn.innerHTML = `<span>⚡ Применить «${item.name}» на чертёж</span>`;
+    }
+
+    // Рендер миниатюр
+    renderLookbookThumbs(gType, item.id);
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function renderLookbookThumbs(garmentType, activeStyleId) {
+    const container = document.getElementById('lb-modal-thumbs');
+    if (!container) return;
+
+    const list = STYLE_CATALOG[garmentType] || [];
+    container.innerHTML = list.map(item => {
+        const isActive = item.id === activeStyleId;
+        const hasPhoto = Boolean(item.image);
+        return `
+            <button type="button" onclick="openLookbookModal('${garmentType}', '${item.id}')"
+                    class="shrink-0 text-left p-1.5 rounded-xl border transition cursor-pointer flex items-center gap-2 ${isActive ? 'border-2 border-indigo-600 bg-indigo-50/80 shadow-xs ring-2 ring-indigo-200' : 'border-stone-200 bg-white hover:bg-stone-50'}">
+                <div class="w-8 h-10 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-stone-200/60 flex items-center justify-center relative">
+                    ${item.image ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">` : `<div class="transform scale-65">${getStyleVectorSvg(item.vectorType, 36)}</div>`}
+                    ${hasPhoto ? `<span class="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-rose-500 shadow-xs" title="Есть фото"></span>` : ''}
+                </div>
+                <div class="pr-1">
+                    <span class="text-[10px] font-bold block truncate max-w-[85px] ${isActive ? 'text-indigo-950' : 'text-stone-800'}">${item.name}</span>
+                    <span class="text-[9px] text-stone-500 block">${hasPhoto ? '📸 Фото' : '📐 Эскиз'}</span>
+                </div>
+            </button>
+        `;
+    }).join('');
+}
+
+function closeLookbookModal() {
+    const modal = document.getElementById('lookbook-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function applyLookbookStyle() {
+    const gType = currentLookbookGarment;
+    const sId = currentLookbookStyleId;
+    const info = getStyleInfo(gType, sId);
+
+    if (gType === 'skirt') {
+        if (typeof selectSkirtStyle === 'function') {
+            selectSkirtStyle(sId, info ? info.recLength : 60);
+        }
+    } else if (gType === 'panties') {
+        if (typeof setPantiesModel === 'function') {
+            setPantiesModel(sId);
+        }
+    } else if (gType === 'dress') {
+        if (['shoulder', 'side', 'waist', 'armhole'].includes(sId)) {
+            if (typeof setDartPosition === 'function') setDartPosition(sId);
+        } else if (['keyhole', 'deep-v', 'round', 'v-neck', 'boat', 'square'].includes(sId)) {
+            if (typeof setNecklineType === 'function') setNecklineType(sId);
+        }
+    }
+
+    closeLookbookModal();
+    if (typeof showNotification === 'function') {
+        showNotification(`Фасон «${info ? info.name : sId}» применён на выкройку!`);
+    }
+}
+
+// Закрытие модального окна по клавише Escape
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLookbookModal();
+    }
+});
+

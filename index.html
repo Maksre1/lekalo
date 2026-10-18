@@ -334,6 +334,23 @@
 
                 <!-- ВКЛАДКА 2: МОДЕЛИРОВАНИЕ ФАСОНА -->
                 <div id="panel-style" class="space-y-4 hidden">
+                    <!-- Баннер Лукбука и фото-галереи фасонов -->
+                    <div class="bg-gradient-to-r from-stone-900 via-indigo-950 to-purple-950 rounded-2xl p-3.5 text-white shadow-md relative overflow-hidden flex items-center justify-between gap-3">
+                        <div class="relative z-10 space-y-0.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold tracking-wide">📸 Лукбук и фото-галерея</span>
+                                <span class="text-[9px] font-bold uppercase bg-amber-400 text-stone-900 px-1.5 py-0.2 rounded-full">New</span>
+                            </div>
+                            <p class="text-[11px] text-stone-300">Фэшн-фотографии, свойства тканей и советы по крою</p>
+                        </div>
+                        <button type="button" onclick="openLookbookModal()" class="relative z-10 shrink-0 px-3 py-1.5 bg-white hover:bg-stone-100 text-indigo-950 font-bold text-xs rounded-xl shadow transition cursor-pointer flex items-center gap-1.5">
+                            <span>Смотреть</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-purple-500/20 rounded-full blur-xl pointer-events-none"></div>
+                        <div class="absolute -left-6 -top-6 w-24 h-24 bg-indigo-500/20 rounded-full blur-xl pointer-events-none"></div>
+                    </div>
+
                     <!-- СТИЛИ ДЛЯ ПЛАТЬЯ / БЛУЗЫ -->
                     <div id="style-dress-container" class="space-y-4">
                         <div id="dress-active-details"></div>
@@ -854,6 +871,117 @@
             <span>Чертёж выкройки</span>
         </button>
     </nav>
+
+    <!-- Модальное окно: Интерактивный Лукбук и фото-галерея фасонов -->
+    <div id="lookbook-modal" class="fixed inset-0 bg-stone-950/75 backdrop-blur-md z-50 hidden items-center justify-center p-2 sm:p-4 transition-all" onclick="if(event.target === this) closeLookbookModal();">
+        <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[92vh] animate-fadeIn">
+            <!-- Шапка модального окна -->
+            <div class="px-5 py-3.5 border-b border-stone-200/80 flex items-center justify-between bg-stone-50/90 shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-xs text-sm">
+                        📸
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 id="lb-modal-title" class="font-bold text-stone-900 text-sm sm:text-base">Мини-трапеция</h3>
+                            <span id="lb-modal-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-rose-100 text-rose-700 border-rose-200">Хит</span>
+                            <span id="lb-modal-type-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-stone-100 text-stone-600 border-stone-200">📸 Фотография</span>
+                        </div>
+                        <p id="lb-modal-breadcrumb" class="text-[11px] text-stone-500 mt-0.5">Юбка • Фасон мини</p>
+                    </div>
+                </div>
+                <button onclick="closeLookbookModal()" class="w-8 h-8 rounded-full hover:bg-stone-200 flex items-center justify-center text-stone-400 hover:text-stone-700 font-bold transition text-base cursor-pointer">✕</button>
+            </div>
+
+            <!-- Тело модального окна -->
+            <div class="p-4 sm:p-6 overflow-y-auto space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                    <!-- Левая колонка: Превью (фото или вектор) -->
+                    <div class="md:col-span-5 flex flex-col items-center space-y-3">
+                        <div class="relative w-full aspect-[3/4] max-h-[360px] bg-gradient-to-b from-stone-50 to-stone-100 rounded-2xl overflow-hidden border border-stone-200 shadow-inner flex items-center justify-center">
+                            <img id="lb-modal-img" src="" alt="Фасон" class="w-full h-full object-cover hidden">
+                            <div id="lb-modal-svg" class="w-full h-full flex items-center justify-center p-3"></div>
+                            <div id="lb-modal-img-tag" class="absolute bottom-2.5 right-2.5 bg-stone-900/85 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md flex items-center gap-1">
+                                <span>📸 Фото</span>
+                            </div>
+                        </div>
+
+                        <!-- Карусель / миниатюры других фасонов -->
+                        <div class="w-full">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5 flex items-center justify-between">
+                                <span>Другие фасоны:</span>
+                                <span id="lb-modal-count" class="text-[10px] text-indigo-600 font-semibold lowercase">13 моделей</span>
+                            </div>
+                            <div id="lb-modal-thumbs" class="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin">
+                                <!-- Рендерится через renderLookbookThumbs() -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Правая колонка: Описание, ткани, крой, стилизация -->
+                    <div class="md:col-span-7 space-y-3">
+                        <!-- Описание силуэта -->
+                        <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3">
+                            <h4 class="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                                <span>✨ Особенности силуэта</span>
+                            </h4>
+                            <p id="lb-modal-desc" class="text-xs text-stone-700 leading-relaxed"></p>
+                        </div>
+
+                        <!-- Карточки характеристик -->
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-2">
+                                <span class="text-[10px] uppercase font-bold text-stone-400 block">Длина</span>
+                                <span id="lb-modal-length" class="text-xs font-bold text-stone-900 block mt-0.5">40 см</span>
+                            </div>
+                            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-2">
+                                <span class="text-[10px] uppercase font-bold text-stone-400 block">Сложность</span>
+                                <span id="lb-modal-difficulty" class="text-xs font-bold text-emerald-700 block mt-0.5">Легко</span>
+                            </div>
+                            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-2">
+                                <span class="text-[10px] uppercase font-bold text-stone-400 block">Время</span>
+                                <span id="lb-modal-time" class="text-xs font-bold text-stone-900 block mt-0.5">1.5 – 2 ч</span>
+                            </div>
+                        </div>
+
+                        <!-- Ткани -->
+                        <div class="border border-stone-200 rounded-xl p-3 bg-white space-y-1">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
+                                <span>🧵 Рекомендуемые ткани</span>
+                            </div>
+                            <p id="lb-modal-fabrics" class="text-xs text-stone-800 leading-snug"></p>
+                        </div>
+
+                        <!-- Совет по раскрою -->
+                        <div class="border border-stone-200 rounded-xl p-3 bg-white space-y-1">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
+                                <span>✂ Секрет кроя и моделирования</span>
+                            </div>
+                            <p id="lb-modal-cuttip" class="text-xs text-stone-800 leading-snug"></p>
+                        </div>
+
+                        <!-- Совет стримера / Стилизация -->
+                        <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-3 space-y-1">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                                <span>💡 Стилизация и ракурс в кадре</span>
+                            </div>
+                            <p id="lb-modal-tip" class="text-xs text-rose-900 leading-snug"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Подвал модального окна -->
+            <div class="px-5 py-3 bg-stone-50 border-t border-stone-200/80 flex items-center justify-between gap-3 shrink-0">
+                <button onclick="closeLookbookModal()" class="px-4 py-2 border border-stone-300 hover:bg-stone-200/70 rounded-xl text-xs font-semibold text-stone-700 transition cursor-pointer">
+                    Закрыть
+                </button>
+                <button id="lb-modal-apply-btn" onclick="applyLookbookStyle()" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 cursor-pointer">
+                    <span>⚡ Применить на чертёж</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Модальное окно подсказок по снятию мерок -->
     <div id="hint-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
