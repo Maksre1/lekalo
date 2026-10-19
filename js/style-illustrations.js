@@ -819,6 +819,21 @@ const STYLE_CATALOG = {
             vectorType: 'top-underboob-crop-tee'
         },
         {
+            id: 'underbust-cutout-top',
+            name: 'Лонгслив / Футболка с вырезом под грудью',
+            category: 'boudoir',
+            badge: '🔥 Underbust Cutout',
+            badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+            image: null,
+            recLength: 52,
+            summary: 'Стильный архитектурный лонгслив или футболка с глухим воротником-стойкой и анатомическим горизонтальным окном-вырезом точно под основанием груди. Приподнимает и подчеркивает контур груди (идеально для чашек A-B), с длинным рукавом и прорезью для большого пальца.',
+            fabrics: 'Микро-рубчик кашкорсе 95/5, биэластичный трикотаж лапша, бифлекс, матовая стрейч-сетка power mesh',
+            difficulty: 'Средняя',
+            time: '1.5 часа',
+            cutTip: 'Вырез под грудью 18×5 см окантовывается бейкой 38 см (k=0.88), длинный рукав с прорезью под палец',
+            vectorType: 'top-underbust-cutout-top'
+        },
+        {
             id: 'cutout-laceup-tee',
             name: 'Футболка с декольте-шнуровкой «Peek-a-Boo»',
             category: 'boudoir',
@@ -1443,6 +1458,26 @@ function getStyleVectorSvg(type, size = 64) {
                 <!-- Контур обнаженной груди -->
                 <circle cx="35" cy="34" r="4.0" fill="none" stroke="#f43f5e" stroke-width="1.0" stroke-dasharray="2,2"/>
                 <circle cx="45" cy="34" r="4.0" fill="none" stroke="#f43f5e" stroke-width="1.0" stroke-dasharray="2,2"/>
+            `;
+            break;
+
+        case 'top-underbust-cutout-top':
+            content = `
+                <!-- Лонгслив / Футболка с вырезом под грудью (Underbust Cutout) -->
+                <!-- Длинные облегающие рукава -->
+                <path d="M 28 18 L 15 50 L 19 52 L 30 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <path d="M 52 18 L 65 50 L 61 52 L 50 25 Z" fill="#e2e8f0" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                <!-- Прорези под большой палец -->
+                <line x1="16.5" y1="48" x2="16.5" y2="51" stroke="#6366f1" stroke-width="1.5"/>
+                <line x1="63.5" y1="48" x2="63.5" y2="51" stroke="#6366f1" stroke-width="1.5"/>
+                <!-- Корпус топа / лонгслива -->
+                <path d="M 28 18 L 52 18 L 51 25 L 49 55 L 31 55 L 29 25 Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+                <path d="M 36 18 Q 40 20.5 44 18" stroke="${stroke}" stroke-width="1.8" fill="none"/>
+                <!-- Фигурное анатомическое окно под грудью -->
+                <ellipse cx="40" cy="34.5" rx="7.5" ry="2.8" fill="#fff1f2" stroke="#e11d48" stroke-width="1.6"/>
+                <path d="M 32.5 34.5 Q 40 38.5 47.5 34.5" stroke="#e11d48" stroke-width="1.1" stroke-dasharray="2,2" fill="none"/>
+                <!-- Приподнятый контур чашек над вырезом -->
+                <path d="M 33.5 33.5 Q 36.5 28 40 33 Q 43.5 28 46.5 33.5" stroke="#f43f5e" stroke-width="1.1" stroke-dasharray="2,2" fill="none"/>
             `;
             break;
 
@@ -2480,6 +2515,7 @@ function getStylingTip(garmentType, styleId) {
         'asymmetric-tee': 'Асимметричный срез горловины деликатно обнажает одно плечо. Идеальный баланс чувственности и непринужденности.',
         'ruched-baby-tee': 'Кулиски со шнурками позволяют регулировать степень сборки и высоту топа от талии до ультра-кропа.',
         'underboob-crop-tee': 'Ультра-кроп с арочным вырезом Underboob — эффектный акцент для стримов, фотосессий и дерзких образов.',
+        'underbust-cutout-top': 'Анатомическое окно под основанием груди деликатно приподнимает и подчеркивает бюст (идеально для чашек A-B), а длинный рукав с прорезью под палец вытягивает силуэт.',
         'cutout-laceup-tee': 'Вырез-капля со шнуровкой создает выразительный фокус в кадре. Степень открытости легко регулируется затяжкой шнура.',
         'backless-mesh-tee': 'Интригующий контраст: лаконичный перед и полностью открытая чувственная спина с тончайшими завязками.',
         'tank-top': 'Базовая майка в рубчик кашкорсе. Система «Анти-задир» гарантирует идеальную посадку по фигуре при движении.',
@@ -2812,8 +2848,8 @@ function renderTopActiveDetails() {
 
 function selectTopStyle(styleId) {
     state.topStyle = styleId;
-    // Рукав строится и отображается для всей линейки футболок
-    const TEE_STYLES = ['smart-tee', 'oversize-tee', 'asymmetric-tee', 'ruched-baby-tee', 'underboob-crop-tee', 'cutout-laceup-tee', 'backless-mesh-tee'];
+    // Рукав строится и отображается для всей линейки футболок и лонгсливов
+    const TEE_STYLES = ['smart-tee', 'oversize-tee', 'asymmetric-tee', 'ruched-baby-tee', 'underboob-crop-tee', 'underbust-cutout-top', 'cutout-laceup-tee', 'backless-mesh-tee'];
     state.showSleeve = TEE_STYLES.includes(styleId);
 
     const sleeveInputs = document.getElementById('measures-sleeve');

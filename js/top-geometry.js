@@ -24,13 +24,14 @@ function calculateTopGeometry(options = {}) {
     // Обхват под грудью (Опг)
     const underbustGirth = Math.round((og - Math.max(10, (og - ot) * 0.6)) * 10) / 10;
 
-    // Список всех моделей футболок с рукавом
+    // Список всех моделей футболок и лонгсливов с рукавом
     const TEE_STYLES = [
         'smart-tee',
         'oversize-tee',
         'asymmetric-tee',
         'ruched-baby-tee',
         'underboob-crop-tee',
+        'underbust-cutout-top',
         'cutout-laceup-tee',
         'backless-mesh-tee'
     ];
@@ -44,6 +45,7 @@ function calculateTopGeometry(options = {}) {
     let isCurtainTop = false;
     let isExtremeCrop = false;
     let isUnderboob = false;
+    let isUnderbustCutout = false;
     let isRuched = false;
     let isBustCutout = false;
     let isBackless = false;
@@ -58,6 +60,9 @@ function calculateTopGeometry(options = {}) {
         isCrop = true;
         isUnderboob = true;
         effectiveLength = Y_underbust - 1.8; // ультра-кроп выше подгрудной складки
+    } else if (style === 'underbust-cutout-top') {
+        isUnderbustCutout = true;
+        effectiveLength = (lengthType === 'crop') ? (Y_underbust + 5.0) : ((lengthType === 'waist') ? gBase.Y_T : (gBase.Y_T + 12.0));
     } else if (style === 'ruched-baby-tee') {
         isCrop = true;
         isRuched = true;
@@ -129,6 +134,11 @@ function calculateTopGeometry(options = {}) {
         sleeveLength = 13.0; // микро-рукав под грудь
         sleeveWidthCustom = Math.max(12.5, gBase.W_sleeve - 2.0);
         sleeveTitle = 'МИКРО-РУКАВ UNDERBOOB (2 дет.)';
+    } else if (style === 'underbust-cutout-top') {
+        const isLong = (state.sleeveLengthType !== 'short');
+        sleeveLength = isLong ? Math.min(62.0, Math.max(52.0, Number(state.dr) || 58.0)) : 18.0;
+        sleeveWidthCustom = gBase.W_sleeve;
+        sleeveTitle = (sleeveLength > 30) ? 'ДЛИННЫЙ РУКАВ ЛОНГСЛИВА (2 дет.)' : 'РУКАВ ФУТБОЛКИ (2 дет.)';
     } else if (style === 'cutout-laceup-tee') {
         sleeveLength = 16.0;
         sleeveTitle = 'ОБЛЕГАЮЩИЙ РУКАВ (2 дет.)';
@@ -211,6 +221,12 @@ function calculateTopGeometry(options = {}) {
         frontNeckDrop = 5.5; // закрытый высокий воротник удерживает посадку
         armholeDrop = 0.3;
         shoulderCutIn = 0.3;
+    } else if (style === 'underbust-cutout-top') {
+        strapWidth = shp;
+        backNeckDrop = 2.2;
+        frontNeckDrop = 6.0; // закрытый аккуратный воротник под горло
+        armholeDrop = 0.5;
+        shoulderCutIn = 0.4;
     } else if (style === 'cutout-laceup-tee') {
         strapWidth = shp;
         backNeckDrop = 2.4;
@@ -350,6 +366,7 @@ function calculateTopGeometry(options = {}) {
         isCrop,
         isExtremeCrop,
         isUnderboob,
+        isUnderbustCutout,
         isRuched,
         isBustCutout,
         isBackless,
@@ -605,6 +622,21 @@ function generateTopPiecesMarkup(g, options = {}) {
             <ellipse cx="${(g.G7.x + fx) * CM}" cy="${(g.G7.y + 2.5) * CM}" rx="26" ry="18" fill="none" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
             <text x="${cX - 15}" y="${(g.F_hem_center.y) * CM - 10}" text-anchor="end" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#e11d48">🔥 UNDERBOOB СРЕЗ (СИЛИКОНОВАЯ БЕЙКА)</text>
         `;
+    } else if (g.isUnderbustCutout) {
+        // Фигурное окно-вырез точно под основанием груди (Underbust Cutout Window)
+        const cX = (g.W_grid + fx) * CM;
+        const cY = (g.Y_underbust) * CM;
+        const wCut = 9.0 * CM; // полуширина на выкройке (18 см в развороте)
+        const hCut = 2.5 * CM; // полувысота окна (5 см просвет)
+        harnessMarkup = `
+            <!-- Анатомическое окно-вырез под основанием груди -->
+            <path d="M ${cX} ${cY - hCut} Q ${cX - wCut * 0.55} ${cY - hCut} ${cX - wCut} ${cY} Q ${cX - wCut * 0.55} ${cY + hCut} ${cX} ${cY + hCut} Z" fill="#fff1f2" stroke="#e11d48" stroke-width="2.2"/>
+            <path d="M ${cX} ${cY - hCut + 3} Q ${cX - wCut * 0.55} ${cY - hCut + 3} ${cX - wCut + 4} ${cY} Q ${cX - wCut * 0.55} ${cY + hCut - 3} ${cX} ${cY + hCut - 3} Z" fill="none" stroke="#e11d48" stroke-width="1.2" stroke-dasharray="4,2"/>
+            <!-- Контур приподнятой груди над вырезом -->
+            <ellipse cx="${(g.G7.x + fx) * CM}" cy="${(g.G7.y + 1.5) * CM}" rx="28" ry="20" fill="none" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+            <text x="${cX - wCut - 8}" y="${cY - 6}" text-anchor="end" font-family="JetBrains Mono" font-size="8.5" font-weight="bold" fill="#e11d48">✂ ВЫРЕЗ ПОД ГРУДЬЮ 18×5 см</text>
+            <text x="${cX - wCut - 8}" y="${cY + 10}" text-anchor="end" font-family="JetBrains Mono" font-size="8" fill="#e11d48">Окантовка бейкой 38 см (k=0.88)</text>
+        `;
     } else if (g.isRuched) {
         // Боковые кулиски со шнурками для сборки Y2K Baby-Tee
         const topY = (g.F_armhole_bot.y + 1.5) * CM;
@@ -701,6 +733,11 @@ function generateTopPiecesMarkup(g, options = {}) {
                 <line x1="0" y1="${sH}" x2="${sW}" y2="${sH}" stroke="#059669" stroke-width="2.5"/>
                 <!-- Подгибка низа рукава 2.0 см -->
                 <line x1="0" y1="${sH - 2.0 * CM}" x2="${sW}" y2="${sH - 2.0 * CM}" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4,3"/>
+                ${sH >= 40 * CM ? `
+                <!-- Прорезь для большого пальца (Thumbhole) -->
+                <line x1="${sW * 0.18}" y1="${sH - 5.5 * CM}" x2="${sW * 0.18}" y2="${sH - 2.0 * CM}" stroke="#6366f1" stroke-width="2.2" stroke-dasharray="3,2"/>
+                <text x="${sW * 0.18 + 6}" y="${sH - 3.5 * CM}" font-family="JetBrains Mono" font-size="8" font-weight="bold" fill="#6366f1">ПРОРЕЗЬ ПОД ПАЛЕЦ 3.5 см</text>
+                ` : ''}
                 <text x="${sW / 2}" y="${sH * 0.52}" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#065f46">${sTitle}</text>
                 <text x="${sW / 2}" y="${sH * 0.52 + 16}" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#047857">Длина ${g.L_sleeve || 19} см | Ширина ${(sW / CM).toFixed(1)} см | 2 дет.</text>
             </g>

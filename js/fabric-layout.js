@@ -217,10 +217,11 @@ function calculatePantiesFabricLayout(g, state) {
     };
 }
 
-function calculateTopFabricLayout(g, state) {
-    const fabricW = Number(state.fabricWidth) || 140;
-    const isFolded = state.fabricFold !== false;
-    const shrinkagePct = Number(state.fabricShrinkage) || 5;
+function calculateTopFabricLayout(g, stateObj = (typeof state !== 'undefined' ? state : {})) {
+    const st = stateObj || {};
+    const fabricW = Number(st.fabricWidth) || 140;
+    const isFolded = st.fabricFold !== false;
+    const shrinkagePct = Number(st.fabricShrinkage) || 5;
     const margin = 2.5;
     const edgeMargin = 1.5;
     const usableW = isFolded ? (fabricW / 2) : fabricW;
@@ -232,8 +233,8 @@ function calculateTopFabricLayout(g, state) {
 
     let pieces = [];
     let totalLengthCm = 0;
-    const TEE_STYLES = ['smart-tee', 'oversize-tee', 'asymmetric-tee', 'ruched-baby-tee', 'underboob-crop-tee', 'cutout-laceup-tee', 'backless-mesh-tee'];
-    const hasSleeve = TEE_STYLES.includes(state.topStyle);
+    const TEE_STYLES = ['smart-tee', 'oversize-tee', 'asymmetric-tee', 'ruched-baby-tee', 'underboob-crop-tee', 'underbust-cutout-top', 'cutout-laceup-tee', 'backless-mesh-tee'];
+    const hasSleeve = TEE_STYLES.includes(st.topStyle);
 
     if (backW + margin + frontW + edgeMargin <= usableW) {
         pieces.push({

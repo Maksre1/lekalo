@@ -262,6 +262,13 @@ function getTopPieceExportData(pieceType) {
                 ${g.antiRideupDrop > 0 ? `
                     <text x="${(g.W_grid - frontW * 0.45) * CM}" y="${(g.effectiveLength + g.antiRideupDrop * 0.5) * CM}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">🛡️ АНТИ-ЗАДИР +${g.antiRideupDrop} см</text>
                 ` : ''}
+                ${g.isUnderbustCutout ? `
+                    <!-- Анатомическое окно-вырез под грудью -->
+                    <path d="M ${(g.W_grid) * CM} ${(g.Y_underbust - 2.5) * CM} Q ${(g.W_grid - 9.0 * 0.55) * CM} ${(g.Y_underbust - 2.5) * CM} ${(g.W_grid - 9.0) * CM} ${(g.Y_underbust) * CM} Q ${(g.W_grid - 9.0 * 0.55) * CM} ${(g.Y_underbust + 2.5) * CM} ${(g.W_grid) * CM} ${(g.Y_underbust + 2.5) * CM} Z" fill="none" stroke="#e11d48" stroke-width="1.8"/>
+                    <path d="M ${(g.W_grid) * CM} ${(g.Y_underbust - 2.2) * CM} Q ${(g.W_grid - 8.6 * 0.55) * CM} ${(g.Y_underbust - 2.2) * CM} ${(g.W_grid - 8.6) * CM} ${(g.Y_underbust) * CM} Q ${(g.W_grid - 8.6 * 0.55) * CM} ${(g.Y_underbust + 2.2) * CM} ${(g.W_grid) * CM} ${(g.Y_underbust + 2.2) * CM} Z" fill="none" stroke="#e11d48" stroke-width="1.0" stroke-dasharray="3,2"/>
+                    <text x="${(g.W_grid - 9.5) * CM}" y="${(g.Y_underbust) * CM - 5}" text-anchor="end" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#e11d48">✂ ВЫРЕЗ ПОД ГРУДЬЮ 18×5 см</text>
+                    <text x="${(g.W_grid - 9.5) * CM}" y="${(g.Y_underbust) * CM + 9}" text-anchor="end" font-family="Arial, sans-serif" font-size="7.5" fill="#e11d48">Окантовка бейкой 38 см (k=0.88)</text>
+                ` : ''}
             </g>
         `;
     } else if (pieceType === 'sleeve') {
@@ -282,6 +289,11 @@ function getTopPieceExportData(pieceType) {
                     <path d="M 0 ${capH} Q ${sW / 2} 0 ${sW} ${capH} L ${sW} ${sH} L 0 ${sH} Z" fill="none" stroke="#09090b" stroke-width="1.8"/>
                     <line x1="0" y1="${sH}" x2="${sW}" y2="${sH}" stroke="#09090b" stroke-width="2.2"/>
                     <line x1="0" y1="${sH - 2.0 * CM}" x2="${sW}" y2="${sH - 2.0 * CM}" stroke="#09090b" stroke-width="1.0" stroke-dasharray="4,3"/>
+                    ${sH >= 40 * CM ? `
+                        <!-- Прорезь для большого пальца -->
+                        <line x1="${sW * 0.18}" y1="${sH - 5.5 * CM}" x2="${sW * 0.18}" y2="${sH - 2.0 * CM}" stroke="#6366f1" stroke-width="2.2" stroke-dasharray="3,2"/>
+                        <text x="${sW * 0.18 + 6}" y="${sH - 3.5 * CM}" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#6366f1">ПРОРЕЗЬ ПОД ПАЛЕЦ 3.5 см</text>
+                    ` : ''}
                     <text x="${sW / 2}" y="${sH * 0.52}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#09090b">${sTitle}</text>
                     <text x="${sW / 2}" y="${sH * 0.52 + 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" fill="#52525b">Длина ${g.L_sleeve || 19} см | Ширина ${(sW / CM).toFixed(1)} см | 2 дет.</text>
                 </g>
