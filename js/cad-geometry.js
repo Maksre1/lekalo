@@ -301,29 +301,37 @@ function calculateGeometry() {
     // Оптимальная высота оката: стабильная посадка +2.0..+3.2 см без избыточного сборения на больших размерах
     const H_cap = Math.min(17.2, Math.max(11.0, 0.70 * d_vert + 1.6));
 
-    // 7. Моделирование выреза горловины (Neckline)
+    // 7. Моделирование выреза горловины (Neckline) с прецизионным сопряжением под 90°
     const necklineType = state.necklineType || 'round';
     const necklineDepth = Math.max(0, Math.min(8.0, Number(state.necklineDepth) || 0));
 
-    // Точки горловины полочки
+    // Нормаль к плечу полочки внутрь горловины (угол 90° к плечу полочки):
+    const n_front_x = f_uy;
+    const n_front_y = -f_ux;
+
+    // Нормаль к плечу спинки внутрь ростка (угол 90° к плечу спинки):
+    const n_back_x = -sh_uy;
+    const n_back_y = sh_ux;
+
+    // Точки горловины полочки и ростка спинки
     let V3_neck = { x: V3.x, y: V3.y };
     let V4_neck = { x: X_G3, y: V4.y + necklineDepth };
-    let V_neck_c1 = { x: V3_neck.x, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
-    let V_neck_c2 = { x: V3_neck.x + W_neck * 0.55, y: V4_neck.y };
     let V_corner_sq = null;
     let keyhole = null;
+    let A4_neck = { x: A4.x, y: A4.y };
 
-    if (necklineType === 'v-neck') {
-        V3_neck = { x: V3.x - 0.5, y: V3.y };
-        V4_neck = { x: X_G3, y: V4.y + 2.5 + necklineDepth };
-        V_neck_c1 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.35 + 0.6, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
-        V_neck_c2 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.75 + 0.3, y: V4_neck.y - 0.5 };
-    } else if (necklineType === 'deep-v') {
-        // Глубокое декольте V-образное
+    if (necklineType === 'boat') {
+        // Лодочка: срез плеча укорачивается на 3.2 см с обеих сторон
+        const shiftBoat = 3.2;
+        V3_neck = { x: V3.x - shiftBoat * f_ux, y: V3.y - shiftBoat * f_uy };
+        V4_neck = { x: X_G3, y: Y_V1 + 2.8 + necklineDepth * 0.4 };
+        A4_neck = { x: A4.x + shiftBoat * sh_ux, y: A4.y + shiftBoat * sh_uy };
+    } else if (necklineType === 'square') {
+        // Каре: прямоугольный вырез
         V3_neck = { x: V3.x - 0.8, y: V3.y };
-        V4_neck = { x: X_G3, y: V4.y + 5.5 + necklineDepth };
-        V_neck_c1 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.35 + 0.4, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
-        V_neck_c2 = { x: V3_neck.x + (V4_neck.x - V3_neck.x) * 0.75 + 0.2, y: V4_neck.y - 0.5 };
+        const sqDepthY = V4.y + necklineDepth;
+        V_corner_sq = { x: V3_neck.x, y: sqDepthY };
+        V4_neck = { x: X_G3, y: sqDepthY };
     } else if (necklineType === 'keyhole') {
         // Вырез-капелька по центру полочки
         const kTopY = V4.y + 1.2;
@@ -336,29 +344,63 @@ function calculateGeometry() {
             centerX: X_G3,
             path: `M ${X_G3 * CM} ${kTopY * CM} C ${(X_G3 - kHalfW) * CM} ${(kTopY + 1.5) * CM}, ${(X_G3 - kHalfW) * CM} ${(kBotY - 1.5) * CM}, ${X_G3 * CM} ${kBotY * CM} C ${(X_G3 + kHalfW) * CM} ${(kBotY - 1.5) * CM}, ${(X_G3 + kHalfW) * CM} ${(kTopY + 1.5) * CM}, ${X_G3 * CM} ${kTopY * CM} Z`
         };
-    } else if (necklineType === 'boat') {
-        // Лодочка: плечо открывается наружу к пройме на 3.2 см
-        const shiftBoat = 3.2;
-        V3_neck = { x: V3.x - shiftBoat * f_ux, y: V3.y - shiftBoat * f_uy };
-        V4_neck = { x: X_G3, y: Y_V1 + 2.8 + necklineDepth * 0.4 };
-        V_neck_c1 = { x: V3_neck.x, y: V3_neck.y + (V4_neck.y - V3_neck.y) * 0.55 };
-        V_neck_c2 = { x: V3_neck.x + (X_G3 - V3_neck.x) * 0.55, y: V4_neck.y };
-    } else if (necklineType === 'square') {
-        // Каре: прямоугольный вырез
-        V3_neck = { x: V3.x - 0.8, y: V3.y };
-        const sqDepthY = V4.y + necklineDepth;
-        V_corner_sq = { x: V3_neck.x, y: sqDepthY };
-        V4_neck = { x: X_G3, y: sqDepthY };
+    } else if (necklineType === 'v-neck' || necklineType === 'deep-v') {
+        const extraV = (necklineType === 'deep-v') ? 5.5 : 2.5;
+        V3_neck = { x: V3.x - (necklineType === 'deep-v' ? 0.8 : 0.5), y: V3.y };
+        V4_neck = { x: X_G3, y: V4.y + extraV + necklineDepth };
     }
 
-    // Горловина спинки при вырезе «лодочка»
-    let A4_neck = { x: A4.x, y: A4.y };
-    let A5_neck = { x: A5.x, y: A5.y };
-    if (necklineType === 'boat') {
-        const shiftBoatBack = 3.2;
-        A4_neck = { x: A4.x + shiftBoatBack * sh_ux, y: A4.y + shiftBoatBack * sh_uy };
-        A5_neck = { x: A4_neck.x * 0.55, y: A.y };
+    // --- ПРЕДОХРАНИТЕЛИ И РАСЧЕТ РЫЧАГОВ БЕЗЬЕ ГОРЛОВИНЫ ПОЛОЧКИ ---
+    const dist_f = Math.hypot(V4_neck.x - V3_neck.x, V4_neck.y - V3_neck.y);
+    const d_front_handle = Math.max(1.4, Math.min(3.8, dist_f * 0.35));
+
+    let V_neck_c1, V_neck_c2;
+
+    if (necklineType === 'v-neck' || necklineType === 'deep-v') {
+        // В V-образном вырезе у шеи делается микро-сопряжение под 90° (длина 1.3-2.0 см),
+        // чтобы вырез не топорщился на ключице, затем плавно уходит в диагональ к V4
+        const v_stem = Math.max(1.1, Math.min(2.0, dist_f * 0.18));
+        V_neck_c1 = {
+            x: V3_neck.x + n_front_x * v_stem,
+            y: V3_neck.y + n_front_y * v_stem
+        };
+        const dir_v_x = V4_neck.x - V3_neck.x;
+        const dir_v_y = V4_neck.y - V3_neck.y;
+        const dist_v = Math.hypot(dir_v_x, dir_v_y);
+        V_neck_c2 = {
+            x: V4_neck.x - (dir_v_x / dist_v) * (v_stem * 1.5),
+            y: V4_neck.y - (dir_v_y / dist_v) * (v_stem * 1.5)
+        };
+    } else {
+        // Круглый / Лодочка / Капелька: сопряжение 90° к плечу полочки и 0° по сгибу переда
+        V_neck_c1 = {
+            x: V3_neck.x + n_front_x * d_front_handle,
+            y: V3_neck.y + n_front_y * d_front_handle
+        };
+        V_neck_c2 = {
+            x: V4_neck.x - d_front_handle * 0.95,
+            y: V4_neck.y
+        };
     }
+
+    // --- СОПРЯЖЕНИЕ РОСТКА СПИНКИ (CUBIC BEZIER) ---
+    // В точке A=(0,0) строго горизонтальная касательная (0°), в точке A4_neck строго 90° к плечу спинки!
+    const dist_b = Math.hypot(A4_neck.x - A.x, A4_neck.y - A.y);
+    const d_back_handle = Math.max(1.2, Math.min(2.8, dist_b * 0.38));
+
+    const A_neck_c1 = {
+        x: A.x + Math.max(1.5, A4_neck.x * 0.42),
+        y: 0
+    };
+    const A_neck_c2 = {
+        x: A4_neck.x + n_back_x * d_back_handle,
+        y: A4_neck.y + n_back_y * d_back_handle
+    };
+    // Сохраняем A5_neck для обратной совместимости
+    const A5_neck = {
+        x: (A_neck_c1.x + A_neck_c2.x) * 0.5,
+        y: A_neck_c2.y * 0.5
+    };
 
     // 8. Моделирование переноса нагрудной вытачки (Bust Dart Transfer)
     const dartPosition = state.dartPosition || 'shoulder';
@@ -494,7 +536,7 @@ function calculateGeometry() {
         necklineType, necklineDepth,
         V3_neck, V4_neck, V_neck_c1, V_neck_c2, V_corner_sq,
         keyhole,
-        A4_neck, A5_neck,
+        A4_neck, A5_neck, A_neck_c1, A_neck_c2,
         dartPosition,
         S_d1, S_d2, S_apex,
         T10_waist, T11_waist, G7_waist_apex,

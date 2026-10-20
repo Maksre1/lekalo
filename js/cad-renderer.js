@@ -25,7 +25,7 @@ function generatePatternPiecesMarkup(g, options = {}) {
     const backOutlinePath = `
         M 0 ${g.Y_H * CM}
         L 0 0
-        Q ${g.A5_neck.x * CM} ${g.A5_neck.y * CM}, ${g.A4_neck.x * CM} ${g.A4_neck.y * CM}
+        C ${(g.A_neck_c1 ? g.A_neck_c1.x : g.A5_neck.x) * CM} ${(g.A_neck_c1 ? g.A_neck_c1.y : g.A5_neck.y) * CM}, ${(g.A_neck_c2 ? g.A_neck_c2.x : g.A5_neck.x) * CM} ${(g.A_neck_c2 ? g.A_neck_c2.y : g.A5_neck.y) * CM}, ${g.A4_neck.x * CM} ${g.A4_neck.y * CM}
         L ${g.sh_D1.x * CM} ${g.sh_D1.y * CM}
         L ${g.sh_Apex.x * CM} ${g.sh_Apex.y * CM}
         L ${g.sh_D2.x * CM} ${g.sh_D2.y * CM}
