@@ -197,11 +197,28 @@ function calculateGeometry() {
     const V7 = { x: V3.x + f_ux * 4.0, y: V3.y + f_uy * 4.0 };
     const L_dart_leg = Math.hypot(V7.x - G7.x, V7.y - G7.y);
 
-    // Раствор нагрудной вытачки и угол поворота (адаптируется под объем чашки груди Ог - 2*Шг)
+    // 4.1 Анатомический расчет чашки груди и проекции молочной железы
+    let cup_diff;
+    if (shgVal > 20) {
+        cup_diff = og - (shgVal * 2);
+    } else {
+        cup_diff = (Sg - 36) * 1.2 + 10.0;
+    }
+    cup_diff = Math.max(6.0, Math.min(28.0, cup_diff));
+
+    // Расчет радиуса адаптивного укорочения вершины вытачки (R_apex)
+    // Маленькая чашка A (cup_diff ~ 10-12) -> отступ ~ 1.6-1.8 см
+    // Средняя чашка B/C (cup_diff ~ 14-16) -> отступ ~ 2.2-2.5 см
+    // Пышная чашка D/E+ (cup_diff ~ 20-26) -> отступ ~ 3.0-3.5 см
+    const R_apex = Math.max(1.5, Math.min(3.5, 1.5 + (cup_diff - 10.0) * 0.13));
+
+    // Проекционный радиус основания грудной железы
+    const R_breast_sphere = Math.max(6.0, Math.min(10.5, 6.0 + (cup_diff - 10.0) * 0.28));
+
+    // Раствор нагрудной вытачки и угол поворота (адаптируется под объем чашки груди)
     let bust_dart_width;
     if (shgVal > 20) {
-        const bust_cup_diff = (Sg * 2) - (shgVal * 2);
-        bust_dart_width = Math.max(2.5, 7.2 + (bust_cup_diff - 26) * 0.25 + postureBustK);
+        bust_dart_width = Math.max(2.5, 7.2 + (cup_diff - 26) * 0.25 + postureBustK);
     } else {
         bust_dart_width = Math.max(2.5, (Sg - 38) * 0.40 + 4.0 + postureBustK);
     }
@@ -214,10 +231,12 @@ function calculateGeometry() {
         x: G7.x + L_dart_leg * Math.cos(angle_V9),
         y: G7.y + L_dart_leg * Math.sin(angle_V9)
     };
-    // Укороченная вершина вытачки В8 (на 1.5 см выше Г7, чтобы ткань не топорщилась)
+    // Укороченная вершина вытачки В8 (лежит строго на биссектрисе вытачки, что гарантирует абсолютное равенство сторон |V7-V8| === |V9-V8|)
+    const angle_bisector = angle_V7 - alpha / 2;
+    const R_apex_sh = Math.max(1.3, R_apex * 0.75);
     const V8 = {
-        x: G7.x + (L_dart_leg - 1.5) * Math.cos(angle_V9),
-        y: G7.y + (L_dart_leg - 1.5) * Math.sin(angle_V9)
+        x: G7.x + (L_dart_leg - R_apex_sh) * Math.cos(angle_bisector),
+        y: G7.y + (L_dart_leg - R_apex_sh) * Math.sin(angle_bisector)
     };
 
     // Повернутая плечевая точка P5_open и контрольная точка P6_open
@@ -255,8 +274,8 @@ function calculateGeometry() {
     const T8 = { x: X_G8 + back_dart_w / 2, y: Y_T };
     const B8_bot = { x: X_G8, y: Y_B - 3.0 };
 
-    // Ромб полочки
-    const front_dart_top = { x: X_G6, y: G7.y + 4.0 };
+    // Ромб полочки (вершина заканчивается под основанием груди)
+    const front_dart_top = { x: X_G6, y: G7.y + Math.max(3.2, R_apex + 1.2) };
     const T9_y = Y_T + front_waist_drop * 0.5;
     const T10 = { x: X_G6 - front_dart_w / 2, y: T9_y };
     const T11 = { x: X_G6 + front_dart_w / 2, y: T9_y };
@@ -353,17 +372,17 @@ function calculateGeometry() {
     const dx_s = G7.x - S_mid.x;
     const dy_s = G7.y - S_mid.y;
     const dist_s = Math.hypot(dx_s, dy_s);
-    // Вершина вытачки укорочена на 2.5 см от центра груди
+    // Вершина боковой вытачки укорочена адаптивно на R_apex
     const S_apex = {
-        x: G7.x - (dx_s / dist_s) * 2.5,
-        y: G7.y - (dy_s / dist_s) * 2.5
+        x: G7.x - (dx_s / dist_s) * R_apex,
+        y: G7.y - (dy_s / dist_s) * R_apex
     };
 
     // Точки для перевода вытачки в талию ('waist')
     const front_dart_w_waist = front_dart_w + bust_dart_width * 0.82;
     const T10_waist = { x: X_G6 - front_dart_w_waist / 2, y: T9_y };
     const T11_waist = { x: X_G6 + front_dart_w_waist / 2, y: T9_y };
-    const G7_waist_apex = { x: X_G6, y: G7.y + 2.0 };
+    const G7_waist_apex = { x: X_G6, y: G7.y + Math.max(2.0, R_apex * 0.85) };
 
     // Точки для перевода вытачки в пройму ('armhole')
     const arm_dart_leg = bust_dart_width * 0.75;
@@ -373,8 +392,8 @@ function calculateGeometry() {
     const dy_arm = G7.y - P6_closed.y;
     const dist_arm = Math.hypot(dx_arm, dy_arm);
     const Arm_apex = {
-        x: G7.x - (dx_arm / dist_arm) * 2.2,
-        y: G7.y - (dy_arm / dist_arm) * 2.2
+        x: G7.x - (dx_arm / dist_arm) * (R_apex * 0.9),
+        y: G7.y - (dy_arm / dist_arm) * (R_apex * 0.9)
     };
 
     // 9. Силуэт изделия: прямой ('straight') или трапеция/клеш ('flare')
@@ -482,6 +501,8 @@ function calculateGeometry() {
         P6_arm_d1, P6_arm_d2, Arm_apex,
         silhouette, flare_w, H_back_side, H_front_side,
         totalEaseBust, totalEaseWaist, totalEaseHips, totalEaseSleeve,
-        bustFitCategory, bustFitLabel, bustFitColor
+        bustFitCategory, bustFitLabel, bustFitColor,
+        // Анатомические параметры грудной железы и укорочения вытачки
+        vg, cg, shg: shgVal, R_apex, R_breast_sphere, cup_diff
     };
 }

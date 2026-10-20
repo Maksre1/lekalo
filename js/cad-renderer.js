@@ -156,7 +156,7 @@ function generatePatternPiecesMarkup(g, options = {}) {
             Q ${g.P7.x * CM} ${g.P7.y * CM}, ${g.P6_open.x * CM} ${g.P6_open.y * CM}
             Q ${ctrl_f_open.x * CM} ${ctrl_f_open.y * CM}, ${g.P5_open.x * CM} ${g.P5_open.y * CM}
             L ${g.V9.x * CM} ${g.V9.y * CM}
-            L ${g.G7.x * CM} ${g.G7.y * CM}
+            L ${g.V8.x * CM} ${g.V8.y * CM}
             L ${g.V7.x * CM} ${g.V7.y * CM}
             L ${g.V3_neck.x * CM} ${g.V3_neck.y * CM}
             ${necklinePath}
@@ -660,6 +660,28 @@ function renderPattern() {
                 <path d="${g.keyhole.path}" stroke="#e11d48" stroke-width="2.0" fill="rgba(225, 29, 72, 0.08)"/>
                 <text x="${g.keyhole.centerX * CM - 18}" y="${((g.keyhole.topY + g.keyhole.botY) / 2) * CM}" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="#e11d48" text-anchor="end">✂ ВЫРЕЗ КАПЕЛЬКА</text>
             ` : ''}
+
+            <!-- Анатомический Центр Груди (Apex / Г7) и зона отвода вытачки -->
+            <g id="apex-indicator" transform="translate(${g.G7.x * CM}, ${g.G7.y * CM})">
+                <!-- Пунктирный радиус основания грудной железы -->
+                <circle cx="0" cy="0" r="${(g.R_breast_sphere || 7.5) * CM}" fill="rgba(224, 90, 71, 0.025)" stroke="#E05A47" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.6"/>
+                <!-- Окружность зоны отвода вершины вытачки -->
+                <circle cx="0" cy="0" r="${(g.R_apex || 2.2) * CM}" fill="none" stroke="#E05A47" stroke-width="0.65" stroke-dasharray="2,2" opacity="0.75"/>
+                <!-- Прецизионное перекрестие Центра Груди -->
+                <line x1="-8" y1="0" x2="8" y2="0" stroke="#E05A47" stroke-width="1.3"/>
+                <line x1="0" y1="-8" x2="0" y2="8" stroke="#E05A47" stroke-width="1.3"/>
+                <circle cx="0" cy="0" r="1.8" fill="#E05A47"/>
+                <!-- Подписи точки Цг и отступа -->
+                <text x="10" y="-4" font-family="JetBrains Mono, monospace" font-size="7.5" font-weight="bold" fill="#E05A47" stroke="none">Цг (сосок) • Вг=${g.vg} см</text>
+                <text x="10" y="6" font-family="JetBrains Mono, monospace" font-size="6.8" font-weight="600" fill="#78716C" stroke="none">отвод вытачки −${(g.R_apex || 2.2).toFixed(1)} см</text>
+            </g>
+            <!-- Осевые лучи сопряжения вытачки с центром груди -->
+            <g stroke="#E05A47" stroke-width="0.75" stroke-dasharray="2,2" opacity="0.55" fill="none">
+                ${g.dartPosition === 'shoulder' ? `<line x1="${g.V8.x * CM}" y1="${g.V8.y * CM}" x2="${g.G7.x * CM}" y2="${g.G7.y * CM}" />` : ''}
+                ${g.dartPosition === 'side' ? `<line x1="${g.S_apex.x * CM}" y1="${g.S_apex.y * CM}" x2="${g.G7.x * CM}" y2="${g.G7.y * CM}" />` : ''}
+                ${g.dartPosition === 'armhole' ? `<line x1="${g.Arm_apex.x * CM}" y1="${g.Arm_apex.y * CM}" x2="${g.G7.x * CM}" y2="${g.G7.y * CM}" />` : ''}
+                ${g.dartPosition === 'waist' ? `<line x1="${g.G7_waist_apex.x * CM}" y1="${g.G7_waist_apex.y * CM}" x2="${g.G7.x * CM}" y2="${g.G7.y * CM}" />` : ''}
+            </g>
         </g>
     `;
 
