@@ -52,8 +52,16 @@
             </button>
         </div>
 
-        <!-- Правая часть: Обучение, Мои мерки (Popover), ГОСТ размеры и кнопка Экспорта -->
+        <!-- Правая часть: Каталог PRO, Обучение, Мои мерки (Popover), ГОСТ размеры и кнопка Экспорта -->
         <div class="flex items-center gap-2 sm:gap-2.5">
+            <!-- Кнопка перехода в Каталог фасонов PRO -->
+            <a href="catalog.html" id="btn-header-catalog-pro" class="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-[#FFF5F3] to-white hover:from-[#FFEBE8] text-[#E05A47] border border-[#FCDAD5] shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Открыть каталог готовых фасонов PRO">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                <span class="hidden sm:inline">Каталог PRO</span>
+                <span class="sm:hidden">Каталог</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#E05A47] text-white mono font-bold">45+</span>
+            </a>
+
             <!-- Кнопка интерактивного обучения -->
             <button onclick="startOnboardingTour()" class="px-2.5 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Интерактивный тур: как работает конструктор">
                 <i data-lucide="compass" class="w-3.5 h-3.5 text-[#E05A47]"></i>
@@ -414,20 +422,30 @@
 
                 <!-- ВКЛАДКА 2: МОДЕЛИРОВАНИЕ ФАСОНА -->
                 <div id="panel-style" class="space-y-4 hidden">
-                    <!-- Теплый уютный баннер Лукбука -->
-                    <div class="bg-gradient-to-r from-[#FFF5F3] to-[#FDE8E4] border border-[#FCDAD5] rounded-2xl p-3.5 text-[#2C2825] shadow-soft relative overflow-hidden flex items-center justify-between gap-3">
-                        <div class="relative z-10 space-y-0.5">
-                            <div class="flex items-center gap-1.5">
-                                <i data-lucide="camera" class="w-4 h-4 text-[#E05A47]"></i>
-                                <span class="text-xs font-bold tracking-tight">Лукбук и фото-галерея</span>
-                                <span class="text-[9px] font-bold uppercase bg-[#E05A47] text-white px-2 py-0.5 rounded-full">New</span>
+                    <!-- Баннер перехода в Каталог Фасонов PRO -->
+                    <div class="bg-gradient-to-br from-[#FFF5F3] via-white to-[#FAF8F5] border border-[#FCDAD5] rounded-2xl p-4 text-[#2C2825] shadow-xs relative overflow-hidden space-y-2.5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#E05A47] px-2 py-0.5 rounded-full bg-[#FFF0ED] border border-[#FCDAD5] flex items-center gap-1">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-[#E05A47]"></i>Каталог PRO
+                                    </span>
+                                    <span class="text-[10px] font-semibold text-[#78716C] mono">45+ фасонов</span>
+                                </div>
+                                <h3 class="text-xs font-bold text-[#2C2825]">Каталог готовых дизайнерских фасонов</h3>
+                                <p class="text-[11px] text-[#78716C] leading-snug">Корсеты, топы «Анти-задир», пеньюары, платья и юбки в формате интерактивной карусели с подбором тканей.</p>
                             </div>
-                            <p class="text-[11px] text-[#78716C]">Фэшн-фотографии, свойства тканей и советы по пошиву</p>
                         </div>
-                        <button type="button" onclick="openLookbookModal()" class="relative z-10 shrink-0 px-3.5 py-1.5 bg-white hover:bg-[#FAF8F5] text-[#2C2825] border border-[#F0ECE1] font-bold text-xs rounded-xl shadow-xs transition cursor-pointer flex items-center gap-1.5">
-                            <span>Смотреть</span>
-                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#E05A47]"></i>
-                        </button>
+                        <div class="flex items-center gap-2 pt-1">
+                            <a href="catalog.html" id="btn-banner-open-catalog" class="flex-1 py-2 px-3 rounded-xl bg-[#E05A47] hover:bg-[#D04936] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                                <span>Открыть каталог (Карусель)</span>
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                            <button type="button" onclick="openLookbookModal()" class="py-2 px-3 rounded-xl bg-white hover:bg-[#FAF8F5] border border-[#F0ECE1] text-[#2C2825] text-xs font-semibold transition flex items-center justify-center gap-1 cursor-pointer" title="Быстрый просмотр фото">
+                                <i data-lucide="camera" class="w-3.5 h-3.5 text-[#78716C]"></i>
+                                <span>Фото</span>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- СТИЛИ ДЛЯ ПЛАТЬЯ / БЛУЗЫ -->
@@ -1424,6 +1442,14 @@
                 }
                 if (urlParams.get('topStyle') && typeof selectTopStyle === 'function') {
                     selectTopStyle(urlParams.get('topStyle'));
+                }
+                const styleParam = urlParams.get('style');
+                if (styleParam) {
+                    if (state.garmentType === 'dress' && typeof selectDressStyle === 'function') selectDressStyle(styleParam);
+                    if (state.garmentType === 'top' && typeof selectTopStyle === 'function') selectTopStyle(styleParam);
+                    if (state.garmentType === 'skirt' && typeof selectSkirtStyle === 'function') selectSkirtStyle(styleParam);
+                    if (state.garmentType === 'panties' && typeof setPantiesModel === 'function') setPantiesModel(styleParam);
+                    if (state.garmentType === 'corset' && typeof selectCorsetStyle === 'function') selectCorsetStyle(styleParam);
                 }
                 const tab = urlParams.get('tab') || window.location.hash.replace('#', '');
                 if (tab && ['measures', 'style', 'fit', 'layout'].includes(tab)) {

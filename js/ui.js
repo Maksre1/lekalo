@@ -1099,6 +1099,11 @@ function setGarmentType(type) {
     if (pantiesStyle) pantiesStyle.classList.toggle('hidden', type !== 'panties');
     if (corsetStyle) corsetStyle.classList.toggle('hidden', type !== 'corset');
 
+    const bannerCatalogBtn = document.getElementById('btn-banner-open-catalog');
+    if (bannerCatalogBtn) bannerCatalogBtn.href = `catalog.html?garment=${type}`;
+    const headerCatalogBtn = document.getElementById('btn-header-catalog-pro');
+    if (headerCatalogBtn) headerCatalogBtn.href = `catalog.html?garment=${type}`;
+
     if (type === 'skirt' && typeof renderSkirtStyleCatalog === 'function') {
         renderSkirtStyleCatalog();
     } else if (type === 'dress' && typeof renderDressStyleCatalog === 'function') {
