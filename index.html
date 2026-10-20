@@ -453,21 +453,10 @@
                         <!-- Детальная карточка активного фасона платья -->
                         <div id="dress-active-details"></div>
 
-                        <!-- 1. Фасоны платьев (Каталог) -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1 flex items-center justify-between">
-                                <span>1. Каталог и фасоны платьев</span>
-                                <span class="text-[10px] text-[#E05A47] font-semibold lowercase">9 моделей</span>
-                            </div>
-                            <div id="dress-catalog-container" class="space-y-3">
-                                <!-- Рендерится динамически через renderDressStyleCatalog() -->
-                            </div>
-                        </div>
-
-                        <!-- 2. Конструктор деталей (тонкая настройка кроя) -->
+                        <!-- Конструктор деталей основы -->
                         <div class="pt-2 border-t border-[#F0ECE1]">
                             <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2.5 flex items-center justify-between">
-                                <span>2. Конструктор деталей</span>
+                                <span>Конструктор деталей основы</span>
                                 <span class="text-[10px] text-[#78716C]">Тонкая настройка</span>
                             </div>
 
@@ -565,17 +554,6 @@
                         <!-- Детальная карточка активного фасона топа -->
                         <div id="top-active-details"></div>
 
-                        <!-- Каталог фасонов маек и топов (3 направления) -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1 flex items-center justify-between">
-                                <span>Каталог фасонов маек и топов</span>
-                                <span class="text-[10px] text-[#E05A47] font-semibold lowercase">11 моделей</span>
-                            </div>
-                            <div id="top-catalog-container" class="space-y-3">
-                                <!-- Рендерится через renderTopStyleCatalog() -->
-                            </div>
-                        </div>
-
                         <!-- Дополнительные настройки посадки топа -->
                         <div class="space-y-3 p-3.5 rounded-2xl bg-white border border-[#F0ECE1] shadow-2xs">
                             <!-- Длина топа -->
@@ -614,20 +592,9 @@
                         <!-- Детальная карточка активного фасона юбки -->
                         <div id="skirt-active-details"></div>
 
-                        <!-- 1. Фасон юбки (Каталог) -->
+                        <!-- Посадка на талии -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1 flex items-center justify-between">
-                                <span>1. Каталог и фасоны юбок</span>
-                                <span class="text-[10px] text-[#E05A47] font-semibold lowercase">13 моделей</span>
-                            </div>
-                            <div id="skirt-catalog-container" class="space-y-3">
-                                <!-- Рендерится через renderSkirtStyleCatalog() -->
-                            </div>
-                        </div>
-
-                        <!-- 2. Высота посадки юбки -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">2. Посадка на талии</div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">Посадка на талии</div>
                             <div class="grid grid-cols-3 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
                                 <button onclick="setSkirtRise('natural')" data-rise="natural" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">На талии</button>
                                 <button onclick="setSkirtRise('low')" data-rise="low" class="skirt-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">На бедрах</button>
@@ -640,18 +607,9 @@
                     <div id="style-panties-container" class="space-y-4 hidden">
                         <div id="panties-active-details"></div>
 
-                        <!-- 1. Модели белья -->
+                        <!-- 1. Высота посадки -->
                         <div>
-                            <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-1 mb-2">
-                                <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C]">1. Каталог моделей белья</div>
-                                <span class="text-[10px] text-[#78716C] font-medium">6 моделей</span>
-                            </div>
-                            <div id="panties-catalog-container" class="space-y-2"></div>
-                        </div>
-
-                        <!-- 2. Высота посадки -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">2. Высота посадки</div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">1. Высота посадки</div>
                             <div class="grid grid-cols-3 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
                                 <button onclick="setPantiesRise('high')" data-rise="high" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Высокая</button>
                                 <button onclick="setPantiesRise('mid')" data-rise="mid" class="panties-rise-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Средняя</button>
@@ -659,18 +617,18 @@
                             </div>
                         </div>
 
-                        <!-- 3. Вырез ноги -->
+                        <!-- 2. Вырез ноги -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">3. Вырез по ноге</div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">2. Вырез по ноге</div>
                             <div class="grid grid-cols-2 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
                                 <button onclick="setPantiesLegCut('classic')" data-leg="classic" class="panties-leg-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Классический</button>
                                 <button onclick="setPantiesLegCut('high')" data-leg="high" class="panties-leg-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">Высокий</button>
                             </div>
                         </div>
 
-                        <!-- 4. Конструкция ластовицы -->
+                        <!-- 3. Конструкция ластовицы -->
                         <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">4. Конструкция ластовицы</div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1">3. Конструкция ластовицы</div>
                             <div class="grid grid-cols-3 gap-1.5 bg-[#FAF8F5] p-1 rounded-2xl border border-[#F0ECE1]">
                                 <button type="button" onclick="setGussetType('classic')" data-gusset="classic" class="gusset-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer">Цельная</button>
                                 <button type="button" onclick="setGussetType('buttons')" data-gusset="buttons" class="gusset-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer">На кнопках</button>
@@ -684,22 +642,27 @@
                         <!-- Детальная карточка активного образа -->
                         <div id="corset-active-details"></div>
 
-                        <!-- Каталог фасонов корсетов и сценических образов -->
-                        <div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2 border-b border-[#F0ECE1] pb-1 flex items-center justify-between">
-                                <span>Каталог образов и корсетов</span>
-                                <span class="text-[10px] text-[#E05A47] font-semibold lowercase">7 моделей</span>
-                            </div>
-                            <div id="corset-catalog-container" class="space-y-3">
-                                <!-- Рендерится через renderCorsetStyleCatalog() -->
-                            </div>
-                        </div>
-
                         <!-- Дополнительные настройки для корсетов -->
                         <div class="space-y-3 p-3.5 rounded-2xl bg-white border border-[#F0ECE1] shadow-2xs">
                             <!-- Утяжка талии -->
                             <div class="space-y-1">
                                 <div class="flex justify-between items-center text-xs">
+                                    <span class="font-medium text-[#2C2825] flex items-center gap-1.5">
+                                        <i data-lucide="shield" class="w-3.5 h-3.5 text-[#E05A47]"></i>
+                                        <span>Корсетная утяжка талии:</span>
+                                    </span>
+                                    <span id="label-corset-reduction" class="mono font-bold text-[#E05A47]">-5.0 см</span>
+                                </div>
+                                <input type="range" id="rng-corset-reduction" min="3" max="8" step="0.5" value="5"
+                                    oninput="setCorsetReduction(this.value)" class="w-full accent-[#E05A47] cursor-pointer">
+                                <div class="flex justify-between text-[10px] text-[#A8A29E] font-mono">
+                                    <span>-3 см (мягко)</span>
+                                    <span>-5 см (норма)</span>
+                                    <span>-8 см (корсет)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                                     <span class="font-medium text-[#2C2825] flex items-center gap-1.5">
                                         <i data-lucide="shield" class="w-3.5 h-3.5 text-[#E05A47]"></i>
                                         <span>Корсетная утяжка талии:</span>

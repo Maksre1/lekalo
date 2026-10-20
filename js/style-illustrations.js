@@ -2052,7 +2052,10 @@ function renderSkirtActiveDetails() {
                         <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('skirt', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                            <a href="catalog.html?garment=skirt" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer" title="Выбрать другой фасон юбки в каталоге PRO">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i><span>Каталог PRO</span>
+                            </a>
+                            <button onclick="openLookbookModal('skirt', '${info.id}')" class="text-[10px] text-[#78716C] hover:text-[#2C2825] font-medium bg-white border border-[#F0ECE1] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
@@ -2140,7 +2143,10 @@ function renderPantiesActiveDetails() {
                         <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('panties', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                            <a href="catalog.html?garment=panties" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer" title="Выбрать другую модель белья в каталоге PRO">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i><span>Каталог PRO</span>
+                            </a>
+                            <button onclick="openLookbookModal('panties', '${info.id}')" class="text-[10px] text-[#78716C] hover:text-[#2C2825] font-medium bg-white border border-[#F0ECE1] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
@@ -2271,7 +2277,10 @@ function renderDressActiveDetails() {
                         <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('dress', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                            <a href="catalog.html?garment=dress" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer" title="Выбрать другой фасон платья в каталоге PRO">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i><span>Каталог PRO</span>
+                            </a>
+                            <button onclick="openLookbookModal('dress', '${info.id}')" class="text-[10px] text-[#78716C] hover:text-[#2C2825] font-medium bg-white border border-[#F0ECE1] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
@@ -2819,7 +2828,10 @@ function renderTopActiveDetails() {
                         <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('top', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                            <a href="catalog.html?garment=top" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer" title="Выбрать другой фасон топа в каталоге PRO">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i><span>Каталог PRO</span>
+                            </a>
+                            <button onclick="openLookbookModal('top', '${info.id}')" class="text-[10px] text-[#78716C] hover:text-[#2C2825] font-medium bg-white border border-[#F0ECE1] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
@@ -3033,7 +3045,10 @@ function renderCorsetActiveDetails() {
                         <h4 class="text-xs font-bold text-[#2C2825]">${info.name}</h4>
                         <div class="flex items-center gap-1">
                             <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border ${info.badgeColor}">${info.badge}</span>
-                            <button onclick="openLookbookModal('corset', '${info.id}')" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
+                            <a href="catalog.html?garment=corset" class="text-[10px] text-[#E05A47] hover:text-[#D04835] font-bold bg-white border border-[#FCDAD5] hover:border-[#E05A47] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer" title="Выбрать другой корсетный образ в каталоге PRO">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i><span>Каталог PRO</span>
+                            </a>
+                            <button onclick="openLookbookModal('corset', '${info.id}')" class="text-[10px] text-[#78716C] hover:text-[#2C2825] font-medium bg-white border border-[#F0ECE1] px-2 py-0.5 rounded-lg shadow-xs transition flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="book-open" class="w-3 h-3"></i><span>Лукбук</span>
                             </button>
                         </div>
