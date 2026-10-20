@@ -785,18 +785,18 @@
                     <!-- Силуэтные пресеты -->
                     <div>
                         <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2">Пресеты силуэта</div>
-                        <div class="grid grid-cols-3 gap-1.5">
-                            <button onclick="applyEasePreset(2.5, 1.0, 1.5, 2.0, 4.0)" class="p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer">
-                                <div class="text-xs font-bold text-[#2C2825]">Облегающий</div>
-                                <div class="text-[10px] mono text-[#78716C]">Пг +2.5 см</div>
+                        <div class="grid grid-cols-3 gap-1.5" id="ease-presets-grid">
+                            <button type="button" onclick="applyEasePreset('fitted')" data-ease="fitted" class="ease-preset-btn p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer">
+                                <div class="text-xs font-bold text-[#2C2825] title-text">Облегающий</div>
+                                <div class="text-[10px] mono text-[#78716C] sub-text">Пг +2.5 см</div>
                             </button>
-                            <button onclick="applyEasePreset(4.0, 2.0, 2.0, 2.5, 5.5)" class="p-2.5 text-left border-2 border-[#E05A47] rounded-2xl bg-[#FFF5F3] transition cursor-pointer">
-                                <div class="text-xs font-bold text-[#2C2825]">Умеренный</div>
-                                <div class="text-[10px] mono text-[#E05A47] font-semibold">Пг +4.0 см</div>
+                            <button type="button" onclick="applyEasePreset('semi')" data-ease="semi" class="ease-preset-btn p-2.5 text-left border-2 border-[#E05A47] rounded-2xl bg-[#FFF5F3] shadow-xs transition cursor-pointer">
+                                <div class="text-xs font-bold text-[#E05A47] title-text">Умеренный</div>
+                                <div class="text-[10px] mono text-[#E05A47] font-semibold sub-text">Пг +4.0 см</div>
                             </button>
-                            <button onclick="applyEasePreset(7.0, 4.5, 4.0, 3.5, 7.5)" class="p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer">
-                                <div class="text-xs font-bold text-[#2C2825]">Свободный</div>
-                                <div class="text-[10px] mono text-[#78716C]">Пг +7.0 см</div>
+                            <button type="button" onclick="applyEasePreset('loose')" data-ease="loose" class="ease-preset-btn p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer">
+                                <div class="text-xs font-bold text-[#2C2825] title-text">Свободный</div>
+                                <div class="text-[10px] mono text-[#78716C] sub-text">Пг +7.0 см</div>
                             </button>
                         </div>
                     </div>
@@ -1404,6 +1404,7 @@
                 if (typeof renderCorsetActiveDetails === 'function') renderCorsetActiveDetails();
                 if (typeof updateContextualTabs === 'function') updateContextualTabs(state.garmentType);
                 if (typeof syncStageControls === 'function') syncStageControls();
+                if (typeof updateStyleUI === 'function') updateStyleUI();
 
                 // На мобильных экранах по умолчанию открываем холст
                 if (window.innerWidth < 768) {

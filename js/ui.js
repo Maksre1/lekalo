@@ -232,6 +232,14 @@ function syncInput(key, value) {
         updateAutoBadge(key);
     }
 
+    if (key === 'pg' && typeof updateEasePresetUI === 'function') {
+        let detected = null;
+        if (Math.abs(val - 2.5) < 0.2) detected = 'fitted';
+        else if (Math.abs(val - 4.0) < 0.2) detected = 'semi';
+        else if (Math.abs(val - 7.0) < 0.2) detected = 'loose';
+        updateEasePresetUI(detected);
+    }
+
     renderPattern();
     syncAllAutoInputs();
     if (typeof StorageManager !== 'undefined') StorageManager.save();
@@ -310,12 +318,56 @@ function applyPreset(sizeKey) {
     }
 }
 
-function applyEasePreset(pg, pt, pb, pspr, pop) {
-    syncInput('pg', pg);
-    syncInput('pt', pt);
-    syncInput('pb', pb);
-    syncInput('pspr', pspr);
-    syncInput('pop', pop);
+const EASE_PRESETS = {
+    fitted: { pg: 2.5, pt: 1.0, pb: 1.5, pspr: 2.0, pop: 4.0, name: 'Облегающий' },
+    semi:   { pg: 4.0, pt: 2.0, pb: 2.0, pspr: 2.5, pop: 5.5, name: 'Умеренный' },
+    loose:  { pg: 7.0, pt: 4.5, pb: 4.0, pspr: 3.5, pop: 7.5, name: 'Свободный' }
+};
+
+function updateEasePresetUI(activeKey) {
+    document.querySelectorAll('.ease-preset-btn').forEach(btn => {
+        const key = btn.dataset.ease;
+        const isActive = (key === activeKey);
+        const titleEl = btn.querySelector('.title-text');
+        const subEl = btn.querySelector('.sub-text');
+
+        if (isActive) {
+            btn.className = "ease-preset-btn p-2.5 text-left border-2 border-[#E05A47] rounded-2xl bg-[#FFF5F3] shadow-xs transition cursor-pointer";
+            if (titleEl) titleEl.className = "text-xs font-bold text-[#E05A47] title-text";
+            if (subEl) subEl.className = "text-[10px] mono text-[#E05A47] font-semibold sub-text";
+        } else {
+            btn.className = "ease-preset-btn p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer";
+            if (titleEl) titleEl.className = "text-xs font-bold text-[#2C2825] title-text";
+            if (subEl) subEl.className = "text-[10px] mono text-[#78716C] sub-text";
+        }
+    });
+}
+
+function applyEasePreset(presetOrPg, pt, pb, pspr, pop) {
+    let presetKey = null;
+    if (typeof presetOrPg === 'string' && EASE_PRESETS[presetOrPg]) {
+        presetKey = presetOrPg;
+        const p = EASE_PRESETS[presetKey];
+        syncInput('pg', p.pg);
+        syncInput('pt', p.pt);
+        syncInput('pb', p.pb);
+        syncInput('pspr', p.pspr);
+        syncInput('pop', p.pop);
+    } else {
+        const pg = Number(presetOrPg);
+        if (Math.abs(pg - 2.5) < 0.2) presetKey = 'fitted';
+        else if (Math.abs(pg - 4.0) < 0.2) presetKey = 'semi';
+        else if (Math.abs(pg - 7.0) < 0.2) presetKey = 'loose';
+        syncInput('pg', pg);
+        if (pt !== undefined) syncInput('pt', pt);
+        if (pb !== undefined) syncInput('pb', pb);
+        if (pspr !== undefined) syncInput('pspr', pspr);
+        if (pop !== undefined) syncInput('pop', pop);
+    }
+    updateEasePresetUI(presetKey);
+    if (presetKey && EASE_PRESETS[presetKey]) {
+        showNotification(`Применен силуэт: ${EASE_PRESETS[presetKey].name} (Пг +${state.pg} см)`);
+    }
 }
 
 function switchTab(tabName) {
@@ -362,9 +414,9 @@ function setDartPosition(pos) {
     state.dartPosition = pos;
     document.querySelectorAll('.dart-btn').forEach(btn => {
         if (btn.dataset.dart === pos) {
-            btn.className = "dart-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer";
+            btn.className = "dart-btn p-2.5 rounded-2xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] shadow-xs transition cursor-pointer";
         } else {
-            btn.className = "dart-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+            btn.className = "dart-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer";
         }
     });
     if (typeof renderDressActiveDetails === 'function') {
@@ -378,9 +430,9 @@ function setNecklineType(type) {
     state.necklineType = type;
     document.querySelectorAll('.neckline-btn').forEach(btn => {
         if (btn.dataset.neckline === type) {
-            btn.className = "neckline-btn p-2 rounded-xl text-left border-2 border-indigo-600 bg-indigo-50/60 font-semibold text-indigo-950 transition cursor-pointer";
+            btn.className = "neckline-btn p-2.5 rounded-2xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] shadow-xs transition cursor-pointer";
         } else {
-            btn.className = "neckline-btn p-2 rounded-xl text-left border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer";
+            btn.className = "neckline-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer";
         }
     });
     renderPattern();
@@ -403,9 +455,9 @@ function setSleeveLength(type) {
     state.sleeveLengthType = type;
     document.querySelectorAll('.sleeve-length-btn').forEach(btn => {
         if (btn.dataset.sleeve === type) {
-            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center";
+            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer";
         } else {
-            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer";
         }
     });
     renderPattern();
@@ -416,36 +468,54 @@ function setSilhouette(sil) {
     state.silhouette = sil;
     document.querySelectorAll('.silhouette-btn').forEach(btn => {
         if (btn.dataset.silhouette === sil) {
-            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-lg bg-indigo-600 text-white shadow-sm transition text-center";
+            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer";
         } else {
-            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition text-center";
+            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer";
         }
     });
     renderPattern();
+    if (typeof StorageManager !== 'undefined') StorageManager.save();
 }
 
 function updateStyleUI(g) {
+    if (typeof updateEasePresetUI === 'function') {
+        let detected = null;
+        if (Math.abs(state.pg - 2.5) < 0.2) detected = 'fitted';
+        else if (Math.abs(state.pg - 4.0) < 0.2) detected = 'semi';
+        else if (Math.abs(state.pg - 7.0) < 0.2) detected = 'loose';
+        updateEasePresetUI(detected);
+    }
     document.querySelectorAll('.dart-btn').forEach(btn => {
         const active = btn.dataset.dart === state.dartPosition;
-        btn.classList.toggle('border-indigo-600', active);
-        btn.classList.toggle('border-2', active);
-        btn.classList.toggle('bg-indigo-50/60', active);
+        if (active) {
+            btn.className = "dart-btn p-2.5 rounded-2xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] shadow-xs transition cursor-pointer";
+        } else {
+            btn.className = "dart-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer";
+        }
     });
     document.querySelectorAll('.neckline-btn').forEach(btn => {
         const active = btn.dataset.neckline === state.necklineType;
-        btn.classList.toggle('border-indigo-600', active);
-        btn.classList.toggle('border-2', active);
-        btn.classList.toggle('bg-indigo-50/60', active);
+        if (active) {
+            btn.className = "neckline-btn p-2.5 rounded-2xl text-left border-2 border-[#E05A47] bg-[#FFF5F3] font-semibold text-[#2C2825] shadow-xs transition cursor-pointer";
+        } else {
+            btn.className = "neckline-btn p-2.5 rounded-2xl text-left border border-[#F0ECE1] bg-white hover:bg-[#FAF8F5] text-[#2C2825] transition cursor-pointer";
+        }
     });
     document.querySelectorAll('.sleeve-length-btn').forEach(btn => {
         const active = btn.dataset.sleeve === state.sleeveLengthType;
-        btn.classList.toggle('bg-indigo-600', active);
-        btn.classList.toggle('text-white', active);
+        if (active) {
+            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer";
+        } else {
+            btn.className = "sleeve-length-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer";
+        }
     });
     document.querySelectorAll('.silhouette-btn').forEach(btn => {
         const active = btn.dataset.silhouette === state.silhouette;
-        btn.classList.toggle('bg-indigo-600', active);
-        btn.classList.toggle('text-white', active);
+        if (active) {
+            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-[#E05A47] text-white shadow-xs transition text-center cursor-pointer";
+        } else {
+            btn.className = "silhouette-btn flex-1 py-1.5 px-2 text-xs font-medium rounded-xl text-[#78716C] bg-white border border-[#F0ECE1] hover:text-[#2C2825] transition text-center cursor-pointer";
+        }
     });
 }
 
