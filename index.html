@@ -679,8 +679,8 @@
 
                 <!-- ВКЛАДКА 3: ПОСАДКА И ПРИБАВКИ -->
                 <div id="panel-fit" class="space-y-4 hidden">
-                    <!-- Степень прилегания -->
-                    <div class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5 space-y-2.5">
+                    <!-- Степень прилегания (для плечевых изделий) -->
+                    <div id="fit-degree-container" class="bg-[#FAF8F5] border border-[#F0ECE1] rounded-2xl p-3.5 space-y-2.5">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-bold text-[#2C2825]">Степень прилегания изделия:</span>
                             <span id="fit-category-badge" class="text-[11px] mono font-bold px-2.5 py-0.5 rounded-full border border-[#BBF7D0] bg-[#F0FDF4] text-[#15803D]">Полуприлегающий</span>
@@ -748,7 +748,7 @@
                     </div>
 
                     <!-- Силуэтные пресеты -->
-                    <div>
+                    <div id="ease-presets-container">
                         <div class="text-[11px] font-bold uppercase tracking-wider text-[#78716C] mb-2">Пресеты силуэта</div>
                         <div class="grid grid-cols-3 gap-1.5" id="ease-presets-grid">
                             <button type="button" onclick="applyEasePreset('fitted')" data-ease="fitted" class="ease-preset-btn p-2.5 text-left border border-[#F0ECE1] rounded-2xl bg-white hover:bg-[#FAF8F5] transition cursor-pointer">
@@ -770,7 +770,7 @@
                     <div class="space-y-2" id="measures-ease"></div>
 
                     <!-- Инженерный конструктор деталей (Transform & Stage) -->
-                    <div class="bg-white border border-[#F0ECE1] rounded-2xl p-3.5 space-y-3 shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)]">
+                    <div id="stage-details-container" class="bg-white border border-[#F0ECE1] rounded-2xl p-3.5 space-y-3 shadow-[0_2px_8px_-2px_rgba(44,40,37,0.03)]">
                         <div class="flex items-center justify-between border-b border-[#F0ECE1] pb-2">
                             <div class="flex items-center gap-1.5">
                                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#E05A47]"></i>

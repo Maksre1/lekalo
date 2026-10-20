@@ -1003,6 +1003,18 @@ function updateContextualTabs(garmentType) {
     if (tabFit) tabFit.classList.remove('hidden');
     if (tabsBar) tabsBar.className = "grid grid-cols-4 p-1 m-3.5 bg-[#F5F2EB] rounded-2xl border border-[#F0ECE1] text-xs";
 
+    // Управление отображением плечевых прибавок (ГОСТ) в табе "Посадка"
+    const fitDegreeContainer = document.getElementById('fit-degree-container');
+    const easePresetsContainer = document.getElementById('ease-presets-container');
+    const measuresEase = document.getElementById('measures-ease');
+
+    const hasBustEase = (garmentType === 'dress' || garmentType === 'top');
+    if (fitDegreeContainer) fitDegreeContainer.style.display = hasBustEase ? 'block' : 'none';
+    if (easePresetsContainer) easePresetsContainer.style.display = hasBustEase ? 'block' : 'none';
+    if (measuresEase) measuresEase.style.display = hasBustEase ? 'block' : 'none';
+
+    syncStageControls();
+
     if (window.lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
     }
@@ -1010,6 +1022,13 @@ function updateContextualTabs(garmentType) {
 
 // Синхронизация состояния конструктора сценических деталей в UI
 function syncStageControls() {
+    const type = state.garmentType || 'dress';
+
+    const stageContainer = document.getElementById('stage-details-container');
+    const vCutCard = document.getElementById('v-cut-waist-card');
+    const scrunchCard = document.getElementById('scrunch-effect-card');
+    const quickReleaseCard = document.getElementById('quick-release-card');
+
     const chkVCut = document.getElementById('chk-v-cut-waist');
     if (chkVCut) chkVCut.checked = Boolean(state.vCutWaist);
     const vCutDepthEl = document.getElementById('v-cut-depth-controls');
@@ -1024,6 +1043,28 @@ function syncStageControls() {
 
     const chkQuick = document.getElementById('chk-quick-release');
     if (chkQuick) chkQuick.checked = Boolean(state.quickRelease);
+
+    // Контекстная фильтрация сценических опций:
+    // V-Cut и Scrunch работают ТОЛЬКО для белья (panties) и юбок (skirt)
+    const supportsVCut = (type === 'panties' || type === 'skirt');
+    const supportsScrunch = (type === 'panties' || type === 'skirt');
+    // Quick-Release планка работает ТОЛЬКО для плечевых топов (top)
+    const supportsQuickRelease = (type === 'top');
+
+    const hasAnyStageFeature = supportsVCut || supportsScrunch || supportsQuickRelease;
+
+    if (stageContainer) {
+        stageContainer.style.display = hasAnyStageFeature ? 'block' : 'none';
+    }
+    if (vCutCard) {
+        vCutCard.style.display = supportsVCut ? 'block' : 'none';
+    }
+    if (scrunchCard) {
+        scrunchCard.style.display = supportsScrunch ? 'block' : 'none';
+    }
+    if (quickReleaseCard) {
+        quickReleaseCard.style.display = supportsQuickRelease ? 'block' : 'none';
+    }
 
     document.querySelectorAll('.gusset-btn').forEach(btn => {
         const isActive = btn.dataset.gusset === (state.gussetType || 'classic');
